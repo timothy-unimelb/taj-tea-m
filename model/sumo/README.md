@@ -78,7 +78,7 @@ Where the rules come from, in order:
 
 Two ways to see the simulation rather than its numbers:
 
-- **Live, in SUMO's viewer:** `python3 04_run.py closure --hour 17 --seed 1 --gui --max-minutes 60` opens the run in sumo-gui, zoomed on the block, with the same memory and time limits. On a Mac the bundled sumo-gui is an X11 program, so it needs XQuartz installed and running first (not installed on the laptop as of 30 Sep).
+- **Live, in SUMO's viewer:** `python3 04_run.py closure --hour 17 --seed 1 --gui --max-minutes 60` opens the run in sumo-gui, zoomed on the block, with the same memory and time limits. On a Mac the bundled sumo-gui is an X11 program, so it needs XQuartz (installed on the laptop 30 Sep 9:50am). Start XQuartz first, and until you have logged out and in again after installing it, run with `DISPLAY=:0` in front of the command.
 - **A recorded clip:** run an hour with `--fcd 10` for both scenarios (`python3 04_run.py base --hour 17 --seed 6 --fcd 10`, then `closure`), then `python3 09_clip.py --hour 17 --seed 6 --minutes 10`. It writes `output/swanston-clip-17.gif`: ten simulated minutes, normal street on the left and closure on the right, cars as dots coloured by speed. Delete the `fcd.xml` files afterwards, they are about 150 MB each.
 
 ## Safety limits
