@@ -10,7 +10,6 @@ Done:
 
 ## Tim
 Now:
-- [04:25] Final checks and summary for the team.
 Done:
 - [04:25] SUMO plug-in for Swanston, model/sumo/ (README there). Early result, low confidence, precomputed, `IMPACT_MODEL=sumo`. About 44 drivers an hour must avoid the block, about 227 m detour, delay within noise. Runs at 50% of counted traffic because the simulated network jams above that. Slide image in model/sumo/output/swanston-closure.png. The first run crashed the laptop (300 GB); runs are now capped at 3 GB and 20 minutes.
 - [04:00] Swappable impact models: contract (lib/impact/types.ts, model/IMPACT_CONTRACT.md), IMPACT_MODEL switch, written severity rule, Tamara's model ported to TypeScript and live as the default, report reads only the impact result and shows method and assumptions. Swanston naming and copy, saved demo TGS analysis, tighter work hours prompt. Commit bc59d87. Vercel preview built.
