@@ -111,6 +111,8 @@ Figures on the sketches, such as "96%", are placeholders.
 - **Wednesday 30 Sep, 12:30pm:** 3 slides plus a video demo. The bare minimum flow, mocked where needed.
 - **Thursday 1 Oct:** only if shortlisted. Not planned yet.
 
+Real for Wednesday: Claude reads the uploaded TGS and lists the scan points.
+
 Mocked for Wednesday: impact model results, scan measurement. The approach for each must still be clear and buildable, because technical feasibility is 30% of the mark.
 
 ## Hackathon facts
@@ -128,8 +130,6 @@ When one is answered, delete it here, add a line to Decisions, and update the se
 - Does the report only flag problems, or also suggest fixes using equipment inventory (move a barrier, add a sign, add a VMS board)? This is the closest fit to RPM's brief.
 - Which metrics per mode (delay, queue length, detour distance, footpath width)?
 - Is the impact based on the plan as drawn, or the plan fitted to the scanned street?
-- Which model runs the agents?
-- Does the TGS analysis run for real in the Wednesday video, or is it mocked too?
 
 ## Decisions
 
@@ -145,6 +145,7 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - [29 Sep] Advait: the report is saved to the device as a PDF. On return home the share sheet opens to email it. For the demo it only needs to be viewable.
 - [29 Sep] Advait: past projects live in localStorage. Supabase maybe later.
 - [29 Sep] Advait: target is the Wed 30 Sep 12:30pm submission (3 slides plus a video demo), mocked where needed. Thursday only if shortlisted.
+- [29 Sep] Advait: the agents run on Claude. Claude reads the TGS for real in the Wednesday video. The other steps can stay mocked.
 
 ## Terms
 
