@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Assess temporary infrastructure before deployment. Barrier Brain site impact assessment prototype.",
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#fafbf8" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#F9F6EF" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

@@ -5,7 +5,16 @@ import { useId, useRef, useState, type ReactNode } from "react";
 import { ArrowRightIcon, CheckIcon, CloudArrowUpIcon, FilePlusIcon, FilePdfIcon, XIcon } from "@phosphor-icons/react";
 
 export function Brand({ compact = false }: { compact?: boolean }) {
-  return <span className={`brand ${compact ? "brand-compact" : ""}`}><svg aria-hidden="true" viewBox="0 0 40 36" width="32" height="30"><path fill="#216b51" d="M19 1 1 33h18zM22 1v32h17z"/><path fill="#89b8a3" d="m19 1-7 27 7-8zm3 0 7 27-7-8z"/><path fill="#144735" d="m1 33 18-13v13zm38 0L22 20v13z"/></svg><span>Barrier Brain</span></span>;
+  return <span className={`brand ${compact ? "brand-compact" : ""}`}>
+    <Image
+      src={compact ? "/assets/barrier-brain-mark.png" : "/assets/barrier-brain-logo.png"}
+      alt="Barrier Brain"
+      width={compact ? 28 : 180}
+      height={compact ? 28 : 45}
+      priority
+      draggable={false}
+    />
+  </span>;
 }
 
 // Select original artwork from the supplied board, excluding screenshot UI and device chrome.

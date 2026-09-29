@@ -35,6 +35,5 @@ export function SiteReport({ data, project, document = false }: { data: Assessme
       <ReportSection title="Site overview"><SiteOverview /></ReportSection>
       {actions.length > 0 && <ReportSection title={document ? "Recommended actions" : "Recommended before deployment"}><div className="recommendations">{actions.map(action => document ? <div className="document-action" key={action.id}><span className="action-number">{action.id}</span><div><h3>{action.title}</h3><p>{action.summary}</p></div></div> : <details className="recommendation" key={action.id}><summary><span className="action-number">{action.id}</span><span><strong>{action.title}</strong><small>{action.summary}</small></span><CaretDownIcon size={18} aria-hidden="true" /></summary><dl className="action-detail"><dt>Impact</dt><dd>{action.impact}</dd><dt>Why it matters</dt><dd>{action.why}</dd><dt>Evidence used</dt><dd><ul>{data.analysis.sources.map(source => <li key={source}>{source}</li>)}</ul></dd><dt>Recommended action</dt><dd>{action.recommendation}</dd></dl></details>)}</div></ReportSection>}
     </div>
-    <footer className="report-footer"><p>{data.explanations.disclaimer}</p><p className="demo-note">Demo assessment · Sample analysis data</p></footer>
   </article>;
 }

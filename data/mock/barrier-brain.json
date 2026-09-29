@@ -39,7 +39,6 @@
     "actions": [
       { "id": 1, "category": "traffic", "title": "Shift eastern taper 12 m west", "summary": "Maintains intersection clearance and reduces merge conflict.", "impact": "The current taper position reduces clearance near the intersection.", "why": "This may increase merging conflict during peak traffic.", "recommendation": "Shift the eastern taper approximately 12 m west before deployment." },
       { "id": 2, "category": "pedestrians", "title": "Protect temporary pedestrian route", "summary": "Add physical separation and clear signage along the detour.", "impact": "The temporary pedestrian route crosses one vehicle access point.", "why": "People using the detour need a protected route past the work zone.", "recommendation": "Add physical separation and clear signage along the detour." }
-    ],
-    "disclaimer": "Barrier Brain supports pre-deployment planning and does not replace formal traffic management approval."
+    ]
   }
 }

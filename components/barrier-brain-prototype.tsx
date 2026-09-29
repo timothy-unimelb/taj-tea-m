@@ -47,7 +47,7 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   async function share() {
     const url = `${window.location.origin}${window.location.pathname}#report/${project.id}`;
     if (navigator.share) {
-      try { await navigator.share({ title: `Barrier Brain: ${project.name}`, text: "Site Impact Report · Demo assessment", url }); return; }
+      try { await navigator.share({ title: `Barrier Brain: ${project.name}`, text: "Site Impact Report", url }); return; }
       catch (error) { if (error instanceof Error && error.name === "AbortError") return; }
     }
     try { await navigator.clipboard.writeText(url); setNotification("Report link copied"); }
@@ -69,7 +69,6 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
     <a href="#main-content" className="skip-link" onClick={event => { event.preventDefault(); main.current?.querySelector<HTMLElement>("h1")?.focus(); }}>Skip to content</a>
     <header className={`app-header ${isReport || isPdf ? "report-toolbar" : ""}`}>
       {screen === "projects" ? <Brand /> : <button className="back-button" onClick={() => navigate(backScreens[screen])}><ArrowLeftIcon size={18} aria-hidden="true" /><span>Back</span></button>}
-      {isReport && <Brand compact />}
       {isPdf && <span className="document-filename">{project.name.replaceAll(" ", "_")}_Report.pdf</span>}
       {(isReport || isPdf) && <div className="toolbar-actions"><button className="toolbar-button" onClick={share} aria-label="Share report"><ShareNetworkIcon size={20} aria-hidden="true" />{!isPdf && <span>Share</span>}</button>{isReport && <button className="toolbar-button" onClick={() => navigate("pdf")}><FilePdfIcon size={20} aria-hidden="true" /><span>Export PDF</span></button>}</div>}
     </header>
@@ -80,7 +79,6 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
         <PrimaryButton onClick={startAssessment} arrow={false}><PlusIcon size={20} aria-hidden="true" />New assessment</PrimaryButton>
         <label className="search-box"><MagnifyingGlassIcon size={20} aria-hidden="true" /><span className="sr-only">Search projects</span><input type="search" placeholder="Search projects…" value={search} onChange={e => setSearch(e.target.value)} /></label>
         <section className="projects-section"><h2>Recent projects</h2><div className="project-list">{filteredProjects.map(p => <button key={p.id} className="project-card" onClick={() => openProject(p.id, p.status)}><ReferenceAsset kind="road" alt="Street work zone" /><span className="project-info"><strong>{p.name}</strong><span className="project-meta"><time>{p.date}</time><span className={`project-status status-${p.status.toLowerCase().replaceAll(" ", "-")}`}>{p.status}</span></span></span><CaretRightIcon size={17} aria-hidden="true" /></button>)}</div>{filteredProjects.length === 0 && <p className="empty-state" role="status">No projects match “{search}”.</p>}</section>
-        <p className="home-note">UniMelb FEIT Hackathon 2026 <span>RPM Hire Challenge</span></p>
       </> : isReport || isPdf ? <>
         <SiteReport data={data} project={project} document={isPdf} />
         {isPdf && <div className="document-print"><PrimaryButton onClick={() => window.print()} arrow={false}><FilePdfIcon size={20} aria-hidden="true" />Print / Save PDF</PrimaryButton><p>Use your browser’s print options to save this report as a PDF.</p></div>}
