@@ -41,11 +41,12 @@ export function Stepper({ active, tgsComplete = false }: { active: number; tgsCo
   })}</ol>;
 }
 
-export function Checklist({ items, captured = items.length, pending = false, statusLabel = "captured" }: { items: string[]; captured?: number; pending?: boolean; statusLabel?: string }) {
-  return <ul className="checklist">{items.map((item, i) => <li key={item}><span className={`check-symbol ${i >= captured ? pending ? "pending" : "failed" : ""}`}>{i < captured ? <CheckIcon size={13} weight="bold" aria-hidden="true" /> : !pending && <XIcon size={12} weight="bold" aria-hidden="true" />}</span><span>{item}{i >= captured && !pending && <small className="error-text">Not fully captured</small>}<span className="sr-only">{i < captured ? `, ${statusLabel}` : pending ? ", required" : ", incomplete"}</span></span></li>)}</ul>;
+export function Checklist({ items, details, captured = items.length, pending = false, statusLabel = "captured" }: { items: string[]; details?: string[]; captured?: number; pending?: boolean; statusLabel?: string }) {
+  return <ul className="checklist">{items.map((item, i) => <li key={`${i}-${item}`}><span className={`check-symbol ${i >= captured ? pending ? "pending" : "failed" : ""}`}>{i < captured ? <CheckIcon size={13} weight="bold" aria-hidden="true" /> : !pending && <XIcon size={12} weight="bold" aria-hidden="true" />}</span><span>{item}{details?.[i] && <small className="checklist-detail">{details[i]}</small>}{i >= captured && !pending && <small className="error-text">Not fully captured</small>}<span className="sr-only">{i < captured ? `, ${statusLabel}` : pending ? ", required" : ", incomplete"}</span></span></li>)}</ul>;
 }
 
-export type UploadFile = { name: string; size: string };
+// `file` is the real upload. It is missing when the demo file is chosen.
+export type UploadFile = { name: string; size: string; file?: File };
 export function UploadPanel({ kind, file, onFile }: { kind: "tgs" | "scan"; file: UploadFile | null; onFile: (file: UploadFile | null) => void }) {
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
@@ -58,7 +59,7 @@ export function UploadPanel({ kind, file, onFile }: { kind: "tgs" | "scan"; file
     if (!extensions.test(selected.name)) { setError(isTgs ? "Choose a PDF, PNG or JPG file." : "Choose a .ply, .las, .e57 or .zip file."); return; }
     if (isTgs && selected.size > 20 * 1024 * 1024) { setError("This file is larger than 20 MB. Choose a smaller file."); return; }
     setError("");
-    onFile({ name: selected.name, size: `${Math.max(0.1, selected.size / 1024 / 1024).toFixed(1)} MB` });
+    onFile({ name: selected.name, size: `${Math.max(0.1, selected.size / 1024 / 1024).toFixed(1)} MB`, file: selected });
   }
   return <div className="upload-group">
     <input ref={input} id={id} className="sr-only" type="file" tabIndex={-1} accept={isTgs ? ".pdf,.png,.jpg,.jpeg" : ".ply,.las,.e57,.zip"} onChange={e => { selectFile(e.target.files?.[0]); e.target.value = ""; }} aria-label={isTgs ? "Choose TGS file" : "Choose site scan file"} />

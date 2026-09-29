@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { CheckIcon, CircleIcon, CircleNotchIcon } from "@phosphor-icons/react";
 import { ReferenceAsset } from "./prototype-ui";
 
-export function ProgressState({ steps, onComplete, illustration = false }: { steps: string[]; onComplete: () => void; illustration?: boolean }) {
+// `ready` holds the last step open until the real work behind it has finished.
+export function ProgressState({ steps, onComplete, illustration = false, ready = true }: { steps: string[]; onComplete: () => void; illustration?: boolean; ready?: boolean }) {
   const [completed, setCompleted] = useState(0);
   useEffect(() => {
-    const timer = window.setInterval(() => setCompleted(value => Math.min(value + 1, steps.length)), 750);
+    const timer = window.setInterval(() => setCompleted(value => Math.min(value + 1, ready ? steps.length : steps.length - 1)), 750);
     return () => window.clearInterval(timer);
-  }, [steps.length]);
+  }, [steps.length, ready]);
   useEffect(() => {
     if (completed !== steps.length) return;
     const timer = window.setTimeout(onComplete, 500);

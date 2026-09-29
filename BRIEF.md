@@ -149,6 +149,8 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - [29 Sep] Advait: the agents run on Claude. Claude reads the TGS for real in the Wednesday video. The other steps can stay mocked.
 - [29 Sep] Tamara: the impact model is a lookup from past closures plus a queue calculation, not machine learning. It is explainable, and its point estimate does not beat "no change", so it is shown as a range and a risk. Code and outputs in `model/`.
 - [29 Sep] Frontend requester: final UI board and supplied copy lock the nine-screen mobile flow. External LiDAR upload, incomplete-scan retry gate, review-required report with recommended actions, and document preview. No native scanning or AR. Structured demo quantities and severities remain separate from AI explanations. Explicit Share replaces automatic sharing on return home for this prototype.
+- [30 Sep] Tim: Claude calls go through Vercel AI Gateway, using the official Anthropic SDK pointed at the gateway. It sits in our existing Vercel project, so there is no separate Anthropic key or account. On Vercel it authenticates with the project's OIDC token.
+- [30 Sep] Tim: the TGS analysis runs on Claude Sonnet 5.5, not Opus, to fit a student budget. Claude models need paid AI Gateway credit; the free monthly credit doesn't cover them.
 
 ## Terms
 

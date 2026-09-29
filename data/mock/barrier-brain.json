@@ -5,8 +5,8 @@
     { "id": "footscray-road", "name": "Footscray Road Upgrade", "date": "02 Sep 2026", "status": "Analysing" }
   ],
   "tgs": {
-    "fileName": "Swan_Street_TGS.pdf",
-    "size": "2.4 MB",
+    "fileName": "swanston-st-closure.webp",
+    "size": "0.4 MB",
     "findings": ["Work zone identified", "Lane closure identified", "12 traffic control devices identified"],
     "requiredVerification": ["Lane width", "Footpath clearance", "Work zone boundary", "Intersection approach"]
   },

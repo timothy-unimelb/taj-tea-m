@@ -10,6 +10,7 @@ Done:
 
 ## Tim
 Now:
+- [branch tim] Real TGS analysis: Claude (via Vercel AI Gateway) reads the uploaded TGS and returns plan elements and scan points. app/api/analyse-tgs/, lib/, components/. Branch tim is based on raina. Code done, build and lint pass. Working locally on Claude Sonnet 5.5 with paid gateway credit: the sample TGS takes about 20 s.
 Done:
 
 ## Advait
