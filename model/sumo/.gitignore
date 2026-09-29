@@ -1,0 +1,6 @@
+.venv/
+work/
+*.osm
+*.net.xml
+*.rou.xml
+*.rou.alt.xml

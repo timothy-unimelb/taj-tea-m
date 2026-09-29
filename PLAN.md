@@ -45,7 +45,7 @@ Claude reads the TGS analysis and the scan measurements, flags each conflict ("f
 The app must not be locked into one traffic model. Tamara may try other approaches, and SUMO is being tested. Order agreed by Tim on 30 Sep, 3:45am:
 
 1. **done** Impact input and output shapes (`lib/impact/types.ts`, written up in `model/IMPACT_CONTRACT.md`) and a switch, `IMPACT_MODEL`, that picks the model (`lib/impact/index.ts`). A model can be TypeScript in the app, a saved JSON result, or an outside service over HTTP. The report reads only the result, via `/api/impact`, and shows the method, confidence and assumptions.
-2. **in progress** Plug-in: SUMO simulation of the Swanston closure, precomputed, with traffic scaled to real counts at signal site 2921. Clearly labelled as an early result.
+2. **done, early result** Plug-in: SUMO simulation of the Swanston closure (`model/sumo/`, README there). Precomputed, selected with `IMPACT_MODEL=sumo`, labelled "Early result", low confidence. About 44 drivers an hour must avoid the block and drive about 227 m further. Delay and queue changes are within run-to-run noise. Not yet credible: the simulated network jams above 50% of the counted traffic (no real signal plans), only 8am to 9am was run, and no trams, pedestrians or trucks. Slide image: `model/sumo/output/swanston-closure.png`.
 3. **done** Plug-in: Tamara's model ported to TypeScript (`lib/impact/models/mvm-core.ts`), live, and the default. Matches the Python example exactly (night 11.9, day 428.6, 24 hours 1,022.0 vehicle-hours; check with `node_modules/.bin/jiti model/check_ts_port.ts`). "Road closed" runs as 0 lanes open on the lookup's level 3 fallback, and the plan's own hours drive the queue. Tamara's Python files are unchanged.
 4. **done** Demo consistency: Swanston naming, report text matching this TGS (tram corridor marked for review), the written severity rule (`lib/impact/severity.ts`), a saved demo analysis, and a tighter work hours prompt.
 
@@ -53,6 +53,7 @@ Questions for Tamara:
 - The `mvm_predict.py` docstring calls the worst case P10, but the code uses P90 (least traffic avoided the site). The port follows the code, and adds P10 as the "low" end of each range. Which is intended?
 - With the road fully closed, the queue model holds a 500 m queue for every hour of works, so delay mostly measures hours worked. The port ranks work windows by forced diversions in that case. Is that right?
 - The lookup has no "road closed" group. Could one be built from RADAR?
+- SUMO says about 44 drivers an hour use the closed Swanston block (one car lane, the rest is tram only). The lookup model assumes half of site 2921's 47,000 daily vehicles use Swanston St, so it predicts about 10,000 diversions a day. Can the SCATS detector counts for the Swanston approach settle which is closer?
 
 ## 6. Impact model connected (later)
 
@@ -78,3 +79,4 @@ User accounts, error handling, tests on measurement and model code, AI cost limi
 - [30 Sep 3:45am] Tim: PDF TGS tested and works. SUMO installed and ran on the Swanston area as a spike. Agreed order for tonight in step 6a: swappable model shapes, SUMO, Tamara's model in TypeScript, demo consistency.
 - [30 Sep 4:00am] Tim: step 6a parts 1, 3 and 4 done. The report now reads a swappable impact result. Default model is Tamara's lookup, ported to TypeScript and live. SUMO plug-in in progress.
 - [30 Sep 4:15am] Tim: first SUMO run used 300 GB of memory and crashed the laptop (too much traffic, stuck cars kept in memory). Run script now has a 3 GB and 20 minute limit. Full and 30% demand still gridlocked from the Spring St / Victoria Pde junctions at the map's east edge, so the network is cut at Exhibition St and rebuilt.
+- [30 Sep 4:25am] Tim: SUMO works at 50% of counted traffic after cutting the network at Exhibition St and simplifying junctions and signals. Plugged in as an early, precomputed result. Far fewer diversions than the lookup model, flagged for Tamara.

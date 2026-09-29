@@ -21,5 +21,9 @@ The competition requires a list of all third-party material and APIs, including 
 | Victoria Traffic Count Locations (AADT) | Dataset | Daily traffic input for the queue calculation. `model/` | DTP, CC-BY 4.0 | No |
 | DuckDB | Library | Builds the impact model tables. `model/` | MIT | No |
 | pandas | Library | Runs impact model predictions. `model/` | BSD 3-Clause | No |
+| Eclipse SUMO | Tool | Traffic simulation of the Swanston St closure. `model/sumo/` | EPL-2.0 | No |
+| OpenStreetMap data | Dataset | Street network for the SUMO simulation, via the Overpass API. `model/sumo/` | ODbL, © OpenStreetMap contributors | No |
+| pyproj | Library | Map coordinate conversion for the SUMO scripts. `model/sumo/` | MIT | No |
+| matplotlib | Library | Slide image of the SUMO result. `model/sumo/` | Matplotlib licence (PSF-based) | No |
 | jiti | Tool | Runs the check that the TypeScript port of the impact model matches the Python. `model/check_ts_port.ts` | MIT | No |
 | Sample TGS (Swanston St closure) | Image | Mock TGS upload and shape of mock data. `data/mock/tgs/` | Invarion sample drawing. Licence not confirmed, check before submission | No |

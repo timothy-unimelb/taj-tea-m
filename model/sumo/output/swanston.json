@@ -1,0 +1,67 @@
+{
+  "model": "sumo",
+  "method": "SUMO traffic simulation",
+  "label": "Early result",
+  "provenance": "precomputed",
+  "confidence": "low",
+  "confidence_note": "The street network comes from OpenStreetMap with guessed signal timings, and traffic is fitted to signal counts, not measured routes.",
+  "period": "Monday 8am to 9am, the morning peak",
+  "recommended_window": null,
+  "modes": {
+    "cars": {
+      "status": "modelled",
+      "delay": {
+        "low": -81,
+        "typical": -10,
+        "high": 41,
+        "unit": "vehicle-hours"
+      },
+      "max_queue": {
+        "low": 53,
+        "typical": 104,
+        "high": 184,
+        "unit": "m"
+      },
+      "forced_diversions": {
+        "low": 44,
+        "typical": 44,
+        "high": 44,
+        "unit": "vehicles"
+      },
+      "detour": {
+        "low": 227,
+        "typical": 227,
+        "high": 416,
+        "unit": "m"
+      },
+      "summary": "In the morning peak hour about 44 drivers must avoid the closed block, adding about 227 m each. The change in total travel time is too small to separate from run-to-run variation."
+    },
+    "public_transport": {
+      "status": "not modelled",
+      "summary": "Trams are in the street network but no tram services were simulated."
+    },
+    "pedestrians": {
+      "status": "not modelled",
+      "summary": "SUMO can model pedestrians, but this run covers cars only."
+    },
+    "trucks": {
+      "status": "not modelled",
+      "summary": "All vehicles are simulated as cars. Trucks are not modelled on their own."
+    }
+  },
+  "assumptions": [
+    "One simulated hour, 8am to 9am on a weekday, after a 30 minute warm-up. Other hours of the works were not simulated.",
+    "Street network from OpenStreetMap (© OpenStreetMap contributors), built with SUMO netconvert. Signal timings are guessed, not the real SCATS plans.",
+    "Traffic fitted to weekday counts at 52 SCATS signal sites in the CBD, including 2921 SWANSTON/LATROBE, using SUMO routeSampler and the SCATS weekday hourly profile. Only 50% of that traffic was inserted, because the simulated network jams above that (70% already grows without limit). Diversions are scaled back up to full traffic. Delay and queue are as simulated, so they are likely understated.",
+    "Closure: the car lane of Swanston St between La Trobe St and Little La Trobe St (208489241) is closed to all vehicles. The rest of that block is tram only in OpenStreetMap.",
+    "Drivers whose route used the closed block get a new shortest route before they leave, and every car can reroute every 5 minutes. 368 trips of 346,604 ended at a place the closure cuts off and were removed from both runs.",
+    "Delay is the extra travel time of the same trips with and without the closure, over all trips in the hour. Negative values mean the closure run happened to flow better, which is run-to-run variation.",
+    "Queue is the largest growth in jam length on any lane within 600 m. The worst lane differs between seeds, so part of it is variation too.",
+    "In OpenStreetMap the closed block is tram only apart from one northbound car lane, so few cars use it: about 44 an hour at full traffic.",
+    "Ranges come from 6 random seeds (delay, diversions, queue). The detour range is the middle half of the shortest-route detours of the diverted trips.",
+    "Diversions count trips whose planned route used the closed block. SUMO's live rerouting also sent some cars through the block as a shortcut in the normal run; those are not counted.",
+    "Cars stuck for 5 minutes are moved on by SUMO (teleported). Up to 72 teleports in a closure run, which points to congestion the real network may not have.",
+    "Trams keep running in reality, but no tram services were simulated, so tram delays are not included."
+  ],
+  "generated_at": "2026-09-29T18:25:12+00:00"
+}
