@@ -11,6 +11,7 @@ Done:
 ## Tim
 Now:
 Done:
+- [10:00] `tim` merged into `main` (fast-forward, lint and build pass). The review list below is now a list of things the team can still revisit.
 - [09:05] SUMO less janky, PLAN.md 6b items 3 and 4, merged into `tim` at 09:55 (app numbers unchanged). Left-hand traffic (was right-hand), every turn at the closed block sourced (OpenStreetMap plus sheets, `model/sumo/turn_rules.json`), delay-based signals, and `08_check_counts.py` checking simulated traffic against the counts: 71% of counted street-hours within GEH 5, afternoon peak still drops 5% to 7% of cars. Diversions about 123 (110 to 162) over the works hours with the La Trobe St right turn banned, about 1,080 if allowed. Details in model/sumo/README.md "Turn rules" and "Calibration check".
 - [07:45] SUMO: every hour of the works (7am to 10pm), and the La Trobe St right turn banned as a second case. Report now says about 755 to 871 shortcut drivers over the works hours, about 77 if the turn is banned. Delay left out as noise. model/sumo/, data/impact/sumo-swanston.json. SUMO roadmap in PLAN.md step 6.
 - [07:00] SUMO fitted to measured car counts per approach (SCATS detectors + DTP signal sheets, 9 junctions). Full traffic, no gridlock, 10 seeds: 21 to 97 shortcut drivers an hour, delay within noise. Whole-site totals overstate cars 1.3 to 3.5x; flagged for Tamara in PLAN.md step 6a. model/sumo/, data/impact/sumo-swanston.json.
@@ -22,7 +23,7 @@ Done:
 - [04:00] Swappable impact models: contract (lib/impact/types.ts, model/IMPACT_CONTRACT.md), IMPACT_MODEL switch, written severity rule, Tamara's model ported to TypeScript, report shows method and assumptions. Swanston naming and copy, saved demo TGS analysis, tighter work hours prompt.
 - [29 Sep] Real TGS analysis: Claude Sonnet 5.5 via Vercel AI Gateway. About 20 s and 3.5 cents per run.
 
-Review before merging `tim` into `main`:
+Merged into `main` 30 Sep 10am. Still worth a team look:
 - The 9am SUMO refinement is in `tim` (model/sumo/ and its committed outputs only). `data/impact/sumo-swanston.json`, what the app shows, is untouched: switching it to the new result would move the car rating from Moderate to High because the high end is the right-turn-allowed sensitivity case. Decide that before copying the file (PLAN.md step 6b).
 - Raina's doc changes that came with her branch: DESIGN.md is now "LOCKED" (it was "NOT SET"), the flow was replaced with her 9 screens, open questions were deleted from BRIEF.md, and "share sheet opens on return home" became an explicit Share button. Agree these as a team.
 - Swanston changes: the project is now "Swanston Street Work Zone". Report copy, the safety finding and two recommended actions were rewritten for this TGS. The safety finding and actions are still fixed demo copy, because scan measurement isn't connected. Trams and pedestrians show "Review required", not a rating, because no model covers them yet.
