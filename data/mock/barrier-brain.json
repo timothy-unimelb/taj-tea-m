@@ -1,44 +1,93 @@
 {
   "projects": [
-    { "id": "swan-street", "name": "Swan Street Work Zone", "date": "29 Sep 2026", "status": "Draft" },
-    { "id": "elizabeth-street", "name": "Elizabeth Street Closure", "date": "15 Sep 2026", "status": "Report ready" },
-    { "id": "footscray-road", "name": "Footscray Road Upgrade", "date": "02 Sep 2026", "status": "Analysing" }
+    {
+      "id": "swanston-street",
+      "name": "Swanston Street Work Zone",
+      "date": "29 Sep 2026",
+      "status": "Draft"
+    },
+    {
+      "id": "elizabeth-street",
+      "name": "Elizabeth Street Closure",
+      "date": "15 Sep 2026",
+      "status": "Report ready"
+    },
+    {
+      "id": "footscray-road",
+      "name": "Footscray Road Upgrade",
+      "date": "02 Sep 2026",
+      "status": "Analysing"
+    }
   ],
   "tgs": {
     "fileName": "swanston-st-closure.webp",
     "size": "0.4 MB",
-    "findings": ["Work zone identified", "Lane closure identified", "12 traffic control devices identified"],
-    "requiredVerification": ["Lane width", "Footpath clearance", "Work zone boundary", "Intersection approach"]
+    "findings": [
+      "Work zone identified: Swanston St, La Trobe St to Little La Trobe St",
+      "Road closure identified",
+      "4 VMS boards identified"
+    ],
+    "requiredVerification": [
+      "Lane width",
+      "Footpath clearance",
+      "Work zone boundary",
+      "Intersection approach"
+    ]
   },
   "scan": {
-    "demoFileName": "Swan_Street_Site_Scan.zip",
+    "demoFileName": "Swanston_Street_Site_Scan.zip",
     "demoFileSize": "18.6 MB",
-    "areas": ["Lane geometry", "Footpath width", "Kerb and roadside clearance", "Work zone boundary", "Intersection approach"],
+    "areas": [
+      "Lane geometry",
+      "Footpath width",
+      "Kerb and roadside clearance",
+      "Work zone boundary",
+      "Intersection approach"
+    ],
     "initialCaptured": 4,
     "completeCaptured": 5,
     "missingArea": "Intersection approach"
   },
   "analysis": {
-    "provenance": "deterministic-demo-fixture",
-    "modelConnected": false,
-    "period": "Morning peak",
-    "metrics": { "queueLengthM": 620, "queuePeakTime": "8:35 am", "pedestrianDetourM": 45, "vehicleAccessPoints": 1, "controlsForReview": 2, "taperShiftM": 12 },
-    "severity": { "overall": "Moderate", "traffic": "High", "pedestrians": "Moderate", "transport": "Low", "safety": "Moderate" },
-    "steps": ["TGS interpreted", "Site geometry verified", "Traffic reference data matched", "Calculating knock-on effects", "Preparing recommendations"],
-    "sources": ["TGS geometry", "Verified site scan", "Traffic reference data"]
+    "provenance": "The impact numbers and severity come from the impact model through lib/impact. Only these progress steps are fixed.",
+    "steps": [
+      "TGS interpreted",
+      "Site geometry verified",
+      "Traffic reference data matched",
+      "Calculating knock-on effects",
+      "Preparing recommendations"
+    ]
   },
   "explanations": {
     "provenance": "scripted-demo-copy",
     "aiGenerated": false,
     "integrationNote": "Future AI explanations belong here and must reference structured analysis. They cannot supply measured values or severity.",
-    "decision": "Review the eastern taper position and pedestrian route protection before this setup is deployed.",
-    "sourceNote": "Based on the uploaded TGS, verified site scan and traffic/reference data.",
-    "transport": "Nearby stop remains accessible.",
-    "safety": "Two controls require review before deployment.",
-    "keyFindings": ["Significant traffic delays predicted during morning peak.", "Pedestrian access maintained with a temporary detour.", "Nearby public transport remains accessible.", "Two site controls require review before deployment."],
+    "decision": "Review the on-road pedestrian walkway beside the tram tracks, and confirm Yarra Trams approval, before this setup is deployed.",
     "actions": [
-      { "id": 1, "category": "traffic", "title": "Shift eastern taper 12 m west", "summary": "Maintains intersection clearance and reduces merge conflict.", "impact": "The current taper position reduces clearance near the intersection.", "why": "This may increase merging conflict during peak traffic.", "recommendation": "Shift the eastern taper approximately 12 m west before deployment." },
-      { "id": 2, "category": "pedestrians", "title": "Protect temporary pedestrian route", "summary": "Add physical separation and clear signage along the detour.", "impact": "The temporary pedestrian route crosses one vehicle access point.", "why": "People using the detour need a protected route past the work zone.", "recommendation": "Add physical separation and clear signage along the detour." }
+      {
+        "id": 1,
+        "category": "pedestrians",
+        "title": "Protect the on-road pedestrian walkway",
+        "summary": "Southbound pedestrians walk on the road beside the tram tracks. Keep a continuous barrier between them and the tracks.",
+        "impact": "The footpath is closed, so southbound pedestrians walk on the road while traffic controllers hold traffic.",
+        "why": "The walkway runs between the work area and the tram tracks. People need a protected, wide enough path the whole way.",
+        "recommendation": "Run water-filled barriers the full length of the walkway, and check its clear width against the scan before deployment."
+      },
+      {
+        "id": 2,
+        "category": "transport",
+        "title": "Confirm trams can pass the works",
+        "summary": "Swanston St is a major tram corridor. Works on a tram road need Yarra Trams approval.",
+        "impact": "Barriers and the pedestrian walkway sit on the road beside the tram tracks, near the La Trobe St tram stop.",
+        "why": "If trams must stop or slow past the works, delays spread along the whole corridor.",
+        "recommendation": "Send the plan to Yarra Trams for approval, and check the barrier line keeps clear of the tram path and stop."
+      }
     ]
+  },
+  "safety": {
+    "provenance": "deterministic-demo-fixture",
+    "severity": "Moderate",
+    "description": "Two controls need review: the on-road walkway beside the tram tracks, and the covered hook turn slot at La Trobe St.",
+    "basis": "Fixed demo finding from the plan and the site scan. Scan measurement is not connected yet."
   }
 }

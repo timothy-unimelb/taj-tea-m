@@ -60,7 +60,8 @@ From the whiteboard sketch. The sketch splits the flow into two phases: preparat
 - **Scan.** Scaniverse in LiDAR mesh mode, exported as PLY, LAS or OBJ. A later version may use our own scanner that keeps data when the phone moves.
 - **Scan check.** A scan fails if it misses the spot it was meant to cover. Check: the phone's location at upload (browser geolocation) must be within about 15 m of the scan point. Later, also check the scan contains the expected feature, such as a kerb.
 - **Analyse scans.** Two parts. Code measures the scan. The agent interprets the measurements. See "Scan measurement" below.
-- **Impact model.** Built, in `model/`. It is not machine learning. It is a lookup table learned from about 2,700 past Melbourne closures (RADAR, 2024 to 2026) matched to SCATS signal counts within 200 m, plus an hour-by-hour queue calculation. Inputs: closure type, work hours, daily traffic, lanes open. Outputs: likely traffic change as a range, chance of a big drop, delay, queue length, forced diversions and the best work window. It runs in Python from CSVs in the repo. Not yet connected to the app. See `model/README.md`.
+- **Impact model.** Built, in `model/`. It is not machine learning. It is a lookup table learned from about 2,700 past Melbourne closures (RADAR, 2024 to 2026) matched to SCATS signal counts within 200 m, plus an hour-by-hour queue calculation. Inputs: closure type, work hours, daily traffic, lanes open. Outputs: likely traffic change as a range, chance of a big drop, delay, queue length, forced diversions and the best work window. It runs in Python from CSVs in the repo, and a TypeScript port runs live in the app. See `model/README.md`.
+- **Swappable impact models.** The app is not tied to one model. Every model takes the same input and returns the same result: ranges per mode (cars, pedestrians, trams and buses, trucks), the method used, assumptions and confidence. One setting picks the model. A model can run in the app, be a saved result, or be an outside service. Modes a model doesn't cover are shown as not modelled. The same written rule rates severity for every model. See `model/IMPACT_CONTRACT.md`.
 - **Base reference data.** Traffic, pedestrian and public transport data from APIs. Where it feeds in is not decided.
 - **Report.** Visual in-app impact report with category tabs and expandable recommendations. Export PDF opens a document preview, with browser print/save PDF for the prototype. Sharing is an explicit action using Web Share or a copy-link fallback.
 - **Storage.** Past projects live in the browser's localStorage for the demo. Supabase may come later.
@@ -86,11 +87,11 @@ This runs as a Python function (Vercel supports Python functions, or a small sep
 
 The frontend layout is locked by the final Barrier Brain UI board supplied on 29 Sep. See DESIGN.md for the complete flow.
 
-- Header: project, date, morning peak, overall Moderate impact.
+- Header: project, date, the work hours from the TGS, overall impact from the severity rule.
 - Overview, Traffic, Pedestrians, Public transport and Safety tabs.
 - Amber review-required decision, impact summary, aerial site overview and two expandable recommended actions.
 - Document-style PDF preview, explicit Share action, and planning disclaimer.
-- Fixed demo results: 620 m queue at 8:35 am, 45 m pedestrian detour, one vehicle access crossing, two controls for review and a 12 m western taper shift. These are structured demo fixtures, not live measurements or output from the Python model or an LLM. Explanatory copy is stored separately.
+- Traffic numbers, ratings and the method note come from the impact model's result. The safety finding and two recommended actions are still fixed demo copy for the Swanston sample, because scan measurement is not connected.
 
 The earlier before/after modelling definition remains background for future model integration. The locked frontend uses the supplied impact summary and recommendations, without adding before/after tables.
 
@@ -115,7 +116,9 @@ Figures on the sketches, such as "96%", are placeholders.
 
 Real for Wednesday: Claude reads the uploaded TGS and lists the scan points.
 
-Mocked for Wednesday: impact model results, scan measurement. The approach for each must still be clear and buildable, because technical feasibility is 30% of the mark.
+Real for Wednesday: impact estimates from Tamara's model, run live on the TGS analysis. A SUMO simulation of the sample closure is an early, precomputed alternative.
+
+Mocked for Wednesday: scan measurement, and the safety findings that depend on it. The approach for each must still be clear and buildable, because technical feasibility is 30% of the mark.
 
 ## Hackathon facts
 
@@ -151,6 +154,7 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - [29 Sep] Frontend requester: final UI board and supplied copy lock the nine-screen mobile flow. External LiDAR upload, incomplete-scan retry gate, review-required report with recommended actions, and document preview. No native scanning or AR. Structured demo quantities and severities remain separate from AI explanations. Explicit Share replaces automatic sharing on return home for this prototype.
 - [30 Sep] Tim: Claude calls go through Vercel AI Gateway, using the official Anthropic SDK pointed at the gateway. It sits in our existing Vercel project, so there is no separate Anthropic key or account. On Vercel it authenticates with the project's OIDC token.
 - [30 Sep] Tim: the TGS analysis runs on Claude Sonnet 5.5, not Opus, to fit a student budget. Claude models need paid AI Gateway credit; the free monthly credit doesn't cover them.
+- [30 Sep] Tim: impact models are swappable behind one result shape, so we are not locked into one approach. Tamara's model runs live as the default; SUMO is being tested. The report shows which method produced its numbers, and severity comes from one written rule.
 
 ## Terms
 

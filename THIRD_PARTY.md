@@ -21,4 +21,5 @@ The competition requires a list of all third-party material and APIs, including 
 | Victoria Traffic Count Locations (AADT) | Dataset | Daily traffic input for the queue calculation. `model/` | DTP, CC-BY 4.0 | No |
 | DuckDB | Library | Builds the impact model tables. `model/` | MIT | No |
 | pandas | Library | Runs impact model predictions. `model/` | BSD 3-Clause | No |
+| jiti | Tool | Runs the check that the TypeScript port of the impact model matches the Python. `model/check_ts_port.ts` | MIT | No |
 | Sample TGS (Swanston St closure) | Image | Mock TGS upload and shape of mock data. `data/mock/tgs/` | Invarion sample drawing. Licence not confirmed, check before submission | No |

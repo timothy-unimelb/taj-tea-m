@@ -26,6 +26,10 @@ Read the drawing and report what it plans. Then choose the places a planner must
 A scan point is anywhere the plan assumes there is enough space: both ends of the work zone and each taper, both edges of the zone, where pedestrians are sent, each sign, barrier and VMS position, and where work vehicles park.
 Give 4 to 8 scan points, most important first. Merge positions that one scan would cover.
 
+Work hours drive the traffic impact, so look for them everywhere: the title block, notes, the legend, and every inset or locality map, including small text inside them.
+Report them as written in work_hours, and also as work_days, work_start and work_end (24-hour HH:MM). If only part is shown, fill in that part and leave the rest empty.
+For lanes, count the lanes a car could normally use in the affected direction, not tram-only or bicycle lanes.
+
 Only report what the drawing shows. If something is not shown or can't be read, say so in uncertainties rather than guessing.
 Write in plain Australian English. Keep each item short enough to read on a phone.`;
 

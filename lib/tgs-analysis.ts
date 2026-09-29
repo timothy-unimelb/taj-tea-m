@@ -16,7 +16,10 @@ export const tgsAnalysisSchema = {
       required: ["street", "extent", "area"],
     },
     closure_type: { type: "string", enum: ["road closed", "lanes closed", "footpath only", "ramp closed", "unspecified"] },
-    work_hours: { type: "string", description: "Days and hours of the works as written on the plan, or 'not shown'" },
+    work_hours: { type: "string", description: "Days and hours of the works as written anywhere on the plan (title block, notes, legend or inset maps), or 'not shown'" },
+    work_days: { type: "string", description: "Days the works run, e.g. 'Monday' or 'Monday to Friday'. Empty string if not shown" },
+    work_start: { type: "string", description: "Start time in 24-hour HH:MM, e.g. '07:00'. Empty string if not shown" },
+    work_end: { type: "string", description: "End time in 24-hour HH:MM, e.g. '22:00'. Empty string if not shown" },
     lanes_per_direction: { type: "integer", description: "Normal lanes in the affected direction. 0 if not shown" },
     lanes_open: { type: "integer", description: "Lanes left open in that direction while works are active. 0 if fully closed or not shown" },
     detour: { type: "string", description: "Vehicle detour route, or 'none shown'" },
@@ -57,7 +60,7 @@ export const tgsAnalysisSchema = {
     uncertainties: { type: "array", description: "Anything unclear or missing on the plan", items: { type: "string" } },
   },
   required: [
-    "site", "closure_type", "work_hours", "lanes_per_direction", "lanes_open", "detour",
+    "site", "closure_type", "work_hours", "work_days", "work_start", "work_end", "lanes_per_direction", "lanes_open", "detour",
     "plan_elements", "equipment", "pedestrian_management", "scan_points", "uncertainties",
   ],
 } as const;
@@ -66,6 +69,9 @@ export type TgsAnalysis = {
   site: { street: string; extent: string; area: string };
   closure_type: "road closed" | "lanes closed" | "footpath only" | "ramp closed" | "unspecified";
   work_hours: string;
+  work_days: string;
+  work_start: string;
+  work_end: string;
   lanes_per_direction: number;
   lanes_open: number;
   detour: string;

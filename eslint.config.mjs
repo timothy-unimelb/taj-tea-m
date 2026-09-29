@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Python virtual environments for the models (SUMO ships its own JavaScript).
+    "**/.venv/**",
   ]),
 ]);
 

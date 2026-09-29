@@ -13,13 +13,14 @@ State: **done**, **in progress**, **next**, **later**.
 - **next** Team reviews `tim`, then merge it into `main` with a pull request. Raina's branch changes shared docs (DESIGN.md "LOCKED", open questions removed, auto share dropped), so the team should agree to those first.
 - **done** Vercel preview deployment of `tim` runs the TGS analysis. On Vercel the OIDC token comes with each request, so the route reads it with `@vercel/oidc`.
 - **later** File storage with Vercel Blob. The browser uploads straight to Blob and sends the route a link. Needed for files over 4.5 MB, which Vercel Functions reject, and for LiDAR scans. Chosen over Supabase Storage for now: same Vercel project, less setup. Revisit if we adopt Supabase for projects.
-- **later** One sample site throughout. The TGS is Swanston St, but the project and report still say "Swan Street Work Zone" (`data/mock/barrier-brain.json`).
+- **done** One sample site throughout. The project and report now say Swanston Street, matching the TGS.
 
 ## 2. TGS analysis with Claude (done, with follow-ups)
 
 - **done** Claude Sonnet 5.5 reads the uploaded TGS and returns JSON: site, closure type, hours, lanes, detour, equipment, pedestrian measures, 4 to 8 scan points, unclear items. Schema in `lib/tgs-analysis.ts`. Shown on the TGS complete and scan upload screens. About 20 s and 3.5 cents per run.
-- **done** PDF TGS tested: the Swanston sample as a PDF reads correctly in about 17 s. Work hours are read inconsistently (only in the small inset map), so tighten the prompt when the impact model needs them.
-- **later** Optional: save one good result for the demo TGS so rehearsals are free and instant. Real uploads still go to Claude.
+- **done** PDF TGS tested: the Swanston sample as a PDF reads correctly in about 17 s.
+- **done** Work hours: the prompt now tells Claude to check inset maps and notes, and the schema asks for days, start and end as separate fields. The sample reads as Monday 07:00 to 22:00.
+- **done** Saved analysis of the demo TGS (`data/mock/tgs/swanston-analysis.json`). "Use demo TGS" shows it instantly and for free, and the screen says it is saved. Real uploads still go to Claude.
 - **later** Recover the drawing's scale by matching it to map data (Vicmap or City of Melbourne open data). Not Google Maps: its terms ban extracting data.
 - **later** Upload limit copy says 20 MB but Vercel allows 4.5 MB until Blob is in. Raina's copy is locked, so check with her.
 
@@ -43,10 +44,15 @@ Claude reads the TGS analysis and the scan measurements, flags each conflict ("f
 
 The app must not be locked into one traffic model. Tamara may try other approaches, and SUMO is being tested. Order agreed by Tim on 30 Sep, 3:45am:
 
-1. **next** Define the impact input and output shapes and a switch that picks the model. The report reads only that output and shows which method produced it.
-2. **next** Plug-in: SUMO simulation of the Swanston closure, precomputed, with traffic scaled to real counts at signal site 2921. Clearly labelled as an early result.
-3. **next** Plug-in: Tamara's current model (`model/mvm/mvm_predict.py`) ported to TypeScript so it runs live.
-4. **next** Demo consistency: Swanston naming, report text matching this TGS, a written severity rule, a saved demo analysis.
+1. **done** Impact input and output shapes (`lib/impact/types.ts`, written up in `model/IMPACT_CONTRACT.md`) and a switch, `IMPACT_MODEL`, that picks the model (`lib/impact/index.ts`). A model can be TypeScript in the app, a saved JSON result, or an outside service over HTTP. The report reads only the result, via `/api/impact`, and shows the method, confidence and assumptions.
+2. **in progress** Plug-in: SUMO simulation of the Swanston closure, precomputed, with traffic scaled to real counts at signal site 2921. Clearly labelled as an early result.
+3. **done** Plug-in: Tamara's model ported to TypeScript (`lib/impact/models/mvm-core.ts`), live, and the default. Matches the Python example exactly (night 11.9, day 428.6, 24 hours 1,022.0 vehicle-hours; check with `node_modules/.bin/jiti model/check_ts_port.ts`). "Road closed" runs as 0 lanes open on the lookup's level 3 fallback, and the plan's own hours drive the queue. Tamara's Python files are unchanged.
+4. **done** Demo consistency: Swanston naming, report text matching this TGS (tram corridor marked for review), the written severity rule (`lib/impact/severity.ts`), a saved demo analysis, and a tighter work hours prompt.
+
+Questions for Tamara:
+- The `mvm_predict.py` docstring calls the worst case P10, but the code uses P90 (least traffic avoided the site). The port follows the code, and adds P10 as the "low" end of each range. Which is intended?
+- With the road fully closed, the queue model holds a 500 m queue for every hour of works, so delay mostly measures hours worked. The port ranks work windows by forced diversions in that case. Is that right?
+- The lookup has no "road closed" group. Could one be built from RADAR?
 
 ## 6. Impact model connected (later)
 
@@ -70,3 +76,4 @@ User accounts, error handling, tests on measurement and model code, AI cost limi
 
 - [30 Sep] Tim: plan written. Steps 1 and 2 partly done on branch `tim` (commit cdcb9f7). Claude runs on Sonnet 5.5 through Vercel AI Gateway with paid credit, since the free credit covers no Claude models.
 - [30 Sep 3:45am] Tim: PDF TGS tested and works. SUMO installed and ran on the Swanston area as a spike. Agreed order for tonight in step 6a: swappable model shapes, SUMO, Tamara's model in TypeScript, demo consistency.
+- [30 Sep 4:30am] Tim: step 6a parts 1, 3 and 4 done. The report now reads a swappable impact result. Default model is Tamara's lookup, ported to TypeScript and live. SUMO plug-in in progress.

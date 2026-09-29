@@ -1,0 +1,153 @@
+{
+  "note": "A saved Claude analysis of the demo TGS, so the demo is instant and free. Real uploads are still analysed live.",
+  "saved_at": "2026-09-30T03:50:00+10:00",
+  "model": "anthropic/claude-sonnet-5.5",
+  "file": "swanston-st-closure.webp",
+  "analysis": {
+    "site": {
+      "street": "Swanston Street",
+      "extent": "Between La Trobe Street and Little La Trobe Street (southbound approach at La Trobe St)",
+      "area": "Melbourne CBD, near State Library, Melbourne Central and RMIT"
+    },
+    "closure_type": "road closed",
+    "work_hours": "Inset map text partly reads 'Mon 7am-10pm' (partly cropped); no other hours shown",
+    "work_days": "Monday",
+    "work_start": "07:00",
+    "work_end": "22:00",
+    "lanes_per_direction": 0,
+    "lanes_open": 0,
+    "detour": "Inset map shows detour arrows via Elizabeth St, Franklin St, A'Beckett St, Queen St, Anthony St and Stewart St around Swanston St, La Trobe St and Melbourne Central; exact route hard to read. Little La Trobe St open to light vehicles (taxis etc.) for access to Swanston St and local properties.",
+    "plan_elements": [
+      "Work zone identified: Swanston St, La Trobe St to Little La Trobe St, shown as green work area with lane closure and water filled barriers",
+      "Road closed signs and No Entry at Little La Trobe St and La Trobe St approaches",
+      "VMS 1 to 4 placed on approaches (Elizabeth St, La Trobe St, Swanston St)",
+      "Detour inset map with DETOUR and END DETOUR signs",
+      "Pedestrian route on footpath with footpath closed signs and use other footpath signs",
+      "Southbound pedestrians walk on road while traffic is held by traffic controllers",
+      "Roaming TC guiding traffic and pedestrians at Little La Trobe St",
+      "Cyclists dismount sign and bicycle lane closed ahead; hook turn slot covered and bollards placed"
+    ],
+    "equipment": [
+      {
+        "item": "VMS board",
+        "count": 4,
+        "detail": "VMS 1 to 4, each with panels 'Swanston Street closed' / 'Access via E'Beth and Lit La Trobe' (VMS 1 and 4 also show turn panels)"
+      },
+      {
+        "item": "Traffic controller",
+        "count": 4,
+        "detail": "At Little La Trobe St, Swanston St intersections and pedestrian crossing points; one roaming TC"
+      },
+      {
+        "item": "Water filled barrier",
+        "count": 0,
+        "detail": "Red line along the closed lane on Swanston St; count not readable"
+      },
+      {
+        "item": "Road closed sign",
+        "count": 0,
+        "detail": "Road closed / local traffic only signs at Little La Trobe St and Swanston St"
+      },
+      {
+        "item": "Road work ahead sign",
+        "count": 0,
+        "detail": "Road work ahead and end road work signs on Elizabeth St and La Trobe St"
+      },
+      {
+        "item": "Footpath closed sign",
+        "count": 0,
+        "detail": "Footpath closed ahead / use other footpath / pedestrians arrow signs near the site"
+      },
+      {
+        "item": "Speed limit sign",
+        "count": 1,
+        "detail": "40 km/h with prepare to stop sign on Elizabeth St"
+      },
+      {
+        "item": "No Entry sign",
+        "count": 0,
+        "detail": "To be covered at Elizabeth St and Little La Trobe St per note"
+      },
+      {
+        "item": "Bicycle signs",
+        "count": 2,
+        "detail": "Bicycle lane closed ahead and cyclists dismount"
+      },
+      {
+        "item": "Bollards/cones",
+        "count": 0,
+        "detail": "Bollards at hook turn slot; spacing table in notes"
+      },
+      {
+        "item": "Shadow vehicle",
+        "count": 1,
+        "detail": "Yellow vehicle on Swanston St at the zone's south end"
+      }
+    ],
+    "pedestrian_management": [
+      "Footpath closed with use other footpath signs and pedestrian arrows",
+      "Southbound pedestrians walk on road while traffic controllers hold traffic",
+      "Cyan pedestrian route drawn along Swanston St and across the intersections",
+      "Roaming TC guides pedestrians at Little La Trobe St",
+      "Cyclists told to dismount"
+    ],
+    "scan_points": [
+      {
+        "name": "Northern work zone end",
+        "location": "Swanston St at La Trobe St intersection",
+        "reason": "Plan assumes room for the closure start, barriers, shadow vehicle and TC",
+        "capture": "Both kerbs, full intersection and footpath widths"
+      },
+      {
+        "name": "Southern work zone end",
+        "location": "Swanston St at Little La Trobe St",
+        "reason": "Closure end, road closed signs and TC position need space",
+        "capture": "Both kerbs, road width and footpaths on both sides"
+      },
+      {
+        "name": "Pedestrian walkway",
+        "location": "Swanston St east footpath and road between La Trobe and Little La Trobe",
+        "reason": "Pedestrians sent on road or footpath alongside barriers",
+        "capture": "Full footpath width, kerb and barrier line"
+      },
+      {
+        "name": "Hook turn and bike lane",
+        "location": "Swanston St at La Trobe St, hook turn slot and bike lane",
+        "reason": "Bollards placed and bicycle lane closed signs need clearance",
+        "capture": "Turn slot, bike lane, kerbs and tram track edges"
+      },
+      {
+        "name": "Little La Trobe access",
+        "location": "Little La Trobe St off Swanston St and Elizabeth St",
+        "reason": "Kept open to light vehicles with signs and a roaming TC",
+        "capture": "Full road width, both kerbs and sign positions"
+      },
+      {
+        "name": "VMS 1 and 4 sites",
+        "location": "La Trobe St / Elizabeth St west of the site",
+        "reason": "VMS and advance signs assume clear space on the footpath or verge",
+        "capture": "Footpath width, kerb and sign positions"
+      },
+      {
+        "name": "Elizabeth St signs",
+        "location": "Elizabeth St near A'Beckett St",
+        "reason": "Road work ahead, 40 km/h and prepare to stop signs need space",
+        "capture": "Both kerbs and footpath widths"
+      },
+      {
+        "name": "VMS 3 site",
+        "location": "Swanston St south of La Trobe St",
+        "reason": "VMS and road closed signs assume clear footpath space",
+        "capture": "Footpath, kerb and sign positions"
+      }
+    ],
+    "uncertainties": [
+      "Work hours partly cropped on inset; only 'Mon 7am-10pm' can be read",
+      "Title block fields (project, dates, scale, conditions) are blank",
+      "Lane numbers not shown",
+      "Water filled barrier and sign counts not readable",
+      "Detour route text small and hard to follow",
+      "Scale not shown"
+    ]
+  }
+}

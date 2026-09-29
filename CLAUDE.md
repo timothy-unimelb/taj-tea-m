@@ -9,7 +9,8 @@ Barrier Brain is a mobile web app for traffic management planners. The planner u
 Built for the RPM Hire problem statement at the UniMelb FEIT Hackathon 2026. Read BRIEF.md for the full brief, components, terms and open questions. Update both when the idea changes.
 
 - Mobile first. Lay every screen out for a phone. It is a Next.js app on Vercel, not a native app.
-- The impact model and scan measurement are mocked for the Wednesday demo. Mock data goes in `data/mock/`. A sample TGS is in `data/mock/tgs/`.
+- Scan measurement is mocked for the Wednesday demo. Mock data goes in `data/mock/`. A sample TGS is in `data/mock/tgs/`.
+- Impact models are swappable. Each returns the same result shape, and `IMPACT_MODEL` picks one. See `model/IMPACT_CONTRACT.md`.
 - Agent calls run on the server. Keys stay in env vars.
 
 This is a hackathon build. The idea will change. Build to what is written here now, and keep the code easy to change.

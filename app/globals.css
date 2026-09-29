@@ -199,6 +199,9 @@ small.error-text { display: block; font-size: 12px; margin-top: 1px; }
 .severity-high { color: #ad3025; }
 .severity-moderate { color: #875004; }
 .severity-low { color: #206044; }
+.severity-review-required { color: #875004; }
+.severity-not-modelled { color: var(--muted); }
+.metric-card .key-findings { margin-top: 6px; }
 .site-image { position: relative; height: 124px; overflow: hidden; border-radius: 10px; border: 1px solid #cbd9cd; background: #e7ece7; }
 .site-image > .reference-asset { width: 100%; height: auto; aspect-ratio: 416 / 70 !important; transform: scaleY(2.38); transform-origin: top; }
 .site-image > .reference-asset > img { transform: none; }

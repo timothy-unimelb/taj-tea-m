@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowLeftIcon, CaretRightIcon, CheckIcon, FilePdfIcon, MagnifyingGlassIcon, PlusIcon, ShareNetworkIcon, WarningCircleIcon, XIcon } from "@phosphor-icons/react";
-import { analyseTgs, sampleTgsUrl, type AssessmentData } from "@/lib/data";
+import { analyseTgs, buildReport, estimateImpact, sampleTgsUrl, type AssessmentData } from "@/lib/data";
+import type { ImpactResult } from "@/lib/impact/types";
 import type { TgsAnalysis } from "@/lib/tgs-analysis";
 import { Brand, Checklist, ExternalScanEvidence, PrimaryButton, ReferenceAsset, Stepper, UploadPanel, type UploadFile } from "./prototype-ui";
 import { ProgressState } from "./progress-state";
@@ -27,6 +28,9 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   const [tgsAnalysis, setTgsAnalysis] = useState<TgsAnalysis | null>(null);
   const [tgsError, setTgsError] = useState("");
   const [tgsAttempt, setTgsAttempt] = useState(0);
+  const [impact, setImpact] = useState<ImpactResult | null>(null);
+  const [impactError, setImpactError] = useState("");
+  const [impactAttempt, setImpactAttempt] = useState(0);
   const [notification, setNotification] = useState("");
   const [shareUrl, setShareUrl] = useState("");
   const missingDialog = useRef<HTMLDialogElement>(null);
@@ -53,11 +57,22 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
     analyseTgs(tgsFile?.file, controller.signal).then(setTgsAnalysis).catch((error: Error) => { if (error.name !== "AbortError") setTgsError(error.message); });
     return () => controller.abort();
   }, [screen, tgsFile, tgsAttempt]);
+  // The impact model runs while the report steps play. A report opened directly runs it on the demo analysis.
+  const needsImpact = impact === null && ["generating", "report", "pdf"].includes(screen);
+  useEffect(() => {
+    if (!needsImpact) return;
+    const controller = new AbortController();
+    estimateImpact(tgsAnalysis, controller.signal).then(setImpact).catch((error: Error) => { if (error.name !== "AbortError") setImpactError(error.message); });
+    return () => controller.abort();
+  }, [needsImpact, tgsAnalysis, impactAttempt]);
+  const report = useMemo(() => impact ? buildReport(impact) : null, [impact]);
+  function retryImpact() { setImpactError(""); setImpactAttempt(n => n + 1); }
   const uploadedImage = tgsFile?.file?.type.startsWith("image/") ? tgsFile.file : null;
   const uploadedImageUrl = useMemo(() => uploadedImage ? URL.createObjectURL(uploadedImage) : null, [uploadedImage]);
   useEffect(() => () => { if (uploadedImageUrl) URL.revokeObjectURL(uploadedImageUrl); }, [uploadedImageUrl]);
+  const usingDemoTgs = !tgsFile?.file;
   const tgsPreviewUrl = tgsFile && !tgsFile.file ? sampleTgsUrl : uploadedImageUrl;
-  function startTgsAnalysis() { setTgsAnalysis(null); setTgsError(""); setTgsAttempt(n => n + 1); }
+  function startTgsAnalysis() { setTgsAnalysis(null); setImpact(null); setTgsError(""); setTgsAttempt(n => n + 1); }
   useEffect(() => { if (!notification) return; const timer = window.setTimeout(() => setNotification(""), 4500); return () => window.clearTimeout(timer); }, [notification]);
 
   async function share() {
@@ -75,7 +90,7 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
     if (status === "Draft") setTgsFile({ name: data.tgs.fileName, size: data.tgs.size });
     navigate(saved ?? (status === "Report ready" ? "report" : status === "Analysing" ? "generating" : "tgs"), id);
   }
-  function startAssessment() { setTgsFile(null); setScanFile(null); setTgsAnalysis(null); navigate("tgs", data.projects[0].id); }
+  function startAssessment() { setTgsFile(null); setScanFile(null); setTgsAnalysis(null); setImpact(null); navigate("tgs", data.projects[0].id); }
   const isReport = screen === "report";
   const isPdf = screen === "pdf";
   const step = ["tgs", "tgs-processing", "tgs-complete"].includes(screen) ? 0 : screen === "generating" ? 2 : 1;
@@ -96,18 +111,18 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
         <label className="search-box"><MagnifyingGlassIcon size={20} aria-hidden="true" /><span className="sr-only">Search projects</span><input type="search" placeholder="Search projects…" value={search} onChange={e => setSearch(e.target.value)} /></label>
         <section className="projects-section"><h2>Recent projects</h2><div className="project-list">{filteredProjects.map(p => <button key={p.id} className="project-card" onClick={() => openProject(p.id, p.status)}><ReferenceAsset kind="road" alt="Street work zone" /><span className="project-info"><strong>{p.name}</strong><span className="project-meta"><time>{p.date}</time><span className={`project-status status-${p.status.toLowerCase().replaceAll(" ", "-")}`}>{p.status}</span></span></span><CaretRightIcon size={17} aria-hidden="true" /></button>)}</div>{filteredProjects.length === 0 && <p className="empty-state" role="status">No projects match “{search}”.</p>}</section>
       </> : isReport || isPdf ? <>
-        <SiteReport data={data} project={project} document={isPdf} />
-        {isPdf && <div className="document-print"><PrimaryButton onClick={() => window.print()} arrow={false}><FilePdfIcon size={20} aria-hidden="true" />Print / Save PDF</PrimaryButton><p>Use your browser’s print options to save this report as a PDF.</p></div>}
+        {report ? <SiteReport data={data} report={report} project={project} document={isPdf} /> : impactError ? <><div className="scan-warning" role="alert"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>{impactError}</p></div><div className="bottom-actions"><PrimaryButton onClick={retryImpact} arrow={false}>Try again</PrimaryButton></div></> : <p className="source-note" role="status">Loading the impact estimate.</p>}
+        {isPdf && report && <div className="document-print"><PrimaryButton onClick={() => window.print()} arrow={false}><FilePdfIcon size={20} aria-hidden="true" />Print / Save PDF</PrimaryButton><p>Use your browser’s print options to save this report as a PDF.</p></div>}
       </> : <>
         <Stepper active={step} tgsComplete={screen === "tgs-complete"} />
         {screen === "tgs" && <><div className="page-heading"><h1 tabIndex={-1}>Upload Traffic Guidance Scheme</h1><p>Upload the TGS for this work zone. Barrier Brain will identify the planned work zone, traffic controls and areas that need site verification.</p></div><UploadPanel kind="tgs" file={tgsFile} onFile={setTgsFile} />{!tgsFile && <button className="demo-file-button" onClick={() => setTgsFile({ name: data.tgs.fileName, size: data.tgs.size })}>Use demo TGS</button>}<div className="bottom-actions"><PrimaryButton onClick={() => { startTgsAnalysis(); navigate("tgs-processing"); }} disabled={!tgsFile}>Analyse TGS</PrimaryButton></div></>}
-        {screen === "tgs-processing" && <><div className="page-heading"><h1 tabIndex={-1}>Analysing TGS</h1><p>Identifying the planned work zone, traffic controls and areas that need site verification.</p></div>{tgsError ? <><div className="scan-warning" role="alert"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>{tgsError}</p></div><div className="bottom-actions"><PrimaryButton onClick={startTgsAnalysis} arrow={false}>Try again</PrimaryButton><button className="secondary-button" onClick={() => navigate("tgs")}>Choose a different file</button></div></> : <ProgressState key={tgsAttempt} steps={tgsSteps} ready={tgsAnalysis !== null} onComplete={() => navigate("tgs-complete", project.id, true)} />}<TgsPreview url={tgsPreviewUrl} alt="The uploaded traffic guidance scheme" /></>}
-        {screen === "tgs-complete" && <><div className="page-heading"><h1 tabIndex={-1}>TGS analysis complete</h1><p>We found the planned work zone and the areas that should be verified on site.</p></div><section className="flow-section"><h2>Plan elements</h2><Checklist items={tgsAnalysis?.plan_elements ?? data.tgs.findings} statusLabel="identified" /></section><TgsPreview url={tgsPreviewUrl} alt="The analysed traffic guidance scheme" /><section className="flow-section"><h2>Areas requiring site verification</h2><Checklist items={tgsAnalysis?.scan_points.map(point => point.name) ?? data.tgs.requiredVerification} details={tgsAnalysis?.scan_points.map(point => point.location)} statusLabel="identified for verification" /></section>{tgsAnalysis && tgsAnalysis.uncertainties.length > 0 && <section className="flow-section"><h2>Not clear on the plan</h2><Checklist items={tgsAnalysis.uncertainties} captured={0} pending /></section>}<div className="bottom-actions"><PrimaryButton onClick={() => navigate("scan")}>Continue to site scan</PrimaryButton></div></>}
+        {screen === "tgs-processing" && <><div className="page-heading"><h1 tabIndex={-1}>Analysing TGS</h1><p>{usingDemoTgs ? "Loading the saved analysis of the demo TGS." : "Identifying the planned work zone, traffic controls and areas that need site verification."}</p></div>{tgsError ? <><div className="scan-warning" role="alert"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>{tgsError}</p></div><div className="bottom-actions"><PrimaryButton onClick={startTgsAnalysis} arrow={false}>Try again</PrimaryButton><button className="secondary-button" onClick={() => navigate("tgs")}>Choose a different file</button></div></> : <ProgressState key={tgsAttempt} steps={tgsSteps} ready={tgsAnalysis !== null} onComplete={() => navigate("tgs-complete", project.id, true)} />}<TgsPreview url={tgsPreviewUrl} alt="The uploaded traffic guidance scheme" /></>}
+        {screen === "tgs-complete" && <><div className="page-heading"><h1 tabIndex={-1}>TGS analysis complete</h1><p>We found the planned work zone and the areas that should be verified on site.</p>{usingDemoTgs && <p>This is a saved analysis of the demo TGS. Upload your own TGS to analyse it now.</p>}</div><section className="flow-section"><h2>Plan elements</h2><Checklist items={tgsAnalysis?.plan_elements ?? data.tgs.findings} statusLabel="identified" /></section><TgsPreview url={tgsPreviewUrl} alt="The analysed traffic guidance scheme" /><section className="flow-section"><h2>Areas requiring site verification</h2><Checklist items={tgsAnalysis?.scan_points.map(point => point.name) ?? data.tgs.requiredVerification} details={tgsAnalysis?.scan_points.map(point => point.location)} statusLabel="identified for verification" /></section>{tgsAnalysis && tgsAnalysis.uncertainties.length > 0 && <section className="flow-section"><h2>Not clear on the plan</h2><Checklist items={tgsAnalysis.uncertainties} captured={0} pending /></section>}<div className="bottom-actions"><PrimaryButton onClick={() => navigate("scan")}>Continue to site scan</PrimaryButton></div></>}
         {screen === "scan" && <><div className="page-heading"><h1 tabIndex={-1}>Upload site scan</h1><p>Complete the required areas in your LiDAR scanning app, then upload the exported site scan here.</p></div><ExternalScanEvidence /><UploadPanel kind="scan" file={scanFile} onFile={setScanFile} />{!scanFile && <button className="demo-file-button" onClick={() => setScanFile({ name: data.scan.demoFileName, size: data.scan.demoFileSize })}>Use demo site scan</button>}<section className="flow-section"><h2>Required areas to verify</h2><Checklist items={tgsAnalysis?.scan_points.map(point => point.name) ?? data.tgs.requiredVerification} details={tgsAnalysis?.scan_points.map(point => point.capture)} captured={3} pending /></section><div className="bottom-actions"><PrimaryButton onClick={() => navigate("scan-checking")} disabled={!scanFile}>Check scan completeness</PrimaryButton></div></>}
         {(screen === "scan-checking" || screen === "scan-additional") && <><div className="page-heading"><h1 tabIndex={-1}>{screen === "scan-additional" ? "Checking additional scan" : "Checking scan completeness"}</h1><p>Checking the scan covers the required site areas.</p></div><ProgressState steps={scanSteps} onComplete={() => navigate(screen === "scan-additional" ? "scan-complete" : "scan-incomplete", project.id, true)} /><ReferenceAsset kind="lidar" className="lidar-preview" alt="External LiDAR point-cloud scan" /></>}
         {screen === "scan-incomplete" && <><div className="page-heading"><h1 tabIndex={-1}>Site scan incomplete</h1><p>{data.scan.initialCaptured} of {data.scan.areas.length} required areas captured.</p></div><Checklist items={data.scan.areas} captured={data.scan.initialCaptured} /><div className="scan-warning"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>Scan this area again before continuing.</p></div><div className="bottom-actions"><PrimaryButton onClick={() => navigate("scan-additional")} arrow={false}>Upload additional scan</PrimaryButton><button className="secondary-button" onClick={() => missingDialog.current?.showModal()}>View missing area</button></div></>}
-        {screen === "scan-complete" && <><div className="page-heading"><h1 tabIndex={-1}>Site scan complete</h1><p>All required areas are captured and ready for impact analysis.</p></div><div className="completion-card"><span className="large-check"><CheckIcon size={32} aria-hidden="true" /></span><div><strong>{data.scan.completeCaptured} of {data.scan.areas.length}</strong><p>required areas captured</p></div></div><Checklist items={data.scan.areas} /><div className="bottom-actions"><PrimaryButton onClick={() => navigate("generating")}>Generate impact report</PrimaryButton></div></>}
-        {screen === "generating" && <><div className="page-heading"><h1 tabIndex={-1}>Generating site impact report</h1><p>Combining the TGS, verified site geometry and reference data to identify knock-on effects.</p></div><ProgressState steps={data.analysis.steps} onComplete={() => navigate("report", project.id, true)} illustration /></>}
+        {screen === "scan-complete" && <><div className="page-heading"><h1 tabIndex={-1}>Site scan complete</h1><p>All required areas are captured and ready for impact analysis.</p></div><div className="completion-card"><span className="large-check"><CheckIcon size={32} aria-hidden="true" /></span><div><strong>{data.scan.completeCaptured} of {data.scan.areas.length}</strong><p>required areas captured</p></div></div><Checklist items={data.scan.areas} /><div className="bottom-actions"><PrimaryButton onClick={() => { setImpact(null); setImpactError(""); navigate("generating"); }}>Generate impact report</PrimaryButton></div></>}
+        {screen === "generating" && <><div className="page-heading"><h1 tabIndex={-1}>Generating site impact report</h1><p>Combining the TGS, verified site geometry and reference data to identify knock-on effects.</p></div>{impactError ? <><div className="scan-warning" role="alert"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>{impactError}</p></div><div className="bottom-actions"><PrimaryButton onClick={retryImpact} arrow={false}>Try again</PrimaryButton></div></> : <ProgressState key={impactAttempt} steps={data.analysis.steps} ready={impact !== null} onComplete={() => navigate("report", project.id, true)} illustration />}</>}
       </>}
     </main>
     <div className={`toast ${notification ? "toast-visible" : ""}`} role="status" aria-live="polite">{notification && <><CheckIcon size={18} aria-hidden="true" />{notification}</>}</div>
