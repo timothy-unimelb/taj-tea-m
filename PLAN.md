@@ -76,4 +76,5 @@ User accounts, error handling, tests on measurement and model code, AI cost limi
 
 - [30 Sep] Tim: plan written. Steps 1 and 2 partly done on branch `tim` (commit cdcb9f7). Claude runs on Sonnet 5.5 through Vercel AI Gateway with paid credit, since the free credit covers no Claude models.
 - [30 Sep 3:45am] Tim: PDF TGS tested and works. SUMO installed and ran on the Swanston area as a spike. Agreed order for tonight in step 6a: swappable model shapes, SUMO, Tamara's model in TypeScript, demo consistency.
-- [30 Sep 4:30am] Tim: step 6a parts 1, 3 and 4 done. The report now reads a swappable impact result. Default model is Tamara's lookup, ported to TypeScript and live. SUMO plug-in in progress.
+- [30 Sep 4:00am] Tim: step 6a parts 1, 3 and 4 done. The report now reads a swappable impact result. Default model is Tamara's lookup, ported to TypeScript and live. SUMO plug-in in progress.
+- [30 Sep 4:15am] Tim: first SUMO run used 300 GB of memory and crashed the laptop (too much traffic, stuck cars kept in memory). Run script now has a 3 GB and 20 minute limit. Full and 30% demand still gridlocked from the Spring St / Victoria Pde junctions at the map's east edge, so the network is cut at Exhibition St and rebuilt.

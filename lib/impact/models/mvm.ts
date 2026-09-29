@@ -53,9 +53,14 @@ export async function estimate(req: ImpactRequest): Promise<ImpactResult> {
   const roadClass = roadClassFromVolume(daily ?? DEFAULT_DAILY);
   assumptions.push(`Road size group for past closures: ${roadClass}, from the signal site's daily count.`);
 
-  const lanesPerDirection = Math.max(1, req.lanes_per_direction);
-  if (req.lanes_per_direction < 1) assumptions.push("The plan does not show the number of lanes. Assumed 1 lane each way.");
-  const lanesOpen = req.closure_type === "road closed" ? 0 : req.closure_type === "footpath only" ? lanesPerDirection : Math.min(req.lanes_open, lanesPerDirection);
+  // A lane closure needs a lane left open. If the plan doesn't show lanes, assume 2 each way with 1 open.
+  const lanesUnknown = req.lanes_per_direction < 1;
+  const partial = req.closure_type !== "road closed" && req.closure_type !== "footpath only";
+  const lanesPerDirection = lanesUnknown ? (partial ? 2 : 1) : req.lanes_per_direction;
+  let lanesOpen = req.closure_type === "road closed" ? 0 : req.closure_type === "footpath only" ? lanesPerDirection : Math.min(req.lanes_open, lanesPerDirection);
+  if (partial && lanesOpen < 1) lanesOpen = Math.max(1, lanesPerDirection - 1);
+  if (lanesUnknown) assumptions.push(partial ? "The plan does not show the number of lanes. Assumed 2 lanes each way with 1 left open." : "The plan does not show the number of lanes. Assumed 1 lane each way.");
+  else if (partial && req.lanes_open < 1) assumptions.push(`The plan does not show how many lanes stay open. Assumed ${lanesOpen}.`);
   if (req.closure_type === "road closed") {
     assumptions.push("The road is fully closed, so it is modelled as 0 lanes open. The past-closure lookup has no full-closure group, so it uses its all-closures fallback.");
     assumptions.push("With no lanes open, the queue model holds a 500 m queue and sends everyone else on the detour. Drivers usually divert earlier at the VMS boards, so queue and delay are likely overstated. Diversions are the key number.");
