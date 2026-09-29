@@ -82,3 +82,4 @@ User accounts, error handling, tests on measurement and model code, AI cost limi
 - [30 Sep 4:25am] Tim: SUMO works at 50% of counted traffic after cutting the network at Exhibition St and simplifying junctions and signals. Plugged in as an early, precomputed result. Far fewer diversions than the lookup model, flagged for Tamara.
 - [30 Sep 4:45am] Tim: a second session reviewed the SUMO work. Fixed without rerunning: diversions now a range (44 to 100), detour 7 m shortest vs 114 m driven, queue dropped as noise, access loss and demand split stated, image caption corrected.
 - [30 Sep 4:55am] Tim: SUMO is now the default where it has a result (the Swanston sample); Tamara's model covers every other site. Her model now warns that it may overstate diversions on tram streets.
+- [30 Sep 5:05am] Tim: the TGS prompt now lives in prompts/tgs-analysis.md so the team can refine it without touching code.
