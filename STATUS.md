@@ -11,6 +11,7 @@ Done:
 ## Tim
 Now:
 Done:
+- [09:05] SUMO less janky, PLAN.md 6b items 3 and 4, on branch `tim-sumo-refinement` (not merged, app numbers unchanged). Left-hand traffic (was right-hand), every turn at the closed block sourced (OpenStreetMap plus sheets, `model/sumo/turn_rules.json`), delay-based signals, and `08_check_counts.py` checking simulated traffic against the counts: 71% of counted street-hours within GEH 5, afternoon peak still drops 5% to 7% of cars. Diversions about 123 (110 to 162) over the works hours with the La Trobe St right turn banned, about 1,080 if allowed. Details in model/sumo/README.md "Turn rules" and "Calibration check".
 - [07:45] SUMO: every hour of the works (7am to 10pm), and the La Trobe St right turn banned as a second case. Report now says about 755 to 871 shortcut drivers over the works hours, about 77 if the turn is banned. Delay left out as noise. model/sumo/, data/impact/sumo-swanston.json. SUMO roadmap in PLAN.md step 6.
 - [07:00] SUMO fitted to measured car counts per approach (SCATS detectors + DTP signal sheets, 9 junctions). Full traffic, no gridlock, 10 seeds: 21 to 97 shortcut drivers an hour, delay within noise. Whole-site totals overstate cars 1.3 to 3.5x; flagged for Tamara in PLAN.md step 6a. model/sumo/, data/impact/sumo-swanston.json.
 - [05:15] Handover: PLAN.md "Where things stand" lists what is real, what is still demo data, known limits and next steps. README rewritten.
@@ -22,6 +23,7 @@ Done:
 - [29 Sep] Real TGS analysis: Claude Sonnet 5.5 via Vercel AI Gateway. About 20 s and 3.5 cents per run.
 
 Review before merging `tim` into `main`:
+- Separate branch `tim-sumo-refinement` holds the 9am SUMO work. It changes model/sumo/ and its committed outputs only; `data/impact/sumo-swanston.json` (what the app shows) is untouched. Merge it into `tim` after reading the numbers in PLAN.md step 6b.
 - Raina's doc changes that came with her branch: DESIGN.md is now "LOCKED" (it was "NOT SET"), the flow was replaced with her 9 screens, open questions were deleted from BRIEF.md, and "share sheet opens on return home" became an explicit Share button. Agree these as a team.
 - Swanston changes: the project is now "Swanston Street Work Zone". Report copy, the safety finding and two recommended actions were rewritten for this TGS. The safety finding and actions are still fixed demo copy, because scan measurement isn't connected. Trams and pedestrians show "Review required", not a rating, because no model covers them yet.
 - SUMO numbers changed at 7:45am (measured car counts, full traffic, whole works period). The Swanston report now says about 755 to 871 drivers over 7am to 10pm, or about 77 if cars can't turn right from La Trobe St into Swanston St (the signal plan shows no car right-turn signal).
