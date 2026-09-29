@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { ArrowLeftIcon, CaretRightIcon, CheckIcon, FilePdfIcon, MagnifyingGlassIcon, PlusIcon, ShareNetworkIcon, WarningCircleIcon, XIcon, MapPinIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, CaretRightIcon, CheckIcon, FilePdfIcon, MagnifyingGlassIcon, PlusIcon, ShareNetworkIcon, WarningCircleIcon, XIcon } from "@phosphor-icons/react";
 import type { AssessmentData } from "@/lib/data";
-import { Brand, Checklist, PrimaryButton, ReferenceAsset, Stepper, UploadPanel, type UploadFile } from "./prototype-ui";
+import { Brand, Checklist, ExternalScanEvidence, PrimaryButton, ReferenceAsset, Stepper, UploadPanel, type UploadFile } from "./prototype-ui";
 import { ProgressState } from "./progress-state";
 import { SiteOverview, SiteReport } from "./site-report";
 
@@ -21,7 +21,7 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   const screen: Screen = screens.includes(screenName as Screen) ? screenName as Screen : "projects";
   const project = data.projects.find(p => p.id === projectId) ?? data.projects[0];
   const [search, setSearch] = useState("");
-  const [tgsFile, setTgsFile] = useState<UploadFile | null>({ name: data.tgs.fileName, size: data.tgs.size });
+  const [tgsFile, setTgsFile] = useState<UploadFile | null>(null);
   const [scanFile, setScanFile] = useState<UploadFile | null>(null);
   const [notification, setNotification] = useState("");
   const [shareUrl, setShareUrl] = useState("");
@@ -56,9 +56,10 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   function openProject(id: string, status: string) {
     let saved: Screen | null = null;
     try { const value = localStorage.getItem(`barrier-brain:${id}`); if (screens.includes(value as Screen)) saved = value as Screen; } catch { /* No persistence available. */ }
+    if (status === "Draft") setTgsFile({ name: data.tgs.fileName, size: data.tgs.size });
     navigate(saved ?? (status === "Report ready" ? "report" : status === "Analysing" ? "generating" : "tgs"), id);
   }
-  function startAssessment() { setTgsFile({ name: data.tgs.fileName, size: data.tgs.size }); setScanFile(null); navigate("tgs", data.projects[0].id); }
+  function startAssessment() { setTgsFile(null); setScanFile(null); navigate("tgs", data.projects[0].id); }
   const isReport = screen === "report";
   const isPdf = screen === "pdf";
   const step = ["tgs", "tgs-processing", "tgs-complete"].includes(screen) ? 0 : screen === "generating" ? 2 : 1;
@@ -85,10 +86,10 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
         {isPdf && <div className="document-print"><PrimaryButton onClick={() => window.print()} arrow={false}><FilePdfIcon size={20} aria-hidden="true" />Print / Save PDF</PrimaryButton><p>Use your browser’s print options to save this report as a PDF.</p></div>}
       </> : <>
         <Stepper active={step} tgsComplete={screen === "tgs-complete"} />
-        {screen === "tgs" && <><div className="page-heading"><h1 tabIndex={-1}>Upload Traffic Guidance Scheme</h1><p>Upload the TGS for this work zone. Barrier Brain will identify the planned work zone, traffic controls and areas that need site verification.</p></div><UploadPanel kind="tgs" file={tgsFile} onFile={setTgsFile} /><div className="bottom-actions"><PrimaryButton onClick={() => navigate("tgs-processing")} disabled={!tgsFile}>Analyse TGS</PrimaryButton></div></>}
+        {screen === "tgs" && <><div className="page-heading"><h1 tabIndex={-1}>Upload Traffic Guidance Scheme</h1><p>Upload the TGS for this work zone. Barrier Brain will identify the planned work zone, traffic controls and areas that need site verification.</p></div><UploadPanel kind="tgs" file={tgsFile} onFile={setTgsFile} />{!tgsFile && <button className="demo-file-button" onClick={() => setTgsFile({ name: data.tgs.fileName, size: data.tgs.size })}>Use demo TGS</button>}<div className="bottom-actions"><PrimaryButton onClick={() => navigate("tgs-processing")} disabled={!tgsFile}>Analyse TGS</PrimaryButton></div></>}
         {screen === "tgs-processing" && <><div className="page-heading"><h1 tabIndex={-1}>Analysing TGS</h1><p>Identifying the planned work zone, traffic controls and areas that need site verification.</p></div><ProgressState steps={tgsSteps} onComplete={() => navigate("tgs-complete", project.id, true)} /><ReferenceAsset kind="tgs" className="tgs-preview" alt="Traffic guidance scheme with orange work zone and traffic control signs" /></>}
         {screen === "tgs-complete" && <><div className="page-heading"><h1 tabIndex={-1}>TGS analysis complete</h1><p>We found the planned work zone and the areas that should be verified on site.</p></div><section className="flow-section"><h2>Plan elements</h2><Checklist items={data.tgs.findings} statusLabel="identified" /></section><ReferenceAsset kind="tgs" className="tgs-preview" alt="Traffic guidance scheme showing the planned work zone and control devices" /><section className="flow-section"><h2>Areas requiring site verification</h2><Checklist items={data.tgs.requiredVerification} statusLabel="identified for verification" /></section><div className="bottom-actions"><PrimaryButton onClick={() => navigate("scan")}>Continue to site scan</PrimaryButton></div></>}
-        {screen === "scan" && <><div className="page-heading"><h1 tabIndex={-1}>Upload site scan</h1><p>Complete the required areas in your LiDAR scanning app, then upload the exported site scan here.</p></div><figure className="lidar-preview"><ReferenceAsset kind="lidar" alt="Point-cloud view of the street from an external LiDAR scanner" /><figcaption><MapPinIcon size={13} aria-hidden="true" />Captured using external LiDAR scanner</figcaption></figure><UploadPanel kind="scan" file={scanFile} onFile={setScanFile} /><section className="flow-section"><h2>Required areas to verify</h2><Checklist items={data.tgs.requiredVerification} captured={3} pending /></section><div className="bottom-actions"><PrimaryButton onClick={() => navigate("scan-checking")}>Check scan completeness</PrimaryButton></div></>}
+        {screen === "scan" && <><div className="page-heading"><h1 tabIndex={-1}>Upload site scan</h1><p>Complete the required areas in your LiDAR scanning app, then upload the exported site scan here.</p></div><ExternalScanEvidence /><UploadPanel kind="scan" file={scanFile} onFile={setScanFile} />{!scanFile && <button className="demo-file-button" onClick={() => setScanFile({ name: data.scan.demoFileName, size: data.scan.demoFileSize })}>Use demo site scan</button>}<section className="flow-section"><h2>Required areas to verify</h2><Checklist items={data.tgs.requiredVerification} captured={3} pending /></section><div className="bottom-actions"><PrimaryButton onClick={() => navigate("scan-checking")} disabled={!scanFile}>Check scan completeness</PrimaryButton></div></>}
         {(screen === "scan-checking" || screen === "scan-additional") && <><div className="page-heading"><h1 tabIndex={-1}>{screen === "scan-additional" ? "Checking additional scan" : "Checking scan completeness"}</h1><p>Checking the scan covers the required site areas.</p></div><ProgressState steps={scanSteps} onComplete={() => navigate(screen === "scan-additional" ? "scan-complete" : "scan-incomplete", project.id, true)} /><ReferenceAsset kind="lidar" className="lidar-preview" alt="External LiDAR point-cloud scan" /></>}
         {screen === "scan-incomplete" && <><div className="page-heading"><h1 tabIndex={-1}>Site scan incomplete</h1><p>{data.scan.initialCaptured} of {data.scan.areas.length} required areas captured.</p></div><Checklist items={data.scan.areas} captured={data.scan.initialCaptured} /><div className="scan-warning"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>Scan this area again before continuing.</p></div><div className="bottom-actions"><PrimaryButton onClick={() => navigate("scan-additional")} arrow={false}>Upload additional scan</PrimaryButton><button className="secondary-button" onClick={() => missingDialog.current?.showModal()}>View missing area</button></div></>}
         {screen === "scan-complete" && <><div className="page-heading"><h1 tabIndex={-1}>Site scan complete</h1><p>All required areas are captured and ready for impact analysis.</p></div><div className="completion-card"><span className="large-check"><CheckIcon size={32} aria-hidden="true" /></span><div><strong>{data.scan.completeCaptured} of {data.scan.areas.length}</strong><p>required areas captured</p></div></div><Checklist items={data.scan.areas} /><div className="bottom-actions"><PrimaryButton onClick={() => navigate("generating")}>Generate impact report</PrimaryButton></div></>}

@@ -11,6 +11,8 @@
     "requiredVerification": ["Lane width", "Footpath clearance", "Work zone boundary", "Intersection approach"]
   },
   "scan": {
+    "demoFileName": "Swan_Street_Site_Scan.zip",
+    "demoFileSize": "18.6 MB",
     "areas": ["Lane geometry", "Footpath width", "Kerb and roadside clearance", "Work zone boundary", "Intersection approach"],
     "initialCaptured": 4,
     "completeCaptured": 5,

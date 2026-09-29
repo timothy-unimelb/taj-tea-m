@@ -63,6 +63,26 @@ export function UploadPanel({ kind, file, onFile }: { kind: "tgs" | "scan"; file
   </div>;
 }
 
+export function ExternalScanEvidence() {
+  return <section className="scan-evidence" aria-labelledby="scan-evidence-title">
+    <div className="scan-evidence-heading">
+      <div>
+        <h2 id="scan-evidence-title">External scan evidence</h2>
+        <p>Captured in an external scanning app, then exported for Barrier Brain.</p>
+      </div>
+      <span className="evidence-badge">External app</span>
+    </div>
+    <figure className="scan-evidence-primary">
+      <Image src="/assets/external-scan-app.png" alt="Mobile scanning app showing the captured street scan" width={1179} height={2556} sizes="(max-width: 430px) 100vw, 390px" />
+      <figcaption>Mobile scan capture</figcaption>
+    </figure>
+    <div className="scan-evidence-exports" aria-label="Exported scan evidence">
+      <figure><Image src="/assets/external-scan-colours.png" alt="Point-cloud colour export with numbered scan points" width={910} height={1120} sizes="(max-width: 430px) 50vw, 190px" /><figcaption>Point-cloud export</figcaption></figure>
+      <figure><Image src="/assets/external-scan-map.png" alt="Map export showing the scan footprint near Swanston Street" width={993} height={1411} sizes="(max-width: 430px) 50vw, 190px" /><figcaption>Map export</figcaption></figure>
+    </div>
+  </section>;
+}
+
 export function ReportSection({ title, children, className = "" }: { title: string; children: ReactNode; className?: string }) {
   return <section className={`report-section ${className}`}><h2>{title}</h2>{children}</section>;
 }
