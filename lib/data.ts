@@ -50,7 +50,7 @@ function details(mode: ModeImpact) {
   const lines = [
     mode.forced_diversions && `Forced diversions: ${span(mode.forced_diversions)}`,
     mode.max_queue && `Longest queue: ${span(mode.max_queue)}`,
-    mode.delay && `Delay: ${span(mode.delay)}`,
+    mode.delay && (mode.delay.low < 0 ? `Delay: no clear change (${fmt(mode.delay.low)} to ${fmt(mode.delay.high)} ${mode.delay.unit} across runs)` : `Delay: ${span(mode.delay)}`),
     mode.detour && `Extra distance per diverted trip: ${span(mode.detour)}`,
     ...(mode.other ?? []).map(o => `${o.label}: ${span(o.range)}`),
   ];

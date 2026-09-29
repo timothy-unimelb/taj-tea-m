@@ -49,6 +49,7 @@ export async function estimate(req: ImpactRequest): Promise<ImpactResult> {
   const daily = req.site.daily_volume;
   const aadt = (daily ?? DEFAULT_DAILY) * (daily ? CLOSED_STREET_SHARE : 1);
   if (daily) assumptions.push(`Traffic from signal site ${req.site.scats_site_no} ${req.site.scats_site_name}: ${fmt(daily)} vehicles on an average weekday across all approaches. Assumed half of them use ${req.site.street}, split evenly by direction.`);
+  if (daily && req.site.tram_route) assumptions.push(`${req.site.street} carries trams. Where cars are limited on a tram street (tram-only or permit-only sections), far less than half the site's traffic uses it, so diversions may be greatly overstated.`);
   else assumptions.push(`No traffic signal site matched ${req.site.street}. Assumed ${fmt(DEFAULT_DAILY)} vehicles a day, split evenly by direction.`);
   const roadClass = roadClassFromVolume(daily ?? DEFAULT_DAILY);
   assumptions.push(`Road size group for past closures: ${roadClass}, from the signal site's daily count.`);

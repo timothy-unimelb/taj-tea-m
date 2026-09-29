@@ -116,7 +116,7 @@ Figures on the sketches, such as "96%", are placeholders.
 
 Real for Wednesday: Claude reads the uploaded TGS and lists the scan points.
 
-Real for Wednesday: impact estimates from Tamara's model, run live on the TGS analysis. A SUMO simulation of the sample closure is an early, precomputed alternative.
+Real for Wednesday: impact estimates. The Swanston sample shows a SUMO simulation (precomputed, labelled early result). Any other TGS gets Tamara's model, run live.
 
 Mocked for Wednesday: scan measurement, and the safety findings that depend on it. The approach for each must still be clear and buildable, because technical feasibility is 30% of the mark.
 
@@ -155,6 +155,7 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - [30 Sep] Tim: Claude calls go through Vercel AI Gateway, using the official Anthropic SDK pointed at the gateway. It sits in our existing Vercel project, so there is no separate Anthropic key or account. On Vercel it authenticates with the project's OIDC token.
 - [30 Sep] Tim: the TGS analysis runs on Claude Sonnet 5.5, not Opus, to fit a student budget. Claude models need paid AI Gateway credit; the free monthly credit doesn't cover them.
 - [30 Sep] Tim: impact models are swappable behind one result shape, so we are not locked into one approach. Tamara's model runs live as the default; SUMO is being tested. The report shows which method produced its numbers, and severity comes from one written rule.
+- [30 Sep] Tim: SUMO is the default impact model where it has a result (the Swanston sample), with Tamara's model everywhere else. A review showed the lookup overstates Swanston: it assumes half the intersection's traffic uses the closed block, which is mostly tram only.
 
 ## Terms
 

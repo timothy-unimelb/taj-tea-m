@@ -1,17 +1,20 @@
 // The model switch. IMPACT_MODEL picks which model the report uses:
-//   mvm      Tamara's past-closures lookup and queue, live (default)
-//   sumo     SUMO simulation, precomputed for the Swanston St sample only
+//   sumo     SUMO simulation, precomputed for the Swanston St sample only (default)
+//   mvm      Tamara's past-closures lookup and queue, live, any site
 //   http     any service at IMPACT_MODEL_URL that returns an ImpactResult
 // If the chosen model can't cover the site, or fails, the live lookup model is
-// used instead and the report says so in its assumptions.
+// used instead and the report says so in its assumptions. So by default the
+// Swanston sample gets SUMO and every other site gets the lookup model.
+// SUMO is the default because the lookup overstates diversions on streets with
+// little car access, like the Swanston block (Tim, 30 Sep).
 
 import type { ImpactRequest, ImpactResult, ImpactModel } from "./types";
 import { mvmModel } from "./models/mvm";
 import { httpModel } from "./models/http";
-import { precomputedModel } from "./models/precomputed";
+import { NotCoveredError, precomputedModel } from "./models/precomputed";
 import { rateSeverity } from "./severity";
 
-export const DEFAULT_MODEL = "mvm";
+export const DEFAULT_MODEL = "sumo";
 
 function chooseModel(id: string): ImpactModel {
   if (id === "mvm") return mvmModel;
@@ -33,8 +36,10 @@ export async function estimateImpact(request: ImpactRequest, id = process.env.IM
     if (id === mvmModel.id) throw error;
     console.warn(`Impact model "${id}" not used:`, error instanceof Error ? error.message : error);
     const fallback = await mvmModel.estimate(request);
-    const reason = error instanceof Error ? error.message : "It failed.";
-    result = { ...fallback, assumptions: [`The ${id} model was not used: ${reason} The live lookup model was used instead.`, ...fallback.assumptions] };
+    const note = error instanceof NotCoveredError
+      ? `No ${id.toUpperCase()} result exists for this site yet, so the live lookup model was used.`
+      : `The ${id} model failed (${error instanceof Error ? error.message : "unknown error"}), so the live lookup model was used.`;
+    result = { ...fallback, assumptions: [note, ...fallback.assumptions] };
   }
   return rateSeverity(result, request);
 }
