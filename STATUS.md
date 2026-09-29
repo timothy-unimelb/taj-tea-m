@@ -10,6 +10,7 @@ Done:
 
 ## Tim
 Now:
+- [07:25] SUMO: test with the La Trobe St right turn into Swanston St banned, simulate the whole works period (7am to 10pm), small fixes. model/sumo/.
 Done:
 - [07:00] SUMO fitted to measured car counts per approach (SCATS detectors + DTP signal sheets, 9 junctions). Full traffic, no gridlock, 10 seeds: 21 to 97 shortcut drivers an hour, delay within noise. Whole-site totals overstate cars 1.3 to 3.5x; flagged for Tamara in PLAN.md step 6a. model/sumo/, data/impact/sumo-swanston.json.
 - [05:15] Handover: PLAN.md "Where things stand" lists what is real, what is still demo data, known limits and next steps. README rewritten.
