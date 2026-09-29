@@ -1,0 +1,174 @@
+{
+  "about": "Which SCATS detectors count cars at the stop line, per approach, at the junctions around the Swanston closure. Read by hand from DTP Traffic Signal Configuration Data Sheets (CC-BY 4.0), 30 Sep 2026. Bike, tram, queue, hook-turn box and pedestrian detectors are left out. 'no_car_approaches' are approaches where the network has a car edge but the sheet shows no general car traffic, so the simulation gets a count of zero there. 'all_car_approaches_counted' marks sites whose car total is complete, used to correct sites without a sheet. Approaches not listed are left unconstrained.",
+  "sites": {
+    "2921": {
+      "name": "SWANSTON/LATROBE",
+      "sheet": "DOC/24/198884, 12/08/2024",
+      "confidence": "high",
+      "car_detectors": {
+        "eastbound": [
+          7
+        ],
+        "westbound": [
+          5
+        ]
+      },
+      "all_car_approaches_counted": true,
+      "notes": "Detector 3 (Swanston St southbound, on the closed block) extends the southbound bike signal SG8 and the right turn SG5, so it counts mostly bikes (about 1,800 a day) and is not used. OpenStreetMap has no southbound car lane there. No detector counts the northbound car lane into the closed block. Detectors 18 and 19 are a second set at the La Trobe St tram stop crossing and duplicate La Trobe St traffic."
+    },
+    "2920": {
+      "name": "RUSSELL/LATROBE",
+      "sheet": "operation spec 1/07/2024",
+      "confidence": "high",
+      "car_detectors": {
+        "northbound": [
+          1,
+          2,
+          3,
+          10
+        ],
+        "southbound": [
+          4,
+          5,
+          11
+        ],
+        "westbound": [
+          6,
+          7
+        ],
+        "eastbound": [
+          8,
+          9
+        ]
+      },
+      "all_car_approaches_counted": true,
+      "notes": "Detectors 13 and 14 are hook-turn boxes inside the junction (about 6,900 a day each) and detector 12 a queue loop; all left out."
+    },
+    "2922": {
+      "name": "ELIZABETH/LATROBE",
+      "sheet": "plan 555670C rev B, 19/07/2024",
+      "confidence": "medium",
+      "car_detectors": {
+        "northbound": [
+          1
+        ],
+        "southbound": [
+          3,
+          4
+        ],
+        "westbound": [
+          5,
+          6
+        ],
+        "eastbound": [
+          8
+        ]
+      },
+      "all_car_approaches_counted": true,
+      "notes": "Map is rotated; orientation from grades and sign notes. Detectors 11, 12 and 19 are hook-turn boxes (about 5,000 a day each for 11 and 19) and are left out. Kerb lanes are shared with bikes."
+    },
+    "2904": {
+      "name": "SWANSTON/LONSDALE",
+      "sheet": "plan 555237, 19/03/2014",
+      "confidence": "medium",
+      "car_detectors": {
+        "westbound": [
+          6,
+          7
+        ],
+        "eastbound": [
+          9,
+          10
+        ]
+      },
+      "no_car_approaches": [
+        "northbound",
+        "southbound"
+      ],
+      "all_car_approaches_counted": true,
+      "notes": "Swanston St here is trams, bikes and permitted vehicles only (detectors 1 to 4 are kerb lanes with bike-like counts or sit in the tram tracks), and netconvert opens it to cars, so both Swanston approaches get zero. Lonsdale St kerb lanes are bus lanes (detectors 5 and 8, under 900 a day each) and are left out. Detectors 15 and 16 are Caledonian Lane."
+    },
+    "2906": {
+      "name": "ELIZABETH/LONSDALE",
+      "sheet": "15/11/2023",
+      "confidence": "medium",
+      "car_detectors": {
+        "westbound": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "eastbound": [
+          5
+        ]
+      },
+      "all_car_approaches_counted": false,
+      "notes": "Elizabeth St has no car detectors (permanent green extension), so its approaches are unconstrained."
+    },
+    "2914": {
+      "name": "ELIZABETH/LITTLE LONSDALE",
+      "sheet": "12/10/2016",
+      "confidence": "medium",
+      "car_detectors": {
+        "northbound": [
+          7,
+          8
+        ],
+        "eastbound": [
+          1
+        ]
+      },
+      "all_car_approaches_counted": false,
+      "notes": "Southbound detector 9 has no August 2026 data, so the southbound approach is unconstrained."
+    },
+    "4512": {
+      "name": "ELIZABETH/A'BECKETT",
+      "sheet": "13/09/2012",
+      "confidence": "medium",
+      "car_detectors": {
+        "westbound": [
+          1
+        ],
+        "eastbound": [
+          2
+        ]
+      },
+      "all_car_approaches_counted": false,
+      "notes": "Elizabeth St has no detectors. Detectors 3 and 4 are call-only loops inside the junction that duplicate 1 and 2."
+    },
+    "4523": {
+      "name": "SWANSTON/FRANKLIN",
+      "sheet": "21/11/2019 (construction phasing)",
+      "confidence": "low",
+      "car_detectors": {
+        "eastbound": [
+          5
+        ],
+        "westbound": [
+          4
+        ],
+        "southbound": [
+          3
+        ]
+      },
+      "all_car_approaches_counted": false,
+      "notes": "The sheet predates the current layout: detectors 2, 4 and 6 are off or unused on it but count traffic in 2026. Westbound 4 looks like car traffic and is used. Southbound 3 is the right turn only; the southbound left turn (detector 2, 732 a day) is left out, so southbound is a lower bound. Detector 6 (3,900 a day) can't be placed."
+    },
+    "2913": {
+      "name": "SWANSTON/LITTLE LONSDALE",
+      "sheet": "23/08/2011",
+      "confidence": "medium",
+      "car_detectors": {
+        "eastbound": [
+          3
+        ]
+      },
+      "no_car_approaches": [
+        "northbound"
+      ],
+      "all_car_approaches_counted": false,
+      "notes": "Swanston St here is the permit-only section, which netconvert opens to cars. Detector 1 (northbound right turn in the tram lane, about 1,800 a day) is left out and the northbound edge gets zero, to keep general cars off it."
+    }
+  }
+}

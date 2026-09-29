@@ -3,8 +3,10 @@
 
 1. Candidate routes: random trips over the whole network, routed by duarouter (with a little
    random routing noise so there are alternatives).
-2. Counts: real SCATS weekday volume per signal site x weekday hourly share. Each site total is
-   split over the car approach edges of its junction. Splitting rule is in README (assumption).
+2. Counts: where a DTP signal sheet has been read (detector_approaches.json, 00_detector_counts.py),
+   car stop-line detector counts per approach, hour by hour. Other sites: the whole-site SCATS weekday
+   volume, corrected to cars only by the median share found at the measured sites, x the weekday hourly
+   share, split over the car approach edges of the junction by lane count (README, assumptions).
 3. routeSampler picks routes from the pool so simulated edge counts match the targets, hour by hour.
 4. Trips that start or end inside the closed block are removed from BOTH scenarios and counted.
 5. The closure scenario re-routes only the trips whose route used the closed edge (duarouter on the
@@ -23,6 +25,7 @@ ap.add_argument("--max-node-dist", type=float, default=45.0, help="metres from S
 ap.add_argument("--edge-margin", type=float, default=120.0, help="ignore sites this close (m) to the network edge")
 ap.add_argument("--scale", type=float, default=1.0, help="multiply all SCATS counts (sensitivity test)")
 ap.add_argument("--tag", default="", help="suffix for output files")
+ap.add_argument("--site-totals", action="store_true", help="use whole-site SCATS totals everywhere (the old method)")
 args = ap.parse_args()
 T = args.tag
 
@@ -91,18 +94,54 @@ def approach_weights(node):
     return {k: v / tot for k, v in ws.items()} if tot else {}
 
 
+def direction(e):
+    """Compass direction of travel at the end of an edge (the CBD grid is about 20 degrees off north)."""
+    (x1, y1), (x2, y2) = e.getShape()[-2:]
+    b = math.degrees(math.atan2(x2 - x1, y2 - y1)) % 360
+    return ["northbound", "eastbound", "southbound", "westbound"][int(((b + 45) % 360) // 90)]
+
+
+# Car counts per approach where a DTP signal sheet has been read (00_detector_counts.py). Other sites use
+# the whole-site total, corrected by the median car share found at the measured sites.
+ac_path = os.path.join(WORK, "approach_counts.json")
+ac = None if args.site_totals or not os.path.exists(ac_path) else json.load(open(ac_path))
+car_share = ac["car_share_of_site_total"] if ac else 1.0
+spec = json.load(open(os.path.join(HERE, "detector_approaches.json")))["sites"] if ac else {}
+print("counts:", f"detector level where mapped, other sites x {car_share:.2f}" if ac else "whole-site totals")
+
 targets = defaultdict(lambda: defaultdict(float))  # hour -> edge -> count
-site_rows = []
+site_rows, unmatched = [], []
 for nid, ss in node_sites.items():
     node = net.getNode(nid)
     aw = approach_weights(node)
     if not aw:
         continue
-    daily = sum(s["daily"] for s in ss)
-    site_rows.append(dict(node=nid, sites=[(s["site_no"], s["name"]) for s in ss], daily=daily, approaches=aw))
+    measured = [s for s in ss if ac and str(s["site_no"]) in ac["sites"]]
+    rest = [s for s in ss if s not in measured]
+    daily = sum(s["daily"] for s in rest) * car_share
+    row = dict(node=nid, sites=[(s["site_no"], s["name"]) for s in ss], daily=daily, approaches=aw)
+    for s in measured:
+        counts = ac["sites"][str(s["site_no"])]["approaches"]
+        for d in spec[str(s["site_no"])].get("no_car_approaches", []):
+            counts = {**counts, d: [0] * 24}  # the sheet shows no car lane: tell routeSampler to keep cars off
+        for d, hourly in counts.items():
+            eds = [e for e in aw if direction(net.getEdge(e)) == d]
+            if not eds:
+                unmatched.append((s["site_no"], d, round(sum(hourly))))
+                continue
+            lanes = {e: len([l for l in net.getEdge(e).getLanes() if l.allows("passenger")]) for e in eds}
+            for h in range(SIM_START_H, SIM_END_H):
+                for e in eds:
+                    targets[h][e] += hourly[h] * lanes[e] / sum(lanes.values()) * args.scale
+        row["daily"] += ac["sites"][str(s["site_no"])]["car_daily"]
+        row["measured"] = True
+    site_rows.append(row)
     for h in range(SIM_START_H, SIM_END_H):
         for eid, f in aw.items():
-            targets[h][eid] += daily * share[h] * f * args.scale
+            if daily:
+                targets[h][eid] += daily * share[h] * f * args.scale
+if unmatched:
+    print("counted approaches with no car edge in the network (site, direction, vehicles/day):", unmatched)
 print(f"{len(site_rows)} junctions with SCATS counts, {len(skipped)} sites skipped")
 tot_site = {h: sum(v.values()) for h, v in targets.items()}
 
@@ -231,6 +270,10 @@ summary = dict(
     closed_edges=closed_ids,
     cutoff_destination_edges=sorted(cutoff_dest),
     counting_junctions=len(site_rows),
+    count_method="detector level where mapped" if ac else "whole-site totals",
+    measured_sites=sorted(int(k) for k in (ac or {}).get("sites", {})),
+    car_share_of_site_total=car_share,
+    counted_approaches_without_car_edge=unmatched,
     counting_sites=sorted({s[0] for r in site_rows for s in r["sites"]}),
     skipped_sites=skipped,
     target_vehicles_per_hour_sum_over_approaches={h: round(v) for h, v in tot_site.items()},

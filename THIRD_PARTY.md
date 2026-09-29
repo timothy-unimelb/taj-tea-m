@@ -17,6 +17,8 @@ The competition requires a list of all third-party material and APIs, including 
 | Claude Code | AI tool | Writing code | Anthropic terms | [fill in] |
 | RADAR roadworks (RADAR_Curated_Prod_roadworks) | Dataset | Past Melbourne closures the impact model learns from. `model/` | Dept of Infrastructure (DITRDCSA), National Freight Data Hub. Licence not confirmed, check before submission | No |
 | Traffic Signal Volume Data (SCATS) | Dataset | Traffic counts before and during past closures. `model/` | DTP, CC-BY 4.0 | No |
+| Traffic Signal Volume Data (SCATS), per detector | Dataset | Car counts per junction approach for the SUMO simulation, August 2026. `model/sumo/` | DTP, CC-BY 4.0 | No |
+| Traffic Signal Configuration Data Sheets | Dataset | Which SCATS detector counts cars on which approach, at 9 CBD junctions. `model/sumo/detector_approaches.json` | DTP, CC-BY 4.0 | No |
 | Traffic Lights (SCATS site locations) | Dataset | Locations of signal sites near each closure. `model/` | DTP, CC-BY 4.0 | No |
 | Victoria Traffic Count Locations (AADT) | Dataset | Daily traffic input for the queue calculation. `model/` | DTP, CC-BY 4.0 | No |
 | DuckDB | Library | Builds the impact model tables. `model/` | MIT | No |

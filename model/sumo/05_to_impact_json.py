@@ -37,13 +37,14 @@ def trips(d):
 
 
 def drove_block(d, closed):
-    """Trips departing in the hour whose last route in this run used the closed block."""
-    ids = set()
+    """Trips departing in the hour whose last route in this run used the closed block: id -> (first, last edge)."""
+    ids = {}
     for _, el in ET.iterparse(os.path.join(d, "vehroute.xml")):
         if el.tag == "vehicle":
             r = el.find("route")
             if t0 <= float(el.get("depart")) < t1 and r is not None and closed & set(r.get("edges").split()):
-                ids.add(el.get("id"))
+                e = r.get("edges").split()
+                ids[el.get("id")] = (e[0], e[-1])
             el.clear()
     return ids
 
@@ -75,16 +76,17 @@ def entered_block(d):
                if e.get("id") in closed_edges)
 
 
-per_seed, detours, jams = [], [], []
+per_seed, detours, jams, all_users = [], [], [], []
 for seed in args.seeds:
     b, c = run_dir("base", seed), run_dir("closure", seed)
     tb, tc = trips(b), trips(c)
     both = tb.keys() & tc.keys()
     users = drove_block(b, closed_edges)
+    all_users.append(users)
     hit = [v for v in both if v in affected]
     delay_all = sum(tc[v][0] - tb[v][0] for v in both) / 3600
     delay_hit = sum(tc[v][0] - tb[v][0] for v in hit) / 3600
-    detours += [tc[v][1] - tb[v][1] for v in hit]
+    detours += [tc[v][1] - tb[v][1] for v in users if v in tc and v in tb]
     jb, jc = max_jam(b), max_jam(c)
     jams.append(jb)
     growth = {lane: jc.get(lane, 0) - jb.get(lane, 0) for lane in jc}
@@ -99,6 +101,15 @@ for seed in args.seeds:
         teleports_base=teleports(b), teleports_closure=teleports(c)))
 
 
+# Noise floor: two normal runs with different seeds carry the same trips, so any "delay" between them is
+# run-to-run variation. A closure effect smaller than this can't be told apart from noise.
+delay_noise = []
+for s1, s2 in zip(args.seeds, args.seeds[1:]):
+    t1_, t2_ = trips(run_dir("base", s1)), trips(run_dir("base", s2))
+    delay_noise.append(round(sum(t2_[v][0] - t1_[v][0] for v in t1_.keys() & t2_.keys()) / 3600, 1))
+floor = max(abs(x) for x in delay_noise) if delay_noise else 0
+
+
 def rng(key, unit):
     vals = sorted(s[key] for s in per_seed)
     return {"low": round(vals[0]), "typical": round(statistics.median(vals)), "high": round(vals[-1]), "unit": unit}
@@ -106,32 +117,37 @@ def rng(key, unit):
 
 delay = rng("delay_veh_h_all", "vehicle-hours")
 
-# Diversions. No counter measures the closed lane, so give the spread of what the runs support:
-#   low      diverted trips that completed, scaled from --scale to full traffic
-#   typical  trips in the hour whose planned route used the block (full demand, no scaling)
-#   high     most cars entering the block in any base run, scaled to full traffic
-# (--scale keeps the same share of cars in every seed, so the completed count barely varies.)
+# Diversions. No counter measures the closed lane. Routes fitted to the counts (03_demand.py) plan few trips
+# through it, but in a normal run SUMO's live rerouting sends more drivers through it as a shortcut around
+# queues. Those drivers must go another way when it is closed, so the range is the cars entering the block
+# in each normal run: fewest, median and most across seeds, scaled to full traffic.
 planned = sum(1 for el in ET.parse(os.path.join(WORK, "affected.trips.xml")).getroot().iter("trip") if t0 <= float(el.get("depart")) < t1)
-div_vals = sorted([round(min(s["diverted_completed"] for s in per_seed) / args.scale), planned,
-                   round(max(s["entered_block_in_base_run"] for s in per_seed) / args.scale)])
-diverted = {"low": div_vals[0], "typical": div_vals[1], "high": div_vals[2], "unit": "vehicles"}
+ent = sorted(s["entered_block_in_base_run"] / args.scale for s in per_seed)
+diverted = {"low": round(ent[0]), "typical": round(statistics.median(ent)), "high": round(ent[-1]), "unit": "vehicles"}
 
-# Detour. Low is the shortest-distance detour on the closed network (the block, A'Beckett St, La Trobe St
-# and Elizabeth St form a rectangle, so it is tiny). Typical and high are what the simulated trips drove:
-# the median and upper quartile. duarouter picks the fastest route, and Little La Trobe St is a 20 km/h
-# living street, so the fastest detour is longer than the shortest one.
+# Detour. Low: the shortest way round for these drivers (median). Typical and high: the extra distance the
+# same drivers actually drove with the block closed, median and upper quartile over all seeds. Live rerouting
+# picks the fastest route, not the shortest, so driven detours vary a lot and some are negative.
 net_full, net_closed = load_net(), sumolib.net.readNet(os.path.join(WORK, "net_closed.net.xml"))
 short = []
-for el in ET.parse(os.path.join(WORK, "affected.trips.xml")).getroot().iter("trip"):
-    if t0 <= float(el.get("depart")) < t1:
-        f, t = el.get("from"), el.get("to")
-        a = net_full.getShortestPath(net_full.getEdge(f), net_full.getEdge(t), vClass="passenger")
-        c = net_closed.getShortestPath(net_closed.getEdge(f), net_closed.getEdge(t), vClass="passenger")
-        if a[0] and c[0]:
-            short.append(c[1] - a[1])
+for f, t in {ft for users in all_users for ft in users.values()}:
+    a = net_full.getShortestPath(net_full.getEdge(f), net_full.getEdge(t), vClass="passenger")
+    c = net_closed.getShortestPath(net_closed.getEdge(f), net_closed.getEdge(t), vClass="passenger")
+    if a[0] and c[0]:
+        short.append(c[1] - a[1])
 detours.sort()
 q = lambda xs, p: round(xs[min(len(xs) - 1, int(p * len(xs)))]) if xs else 0
-detour = {"low": round(statistics.median(short)) if short else 0, "typical": q(detours, 0.5), "high": q(detours, 0.75), "unit": "m"}
+detour = {"low": round(statistics.median(short)) if short else 0, "typical": max(0, q(detours, 0.5)), "high": max(0, q(detours, 0.75)), "unit": "m"}
+
+
+def discarded(d):
+    m = re.findall(r'<step [^>]*loaded="(\d+)"[^>]*discarded="(\d+)"', open(os.path.join(d, "summary.xml")).read())
+    return int(m[-1][1]) / int(m[-1][0]) if m else 0
+
+
+ac = json.load(open(os.path.join(WORK, "approach_counts.json")))
+latrobe = sum(v[args.hour] for v in ac["sites"]["2921"]["approaches"].values())
+drop = max(discarded(run_dir(sc, sd)) for sc in ("base", "closure") for sd in args.seeds)
 
 # Queue. The biggest jam growth on any lane is no bigger than the difference between two base runs,
 # so no queue result is reported.
@@ -139,7 +155,7 @@ noise = [round(max(jams[i + 1].get(l, 0) - v for l, v in jams[i].items())) for i
 hour_label = f"{args.hour % 12 or 12}{'am' if args.hour < 12 else 'pm'} to {(args.hour + 1) % 12 or 12}{'am' if args.hour + 1 < 12 else 'pm'}"
 demand = json.load(open(os.path.join(WORK, "demand_summary.json")))
 tele = max(s["teleports_closure"] for s in per_seed)
-noisy = delay["low"] < 0 <= delay["high"] or delay["high"] < 0
+noisy = delay["low"] < 0 <= delay["high"] or delay["high"] < 0 or abs(delay["typical"]) <= floor
 delay_text = ("The change in total travel time is too small to separate from run-to-run variation."
               if noisy else f"Total extra travel time is about {delay['typical']:,} vehicle-hours.")
 
@@ -149,15 +165,15 @@ result = {
     "label": "Early result",
     "provenance": "precomputed",
     "confidence": "low",
-    "confidence_note": "The street network comes from OpenStreetMap with guessed signal timings, traffic is fitted to signal counts rather than measured routes, and no counter measures the closed lane.",
+    "confidence_note": "Traffic is fitted to measured car counts at the surrounding junctions, but no counter measures the closed lane itself, routes are inferred, and signal timings are guessed.",
     "period": f"Monday {hour_label}, the morning peak",
     "recommended_window": None,
     "modes": {
         "cars": {
             "status": "modelled",
             "delay": delay, "forced_diversions": diverted, "detour": detour,
-            "summary": f"In the morning peak, tens to about a hundred drivers an hour must avoid the closed block. "
-                       f"Most detour about one block, depending on route choice. {delay_text}",
+            "summary": f"In the morning peak, about {diverted['low']} to {diverted['high']} drivers an hour use the block as a shortcut from La Trobe St to A'Beckett St and must go another way. "
+                       f"Most drive up to about {int(round(detour['high'], -1))} m further. {delay_text}",
         },
         "public_transport": {"status": "not modelled", "summary": "Trams are in the street network but no tram services were simulated."},
         "pedestrians": {"status": "not modelled", "summary": "SUMO can model pedestrians, but this run covers cars only."},
@@ -166,15 +182,24 @@ result = {
     "assumptions": [
         f"One simulated hour, {hour_label} on a weekday, after a 30 minute warm-up. Other hours of the works were not simulated.",
         "Street network from OpenStreetMap (© OpenStreetMap contributors), built with SUMO netconvert. Signal timings are guessed, not the real SCATS plans.",
+        (f"Traffic fitted to car counts per approach from SCATS stop-line detectors at the {len(demand['measured_sites'])} junctions around the closure "
+         f"(August 2026 weekdays, detector roles from DTP signal sheets), and to {len(demand['counting_sites']) - len(demand['measured_sites'])} other CBD signal sites, "
+         f"using SUMO routeSampler. Whole-site SCATS totals also count bikes, trams and queue loops, so the other sites' totals were cut to "
+         f"{demand['car_share_of_site_total']:.0%}, the car share found at the measured junctions.")
+        if demand.get("count_method", "").startswith("detector") else
         f"Traffic fitted to weekday counts at {len(demand['counting_sites'])} SCATS signal sites in the CBD, including 2921 SWANSTON/LATROBE, using SUMO routeSampler and the SCATS weekday hourly profile.",
-        (f"Only {args.scale:.0%} of that traffic was inserted. The counts are whole-intersection totals, and at site 2921 they all land on the two La Trobe St approaches, because both Swanston St approaches are tram only. "
-         "OpenStreetMap codes the eastbound approach as one lane, so it can't carry its share. The run therefore carries less than the counted traffic at this junction, and some cars never enter the network. Delay is likely understated.") if args.scale != 1 else
-        "Counts are whole-intersection totals, split across each junction's car approaches by lane count.",
+        (f"Only {args.scale:.0%} of that traffic was inserted, so delay is likely understated.") if args.scale != 1 else
+        "All of the counted traffic was inserted.",
         f"Closure: the only car lane on Swanston St between La Trobe St and Little La Trobe St ({', '.join(demand['closed_edges'])}, northbound) is closed. The rest of the block is tram only in OpenStreetMap, as on the street.",
-        "That lane is the only car entry to Little La Trobe St and the east end of A'Beckett St, so the closure cuts car access to them. Trips ending there were removed from both runs rather than counted.",
-        f"Diversions: no counter measures the closed lane, so the range spans what the runs support: completed diverted trips, trips planned through the block, and the most cars entering it in a normal run (the last two scaled to full traffic).",
-        "Detour: the shortest way round is only a few metres, because nearby streets form a loop. The typical and high values are what simulated drivers actually drove, with live rerouting.",
-        f"Delay is the extra travel time of the same trips with and without the closure, over all trips in the hour, across {len(args.seeds)} random seeds. Negative values mean the closure run happened to flow better.",
+        "That lane is the only car entry to Little La Trobe St and the east end of A'Beckett St, so the closure cuts car access to them. "
+        f"Trips ending there are removed from both runs rather than counted ({demand['removed_destination_cut_off_by_closure']} in this demand).",
+        f"Diversions: no counter measures the closed lane. Routes fitted to the counts plan {planned} trips through it in this hour, but in normal runs {diverted['low']} to {diverted['high']} drivers use it as a shortcut around queues. "
+        f"The range is those drivers. Measured counts cap it: every car entering the block comes from La Trobe St, which carries {latrobe:,.0f} cars in this hour, both directions together (SCATS detectors at site 2921).",
+        "The shortcut needs a right turn from westbound La Trobe St into Swanston St. The simulation allows it, but the signal plan for site 2921 shows no car right-turn signal there. If the turn is banned, almost no cars use the block.",
+        "Detour: the low value is the shortest way round for these drivers. Typical and high are the extra distance they actually drove with the block closed (median and upper quartile), with live rerouting.",
+        f"Up to {drop:.0%} of cars could not enter the network within 5 minutes and were dropped. Delay is likely understated.",
+        f"Delay is the extra travel time of the same trips with and without the closure, over all trips in the hour, across {len(args.seeds)} random seeds. "
+        f"Two normal runs differ by up to {floor:,.0f} vehicle-hours on their own, so a smaller effect is reported as noise.",
         f"Queue growth could not be separated from run-to-run variation. Normal runs differ from each other by {min(noise)} to {max(noise)} m on their worst lane, so no queue is reported.",
         f"Cars stuck for 5 minutes are moved on by SUMO (teleported). Up to {tele:,} teleports in a closure run.",
         "Trams keep running in reality, but no tram services were simulated, so tram delays are not included.",
@@ -184,7 +209,7 @@ result = {
 os.makedirs(OUT, exist_ok=True)
 json.dump(result, open(os.path.join(OUT, "swanston.json"), "w"), indent=2, ensure_ascii=False)
 json.dump(dict(hour=args.hour, scale=args.scale, per_seed=per_seed, diversions=diverted, planned_in_hour=planned,
-               detour_m=detour, shortest_detours_m=sorted(round(x) for x in short), simulated_detour_quartiles_m=[q(detours, 0.25), q(detours, 0.5), q(detours, 0.75)],
+               detour_m=detour, shortest_detour_median_m=detour["low"], simulated_detour_quartiles_m=[q(detours, 0.25), q(detours, 0.5), q(detours, 0.75)],
                n_diverted_trips_matched=len(detours), base_vs_base_worst_lane_m=noise), open(os.path.join(OUT, "summary.json"), "w"), indent=2)
 print(json.dumps(per_seed, indent=1))
 print("cars:", json.dumps(result["modes"]["cars"], indent=1))

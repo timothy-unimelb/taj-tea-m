@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Slide image: the closed block and where the drivers who used it go instead.
 
-    python3 06_plot.py --hour 8 --scale 0.5 --seeds 1 2 3 4 5 6
+    python3 06_plot.py --hour 8 --seeds 1 2 3 4 5 6 7 8 9 10
 
 Only trips whose normal route used the closed block are drawn: their normal routes in blue,
 their routes with the closure in red, averaged over the seeds and scaled to full traffic.
@@ -26,17 +26,36 @@ args = ap.parse_args()
 
 
 t0 = (args.hour - SIM_START_H) * 3600
-affected = {el.get("id") for el in ET.parse(os.path.join(WORK, "affected.trips.xml")).getroot().iter("trip")}
+
+
+net = load_net()
+closed, junction = find_closed_edges(net)
+
+
+def run_file(scenario, seed):
+    return os.path.join(WORK, "runs", f"{scenario}_h{args.hour}_x{args.scale:g}_s{seed}", "vehroute.xml")
+
+
+def block_users(seed):
+    """Drivers departing in the hour whose route in the normal run used the closed block."""
+    ids = set()
+    for _, v in ET.iterparse(run_file("base", seed)):
+        if v.tag == "vehicle":
+            r = v.find("route")
+            if t0 <= float(v.get("depart")) < t0 + 3600 and r is not None and set(r.get("edges").split()) & set(closed):
+                ids.add(v.get("id"))
+            v.clear()
+    return ids
 
 
 def route_use(scenario):
-    """Cars an hour on each edge, over affected trips only, averaged over seeds, at full traffic."""
+    """Cars an hour on each edge, over the block's users only, averaged over seeds, at full traffic."""
     use = {}
     for seed in args.seeds:
-        d = os.path.join(WORK, "runs", f"{scenario}_h{args.hour}_x{args.scale:g}_s{seed}", "vehroute.xml")
-        for _, v in ET.iterparse(d):
+        users = block_users(seed)
+        for _, v in ET.iterparse(run_file(scenario, seed)):
             if v.tag == "vehicle":
-                if v.get("id") in affected and t0 <= float(v.get("depart")) < t0 + 3600:
+                if v.get("id") in users and t0 <= float(v.get("depart")) < t0 + 3600:
                     r = v.find("route")
                     for e in (r.get("edges").split() if r is not None else []):
                         use[e] = use.get(e, 0) + 1 / len(args.seeds) / args.scale
@@ -44,8 +63,6 @@ def route_use(scenario):
     return use
 
 
-net = load_net()
-closed, junction = find_closed_edges(net)
 base, clos = route_use("base"), route_use("closure")
 
 grey, gains, losses = [], [], []
@@ -77,7 +94,7 @@ ax.annotate("Swanston St closed\nLa Trobe St to Little La Trobe St", (cx, cy), x
 ax.set_xlim(jx - args.radius, jx + args.radius); ax.set_ylim(jy - args.radius, jy + args.radius); ax.set_aspect("equal"); ax.axis("off")
 hour = f"{args.hour % 12 or 12}{'am' if args.hour < 12 else 'pm'}"
 ax.set_title(f"Paths taken by drivers who used the closed block, SUMO, weekday {hour} peak hour. Early result.\n"
-             "Paths include live rerouting around jams. The shortest detour is about one block.",
+             "Most use it as a shortcut around queues on La Trobe St. Traffic fitted to measured SCATS car counts.",
              fontsize=12, loc="left")
 ax.legend(handles=[Line2D([], [], color="#2f6fad", lw=4, label="Their normal routes"),
                    Line2D([], [], color="#c4462b", lw=4, label="Their routes with the closure"),
