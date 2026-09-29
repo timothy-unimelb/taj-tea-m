@@ -6,7 +6,7 @@ Keep it current. When a step's state changes, update it here in the same commit.
 
 State: **done**, **in progress**, **next**, **later**.
 
-## Where things stand (30 Sep, 7:45am)
+## Where things stand (30 Sep, 9:05am)
 
 Read this first when picking up the work. All of it is on branch `tim`, pushed, with lint and build passing. `main` does not have it yet (see step 1).
 
