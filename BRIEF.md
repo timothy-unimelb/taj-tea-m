@@ -62,7 +62,7 @@ From the whiteboard sketch. The sketch splits the flow into two phases: preparat
 - **Analyse scans.** Two parts. Code measures the scan. The agent interprets the measurements. See "Scan measurement" below.
 - **Impact model.** Built, in `model/`. It is not machine learning. It is a lookup table learned from about 2,700 past Melbourne closures (RADAR, 2024 to 2026) matched to SCATS signal counts within 200 m, plus an hour-by-hour queue calculation. Inputs: closure type, work hours, daily traffic, lanes open. Outputs: likely traffic change as a range, chance of a big drop, delay, queue length, forced diversions and the best work window. It runs in Python from CSVs in the repo. Not yet connected to the app. See `model/README.md`.
 - **Base reference data.** Traffic, pedestrian and public transport data from APIs. Where it feeds in is not decided.
-- **Report.** Generated in the app and saved to the device as a PDF. On return home, the phone's share sheet opens so the planner can email it to their team (Web Share API).
+- **Report.** Visual in-app impact report with category tabs and expandable recommendations. Export PDF opens a document preview, with browser print/save PDF for the prototype. Sharing is an explicit action using Web Share or a copy-link fallback.
 - **Storage.** Past projects live in the browser's localStorage for the demo. Supabase may come later.
 
 ## Scan measurement
@@ -84,13 +84,15 @@ This runs as a Python function (Vercel supports Python functions, or a small sep
 
 ## Report
 
-The layout is not decided. Current draft:
+The frontend layout is locked by the final Barrier Brain UI board supplied on 29 Sep. See DESIGN.md for the complete flow.
 
-- Header: date, time and location.
-- Before and after tables for pedestrians, buses and trams, cars, and trucks.
-- An in-app summary with visuals, plus a PDF export.
+- Header: project, date, morning peak, overall Moderate impact.
+- Overview, Traffic, Pedestrians, Public transport and Safety tabs.
+- Amber review-required decision, impact summary, aerial site overview and two expandable recommended actions.
+- Document-style PDF preview, explicit Share action, and planning disclaimer.
+- Fixed demo results: 620 m queue at 8:35 am, 45 m pedestrian detour, one vehicle access crossing, two controls for review and a 12 m western taper shift. These are structured demo fixtures, not live measurements or output from the Python model or an LLM. Explanatory copy is stored separately.
 
-"Before" is the street with no works. "After" is the plan once it is corrected for what the scan found. We will tune this once the agents run on real data. For now the report must look good, read easily and feel plausible.
+The earlier before/after modelling definition remains background for future model integration. The locked frontend uses the supplied impact summary and recommendations, without adding before/after tables.
 
 Figures on the sketches, such as "96%", are placeholders.
 
@@ -127,13 +129,12 @@ Mocked for Wednesday: impact model results, scan measurement. The approach for e
 
 When one is answered, delete it here, add a line to Decisions, and update the section it affects.
 
-- Does the report only flag problems, or also suggest fixes using equipment inventory (move a barrier, add a sign, add a VMS board)? This is the closest fit to RPM's brief.
-- Which metrics per mode (delay, queue length, detour distance, footpath width)?
 - Is the impact based on the plan as drawn, or the plan fitted to the scanned street?
 
 ## Decisions
 
 Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious.`
+
 
 - [29 Sep] Team: the app is called Barrier Brain. Mobile web app on Vercel, not native.
 - [29 Sep] Advait: the user is someone at a road company. Either the planner who drew the TGS, or whoever sets it up or verifies it. Refine later.
@@ -147,6 +148,7 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - [29 Sep] Advait: target is the Wed 30 Sep 12:30pm submission (3 slides plus a video demo), mocked where needed. Thursday only if shortlisted.
 - [29 Sep] Advait: the agents run on Claude. Claude reads the TGS for real in the Wednesday video. The other steps can stay mocked.
 - [29 Sep] Tamara: the impact model is a lookup from past closures plus a queue calculation, not machine learning. It is explainable, and its point estimate does not beat "no change", so it is shown as a range and a risk. Code and outputs in `model/`.
+- [29 Sep] Frontend requester: final UI board and supplied copy lock the nine-screen mobile flow. External LiDAR upload, incomplete-scan retry gate, review-required report with recommended actions, and document preview. No native scanning or AR. Structured demo quantities and severities remain separate from AI explanations. Explicit Share replaces automatic sharing on return home for this prototype.
 
 ## Terms
 

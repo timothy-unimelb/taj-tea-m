@@ -1,10 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Barrier Brain",
-  description: "FEIT Hackathon 2026",
+  description: "Assess temporary infrastructure before deployment. Barrier Brain site impact assessment prototype.",
 };
+
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#fafbf8" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

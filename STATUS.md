@@ -26,6 +26,7 @@ Done:
 ## Others
 Now:
 Done:
+- [23:16] Codex: completed the locked mobile frontend and report/PDF preview. app/, components/, lib/data.ts, data/mock/, public/assets/. Build and lint pass; browser flow and responsive checks complete. Evidence in design-qa.md and artifacts/qa/. Local production preview on port 3000. Analysis remains mocked.
 
 ## Assumptions
 [Anything a session guessed at because it wasn't specified. One line each, with the person's name.]

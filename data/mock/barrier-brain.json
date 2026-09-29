@@ -1,0 +1,43 @@
+{
+  "projects": [
+    { "id": "swan-street", "name": "Swan Street Work Zone", "date": "29 Sep 2026", "status": "Draft" },
+    { "id": "elizabeth-street", "name": "Elizabeth Street Closure", "date": "15 Sep 2026", "status": "Report ready" },
+    { "id": "footscray-road", "name": "Footscray Road Upgrade", "date": "02 Sep 2026", "status": "Analysing" }
+  ],
+  "tgs": {
+    "fileName": "Swan_Street_TGS.pdf",
+    "size": "2.4 MB",
+    "findings": ["Work zone identified", "Lane closure identified", "12 traffic control devices identified"],
+    "requiredVerification": ["Lane width", "Footpath clearance", "Work zone boundary", "Intersection approach"]
+  },
+  "scan": {
+    "areas": ["Lane geometry", "Footpath width", "Kerb and roadside clearance", "Work zone boundary", "Intersection approach"],
+    "initialCaptured": 4,
+    "completeCaptured": 5,
+    "missingArea": "Intersection approach"
+  },
+  "analysis": {
+    "provenance": "deterministic-demo-fixture",
+    "modelConnected": false,
+    "period": "Morning peak",
+    "metrics": { "queueLengthM": 620, "queuePeakTime": "8:35 am", "pedestrianDetourM": 45, "vehicleAccessPoints": 1, "controlsForReview": 2, "taperShiftM": 12 },
+    "severity": { "overall": "Moderate", "traffic": "High", "pedestrians": "Moderate", "transport": "Low", "safety": "Moderate" },
+    "steps": ["TGS interpreted", "Site geometry verified", "Traffic reference data matched", "Calculating knock-on effects", "Preparing recommendations"],
+    "sources": ["TGS geometry", "Verified site scan", "Traffic reference data"]
+  },
+  "explanations": {
+    "provenance": "scripted-demo-copy",
+    "aiGenerated": false,
+    "integrationNote": "Future AI explanations belong here and must reference structured analysis. They cannot supply measured values or severity.",
+    "decision": "Review the eastern taper position and pedestrian route protection before this setup is deployed.",
+    "sourceNote": "Based on the uploaded TGS, verified site scan and traffic/reference data.",
+    "transport": "Nearby stop remains accessible.",
+    "safety": "Two controls require review before deployment.",
+    "keyFindings": ["Significant traffic delays predicted during morning peak.", "Pedestrian access maintained with a temporary detour.", "Nearby public transport remains accessible.", "Two site controls require review before deployment."],
+    "actions": [
+      { "id": 1, "category": "traffic", "title": "Shift eastern taper 12 m west", "summary": "Maintains intersection clearance and reduces merge conflict.", "impact": "The current taper position reduces clearance near the intersection.", "why": "This may increase merging conflict during peak traffic.", "recommendation": "Shift the eastern taper approximately 12 m west before deployment." },
+      { "id": 2, "category": "pedestrians", "title": "Protect temporary pedestrian route", "summary": "Add physical separation and clear signage along the detour.", "impact": "The temporary pedestrian route crosses one vehicle access point.", "why": "People using the detour need a protected route past the work zone.", "recommendation": "Add physical separation and clear signage along the detour." }
+    ],
+    "disclaimer": "Barrier Brain supports pre-deployment planning and does not replace formal traffic management approval."
+  }
+}

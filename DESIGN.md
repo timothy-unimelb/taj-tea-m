@@ -1,34 +1,30 @@
 # Design language
 
-Status: NOT SET. Waiting on the designer's input. (The flow below is drafted. The look is not.)
+Status: LOCKED for the frontend prototype, 29 Sep 2026. The final Barrier Brain UI reference board supplied by the user is the primary visual source: `public/assets/barrier-brain-reference.png`.
 
-Until this is set, build structure only: system font stack, black on white, one grey for borders, no accent colour, no decoration.
+Use the supplied copy and workflow. Do not redesign or add screens without a new product request.
 
 ## Flow
-Drafted from the whiteboard sketch, 29 Sep. Mobile first: every screen is laid out for a phone. Home has a bottom nav bar.
+Locked frontend flow, 29 Sep. Mobile browser at 393 x 852, responsive from 375 to 430 px. Centre the phone-width app on desktop. No simulated device chrome or bottom navigation.
 
-Preparation:
-1. **Home.** A New button and a list of past projects.
-2. **Upload TGS.** The planner uploads the drawing as an image or PDF. A next button moves on.
-3. **Processing.** The agent analyses the TGS.
-4. **Done.** The TGS is analysed. The planner goes on to scan.
+1. **Projects.** New assessment, search and the three recent projects from the board.
+2. **Upload TGS.** PDF, PNG or JPG up to 20 MB. Demo file selected. Analyse TGS.
+3. **TGS analysis.** Brief progress state, then plan elements and areas requiring site verification.
+4. **Upload site scan.** External LiDAR app only. PLY, LAS, E57 or ZIP upload. Check scan completeness.
+5. **Incomplete scan.** Four of five areas captured. Intersection approach missing. View missing area or upload additional scan. No Continue action.
+6. **Complete scan.** Five of five areas captured. Generate impact report.
+7. **Generating report.** Five progressive processing steps, then automatically show the report.
+8. **Site Impact Report.** Overview, Traffic, Pedestrians, Public transport and Safety tabs. Amber review-required decision, impact summary, aerial site overview and expandable recommended actions.
+9. **Export preview.** Document-style report with site image, findings, actions and planning disclaimer. Browser print/save PDF. Share is an explicit action with native share or a copy-link fallback.
 
-On-site scan:
-5. **Scan list.** The agent lists each place to scan, with instructions. The planner scans each one in Scaniverse and uploads the exported file.
-6. **Scan check.** The app checks each upload covers the right spot. A passed scan shows a tick. A failed scan shows a cross and a retry button. OK moves on when all pass.
-7. **Processing.** The agent analyses the scans and generates the report.
-8. **Done.** View report, or return home. On return, the PDF is saved to the device and the phone's share sheet opens to email it to the team.
-9. **Report.** An in-app summary with visuals: charts, a map and headline figures. An export button makes the PDF.
-
-PDF report (draft): header with date, time and location. Then before and after tables (metric, before, after) for pedestrians, buses and trams, cars, and trucks.
+Use deterministic demo analysis values. Keep explanatory copy separate. The UI supports planning, not formal traffic management approval.
 
 ## Look
-[Filled in from the designer's references in design/. Claude can draft this from those files. The designer approves it.]
-- Type:
-- Colour:
-- Spacing, corners, borders:
-- Buttons, inputs, tables, lists:
-- References, and what to take from each:
+- Type: existing system sans-serif, bold headings, compact readable body.
+- Colour: warm white, deep green primary, sage secondary, restrained burnt orange. Amber review states, red high-impact/incomplete states. Always pair colour with words or icons.
+- Spacing, corners, borders: about 8 px rhythm, 20 px page padding, 14-16 px primary card corners, subtle borders and minimal shadows.
+- Buttons, inputs, tables, lists: 44 px minimum interactive targets, 48 px primary buttons, visible focus, keyboard-operable tabs, semantic disclosure rows and dialogs.
+- Reference: supplied final nine-screen board. Reuse its imagery. No stock-image search or new design direction.
 
 ## Never
 These make an app look AI-generated. Avoid them always.

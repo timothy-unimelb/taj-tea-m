@@ -8,6 +8,9 @@ The competition requires a list of all third-party material and APIs, including 
 | React | Library | UI rendering | MIT | No |
 | Tailwind CSS | Library | Styling | MIT | No |
 | Vercel | Hosting | Deploys the app | Vercel terms | No |
+| Phosphor Icons | Icon library | Consistent line icons and status symbols in the frontend | MIT | No |
+| User-supplied Barrier Brain UI reference board | Design and image source | Visual source; original street, LiDAR, plan and aerial artwork reused in the prototype | Supplied by the project user; underlying asset provenance not provided | No purchase by this implementation |
+| OpenAI Codex | AI tool | Frontend implementation and verification | OpenAI terms | User account |
 | Claude Code | AI tool | Writing code | Anthropic terms | [fill in] |
 | RADAR roadworks (RADAR_Curated_Prod_roadworks) | Dataset | Past Melbourne closures the impact model learns from. `model/` | Dept of Infrastructure (DITRDCSA), National Freight Data Hub. Licence not confirmed, check before submission | No |
 | Traffic Signal Volume Data (SCATS) | Dataset | Traffic counts before and during past closures. `model/` | DTP, CC-BY 4.0 | No |
