@@ -123,13 +123,28 @@ Mocked for Wednesday: impact model results, scan measurement. The approach for e
 
 ## Open questions
 
-Answers go here, then into the sections above.
+When one is answered, delete it here, add a line to Decisions, and update the section it affects.
 
-- Does the report only flag problems, or also suggest fixes using equipment inventory (move a barrier, add a sign, add a VMS board)?
+- Does the report only flag problems, or also suggest fixes using equipment inventory (move a barrier, add a sign, add a VMS board)? This is the closest fit to RPM's brief.
 - Which metrics per mode (delay, queue length, detour distance, footpath width)?
 - Is the impact based on the plan as drawn, or the plan fitted to the scanned street?
 - Which model runs the agents?
 - Does the TGS analysis run for real in the Wednesday video, or is it mocked too?
+
+## Decisions
+
+Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious.`
+
+- [29 Sep] Team: the app is called Barrier Brain. Mobile web app on Vercel, not native.
+- [29 Sep] Advait: the user is someone at a road company. Either the planner who drew the TGS, or whoever sets it up or verifies it. Refine later.
+- [29 Sep] Advait: report "before" is the street with no works. "After" is the plan corrected for what the scan found. For now the report must look good and feel plausible.
+- [29 Sep] Advait: base reference data feeds the simulation as well as the report.
+- [29 Sep] Advait: the TGS gives the hours of the works. The planner does not enter them.
+- [29 Sep] Advait: a scan fails the check if it misses the spot it was meant to cover. Checked by phone location at upload, within about 15 m (the 15 m is a guess).
+- [29 Sep] Advait: scan measurement is geometry code (Open3D, trimesh, laspy), then the agent reads the numbers. Mocked for Wednesday, but the approach must be clear. See "Scan measurement".
+- [29 Sep] Advait: the report is saved to the device as a PDF. On return home the share sheet opens to email it. For the demo it only needs to be viewable.
+- [29 Sep] Advait: past projects live in localStorage. Supabase maybe later.
+- [29 Sep] Advait: target is the Wed 30 Sep 12:30pm submission (3 slides plus a video demo), mocked where needed. Thursday only if shortlisted.
 
 ## Terms
 

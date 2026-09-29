@@ -28,7 +28,7 @@ It is an app for one workflow, not a marketing site. No landing page, hero secti
 
 STATUS.md tracks what each Claude session is working on. Anyone can ask "what's happening?" and get a straight answer.
 
-1. Read it at the start of every session.
+1. Read it and BRIEF.md at the start of every session.
 2. Before starting a task, add it under "Now" in the section of the person running this session.
 3. Update that line when something changes: a decision, a blocker, a partial result.
 4. When the task is done, move it to "Done" with one line on what changed and where.
@@ -36,7 +36,23 @@ STATUS.md tracks what each Claude session is working on. Anyone can ask "what's 
    `git pull --rebase && git add STATUS.md && git commit -m "status: <short note>" && git push`
 6. When asked "what's happening?", answer from STATUS.md and `git log --oneline -15`. Five lines or fewer.
 
-Only edit your own person's section. Anyone can edit "Links".
+Only edit your own person's section. Anyone can edit "Links". If the person running the session has no section, add one.
+
+## BRIEF.md
+
+BRIEF.md is the shared record of what we are building and why. It holds the brief, the approach for each part, open questions and a decisions log. Anyone can edit it.
+
+1. Read it at the start of every session, with STATUS.md.
+2. Whenever the person you are working with makes a product decision, answers an open question or changes the idea, record it before you finish the task:
+   - add a dated line under "Decisions" with their name,
+   - update the section it affects,
+   - delete the answered question from "Open questions".
+3. When you hit a question only the team can answer, add it under "Open questions".
+4. If the change affects the one-paragraph summary at the top of this file, update that too. If it changes the screens, update the Flow in DESIGN.md.
+5. Commit BRIEF.md with the work it relates to. If there is no other work, push it on its own:
+   `git pull --rebase && git add BRIEF.md && git commit -m "brief: <short note>" && git push`
+
+Don't record implementation details here. Those live in the code and git history.
 
 ## How to explain things
 
