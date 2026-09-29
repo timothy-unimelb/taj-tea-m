@@ -9,3 +9,4 @@ The competition requires a list of all third-party material and APIs, including 
 | Tailwind CSS | Library | Styling | MIT | No |
 | Vercel | Hosting | Deploys the app | Vercel terms | No |
 | Claude Code | AI tool | Writing code | Anthropic terms | [fill in] |
+| Sample TGS (Swanston St closure) | Image | Mock TGS upload and shape of mock data. `data/mock/tgs/` | Invarion sample drawing. Licence not confirmed, check before submission | No |
