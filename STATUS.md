@@ -1,7 +1,7 @@
 # Status
 
 ## Links
-- App:
+- App: https://taj-tea-m.vercel.app
 - Repo: https://github.com/timothy-unimelb/taj-tea-m
 
 ## Joel
