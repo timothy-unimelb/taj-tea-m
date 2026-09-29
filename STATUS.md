@@ -10,6 +10,7 @@ Done:
 
 ## Tim
 Now:
+- [05:40] SUMO real car counts: per-detector SCATS counts and DTP signal sheets for the junctions around the closure, replacing whole-site totals (which also count bikes, trams and queue loops). model/sumo/.
 Done:
 - [05:15] Handover: PLAN.md "Where things stand" lists what is real, what is still demo data, known limits and next steps. README rewritten.
 - [05:05] TGS prompt moved to prompts/tgs-analysis.md so the team can refine it without editing code.
