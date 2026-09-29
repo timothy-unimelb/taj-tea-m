@@ -1,5 +1,5 @@
 """Shared helpers for the Swanston closure simulation."""
-import csv, os, sys
+import csv, math, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 # SUMO_WORK and SUMO_OUT point a variant (such as a network with a turn banned) at its own folders.
 WORK = os.environ.get("SUMO_WORK", os.path.join(HERE, "work"))
@@ -82,3 +82,18 @@ def find_closed_edges(net):
                 closed.append(e.getID())
                 break
     return closed, j
+
+
+def direction(e):
+    """Compass direction of travel at the end of an edge (the CBD grid is about 20 degrees off north)."""
+    (x1, y1), (x2, y2) = e.getShape()[-2:]
+    b = math.degrees(math.atan2(x2 - x1, y2 - y1)) % 360
+    return ["northbound", "eastbound", "southbound", "westbound"][int(((b + 45) % 360) // 90)]
+
+
+def nearest_car_junction(net, lat, lon):
+    """The junction with car traffic nearest a SCATS site, and its distance in metres."""
+    x, y = net.convertLonLat2XY(lon, lat)
+    cands = [n for n in net.getNodes() if any(e.allows("passenger") for e in n.getIncoming())]
+    j = min(cands, key=lambda n: (n.getCoord()[0] - x) ** 2 + (n.getCoord()[1] - y) ** 2)
+    return j, math.hypot(j.getCoord()[0] - x, j.getCoord()[1] - y)

@@ -26,6 +26,8 @@ ap.add_argument("--edge-margin", type=float, default=120.0, help="ignore sites t
 ap.add_argument("--scale", type=float, default=1.0, help="multiply all SCATS counts (sensitivity test)")
 ap.add_argument("--tag", default="", help="suffix for output files")
 ap.add_argument("--site-totals", action="store_true", help="use whole-site SCATS totals everywhere (the old method)")
+ap.add_argument("--min-lane-daily", type=float, default=600.0,
+                help="skip an unmeasured site whose car total split over its approach lanes gives fewer cars per lane a day than this")
 args = ap.parse_args()
 T = args.tag
 
@@ -58,9 +60,21 @@ minx, miny, maxx, maxy = min_max = None, None, None, None
 xs = [p[0] for e in base_scc for p in e.getShape()]
 ys = [p[1] for e in base_scc for p in e.getShape()]
 minx, maxx, miny, maxy = min(xs), max(xs), min(ys), max(ys)
-car_nodes = [n for n in net.getNodes() if any(e.getID() in scc_ids for e in n.getIncoming() if e.allows("passenger"))]
+# Approaches of a counting site: every car edge that ends within --max-node-dist of the site and starts outside
+# that radius (or enters the network there). Not "the edges into the nearest junction": netconvert leaves some
+# divided junctions as several nodes, and an edge that enters the network at its cut edge is not in the strongly
+# connected component, so until 30 Sep 9am a boundary site could put its whole total on one interior approach.
+# Car counts per approach where a DTP signal sheet has been read (00_detector_counts.py). Other sites use
+# the whole-site total, corrected by the median car share found at the measured sites.
+ac_path = os.path.join(WORK, "approach_counts.json")
+ac = None if args.site_totals or not os.path.exists(ac_path) else json.load(open(ac_path))
+car_share = ac["car_share_of_site_total"] if ac else 1.0
+spec = json.load(open(os.path.join(HERE, "detector_approaches.json")))["sites"] if ac else {}
+print("counts:", f"detector level where mapped, other sites x {car_share:.2f}" if ac else "whole-site totals")
+
+in_ids = {e.getID() for e in reach(seed_edge, False)}  # edges from which La Trobe St can be reached
 lonmin, latmin, lonmax, latmax = BBOX
-node_sites = defaultdict(list)
+site_edges = {}
 skipped = []
 for s in sites:
     if s["type"] != "INT":
@@ -73,17 +87,26 @@ for s in sites:
     if x < minx + args.edge_margin or x > maxx - args.edge_margin or y < miny + args.edge_margin or y > maxy - args.edge_margin:
         skipped.append((s["site_no"], s["name"], "near network edge"))
         continue
-    best = min(car_nodes, key=lambda n: (n.getCoord()[0] - x) ** 2 + (n.getCoord()[1] - y) ** 2)
-    d = math.hypot(best.getCoord()[0] - x, best.getCoord()[1] - y)
-    if d > args.max_node_dist:
-        skipped.append((s["site_no"], s["name"], f"no junction within {args.max_node_dist:.0f} m ({d:.0f} m)"))
+    eds = []
+    for e in net.getEdges():
+        if not e.allows("passenger") or e.getID() not in in_ids:
+            continue
+        (sx, sy), (ex, ey) = e.getShape()[0], e.getShape()[-1]
+        if math.hypot(ex - x, ey - y) <= args.max_node_dist and (math.hypot(sx - x, sy - y) > args.max_node_dist or not e.getIncoming()):
+            eds.append(e)
+    if not eds:
+        skipped.append((s["site_no"], s["name"], f"no car approach within {args.max_node_dist:.0f} m"))
         continue
-    node_sites[best.getID()].append(s)
+    if len(eds) < 3 and not (ac and str(s["site_no"]) in ac["sites"]):
+        # a whole-site total needs the whole junction: where the cross street is tram-only (Swanston St) or
+        # cut, the total would land on the one street that is left
+        skipped.append((s["site_no"], s["name"], f"only {len(eds)} car approaches in the network for a whole-site total"))
+        continue
+    site_edges[s["site_no"]] = (s, eds)
 
 
-def approach_weights(node):
-    """Car edges entering the junction and their share of the site total."""
-    eds = [e for e in node.getIncoming() if e.allows("passenger") and e.getID() in scc_ids]
+def approach_weights(eds):
+    """Car approach edges and their share of the site total, by lane count (of the wider edge upstream if wider)."""
     ws = {}
     for e in eds:
         lanes = len([l for l in e.getLanes() if l.allows("passenger")])
@@ -94,32 +117,25 @@ def approach_weights(node):
     return {k: v / tot for k, v in ws.items()} if tot else {}
 
 
-def direction(e):
-    """Compass direction of travel at the end of an edge (the CBD grid is about 20 degrees off north)."""
-    (x1, y1), (x2, y2) = e.getShape()[-2:]
-    b = math.degrees(math.atan2(x2 - x1, y2 - y1)) % 360
-    return ["northbound", "eastbound", "southbound", "westbound"][int(((b + 45) % 360) // 90)]
-
-
-# Car counts per approach where a DTP signal sheet has been read (00_detector_counts.py). Other sites use
-# the whole-site total, corrected by the median car share found at the measured sites.
-ac_path = os.path.join(WORK, "approach_counts.json")
-ac = None if args.site_totals or not os.path.exists(ac_path) else json.load(open(ac_path))
-car_share = ac["car_share_of_site_total"] if ac else 1.0
-spec = json.load(open(os.path.join(HERE, "detector_approaches.json")))["sites"] if ac else {}
-print("counts:", f"detector level where mapped, other sites x {car_share:.2f}" if ac else "whole-site totals")
 
 targets = defaultdict(lambda: defaultdict(float))  # hour -> edge -> count
 site_rows, unmatched = [], []
-for nid, ss in node_sites.items():
-    node = net.getNode(nid)
-    aw = approach_weights(node)
+for site_no, (s, eds) in site_edges.items():
+    ss = [s]
+    aw = approach_weights(eds)
     if not aw:
         continue
     measured = [s for s in ss if ac and str(s["site_no"]) in ac["sites"]]
     rest = [s for s in ss if s not in measured]
     daily = sum(s["daily"] for s in rest) * car_share
-    row = dict(node=nid, sites=[(s["site_no"], s["name"]) for s in ss], daily=daily, approaches=aw)
+    lanes_total = sum(len([l for l in e.getLanes() if l.allows("passenger")]) for e in eds)
+    if not measured and daily / lanes_total < args.min_lane_daily:
+        # A site total this small at a CBD junction means only the side street has detectors (the sheets for
+        # 2906 and 4512 show Elizabeth St with none). Splitting it would starve the main street, so leave the
+        # site unconstrained.
+        skipped.append((s["site_no"], s["name"], f"site total gives {daily / lanes_total:.0f} cars per lane a day: main street probably has no detectors"))
+        continue
+    row = dict(node=sorted({e.getToNode().getID() for e in eds}), sites=[(s["site_no"], s["name"]) for s in ss], daily=daily, approaches=aw)
     for s in measured:
         counts = ac["sites"][str(s["site_no"])]["approaches"]
         for d in spec[str(s["site_no"])].get("no_car_approaches", []):
@@ -142,7 +158,9 @@ for nid, ss in node_sites.items():
                 targets[h][eid] += daily * share[h] * f * args.scale
 if unmatched:
     print("counted approaches with no car edge in the network (site, direction, vehicles/day):", unmatched)
-print(f"{len(site_rows)} junctions with SCATS counts, {len(skipped)} sites skipped")
+print(f"{len(site_rows)} junctions with SCATS counts, {len(skipped)} sites skipped:", skipped)
+few = [(r["sites"][0][1], len(r["approaches"])) for r in site_rows if not r.get("measured") and len(r["approaches"]) < 3]
+print("unmeasured sites with fewer than 3 car approaches in the network (their total is split over what is there):", few)
 tot_site = {h: sum(v.values()) for h, v in targets.items()}
 
 # ---- edgedata file with hourly counts ---------------------------------------------------------

@@ -1,5 +1,0 @@
-<!-- Bans the right turn from westbound La Trobe St (279989317#0) into the Swanston St block (208489241).
-     Site 2921's signal plan shows no car right-turn signal there, only a bike hook turn. See README, "Right turn banned". -->
-<connections>
-  <delete from="279989317#0" to="208489241"/>
-</connections>

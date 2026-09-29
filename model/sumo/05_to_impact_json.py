@@ -3,7 +3,7 @@
 
     python3 05_to_impact_json.py --hours 8 --seeds 1 2 3                  # one hour
     python3 05_to_impact_json.py --hours $(seq 7 21) --seeds 1 2 3 4 5    # the works period, 7am to 10pm
-    ... --banned-summary work/noright/output/summary.json                  # add the banned right turn case
+    ... --allowed-summary work/allowed/output/summary.json                 # add the sensitivity case: La Trobe St right turn allowed
 
 Reads work/runs/{base,closure}_h<hour>_x<scale>_s<seed>/ and writes
   output/swanston.json   ImpactResult (shape in lib/impact/types.ts and model/IMPACT_CONTRACT.md)
@@ -19,7 +19,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--hours", type=int, nargs="+", default=[8])
 ap.add_argument("--scale", type=float, default=1.0)
 ap.add_argument("--seeds", type=int, nargs="+", default=[1, 2, 3])
-ap.add_argument("--banned-summary", help="summary.json of the same runs on the network with the La Trobe St right turn banned")
+ap.add_argument("--allowed-summary", help="summary.json of the same runs on the network with the La Trobe St right turn allowed (02_build_net.sh --allow ...)")
 args = ap.parse_args()
 hours = sorted(args.hours)
 
@@ -137,14 +137,16 @@ for s1, s2 in zip(args.seeds, args.seeds[1:]):
 floor = max(abs(x) for x in floor_pairs) if floor_pairs else 0
 
 # Diversions. No counter measures the closed lane. Routes fitted to the counts (03_demand.py) plan few trips
-# through it, but in a normal run SUMO's live rerouting sends more drivers through it as a shortcut around
-# queues. Those drivers must go another way when it is closed, so the range is the cars entering the block
-# in the normal runs, added up over the hours: fewest, median and most across seeds.
+# through it, but in a normal run SUMO's live rerouting can send more drivers through it. Those drivers must go
+# another way when it is closed, so the range is the cars entering the block in the normal runs, added up over
+# the hours: fewest, median and most across seeds. The network bans the right turn from La Trobe St westbound
+# (turn_rules.json, from the signal sheet). The same runs with that turn allowed are the sensitivity case: if
+# given, their median is the high end.
 diverted = spread([total("entered_block_in_base_run", s) for s in args.seeds], "vehicles")
-allowed = dict(diverted)
-banned = json.load(open(args.banned_summary))["diversions"] if args.banned_summary else None
-if banned:
-    diverted["low"] = banned["typical"]  # the low end assumes cars can't turn right from La Trobe St
+main = dict(diverted)
+allowed = json.load(open(args.allowed_summary))["diversions_main"] if args.allowed_summary else None
+if allowed:
+    diverted["high"] = max(diverted["high"], allowed["typical"])
 planned = sum(1 for el in ET.parse(os.path.join(WORK, "affected.trips.xml")).getroot().iter("trip")
               if any(window(h)[0] <= float(el.get("depart")) < window(h)[1] for h in hours))
 
@@ -173,7 +175,10 @@ over = "in this hour" if one else f"over the works period ({span})"
 noisy = delay["low"] < 0 <= delay["high"] or delay["high"] < 0 or abs(delay["typical"]) <= floor
 delay_text = ("The change in total travel time is too small to separate from run-to-run variation."
               if noisy else f"Total extra travel time is about {delay['typical']:,} vehicle-hours.")
-banned_text = (f" If cars can't turn right from La Trobe St into Swanston St, it is about {banned['typical']:,}." if banned else "")
+allowed_text = (f" If cars may turn right from La Trobe St into Swanston St, which the signal plan does not show, it is about {allowed['typical']:,}." if allowed else "")
+calib = json.load(open(os.path.join(OUT, "calibration.json")))["overall"] if os.path.exists(os.path.join(OUT, "calibration.json")) else None
+turn_report = json.load(open(os.path.join(WORK, "turn_rules_report.json"))) if os.path.exists(os.path.join(WORK, "turn_rules_report.json")) else None
+actuated = any(x in open(NET).read() for x in ('type="actuated"', 'type="delay_based"'))
 
 result = {
     "model": "sumo",
@@ -181,14 +186,16 @@ result = {
     "label": "Early result",
     "provenance": "precomputed",
     "confidence": "low",
-    "confidence_note": "Traffic is fitted to measured car counts at the surrounding junctions, but no counter measures the closed lane itself, routes are inferred, and signal timings are guessed.",
+    "confidence_note": "Traffic is fitted to measured car counts at the surrounding junctions" + (f" and the simulation reproduces them on {calib['geh_under_5']:.0%} of counted street-hours" if calib else "")
+                       + ", but no counter measures the closed lane itself, routes are inferred, and the signals are SUMO's actuated control, not the real SCATS plans." if actuated else
+                       "Traffic is fitted to measured car counts at the surrounding junctions, but no counter measures the closed lane itself, routes are inferred, and signal timings are guessed.",
     "period": f"Monday {span}" + (", the morning peak" if hours == [8] else ", the works hours" if not one else ""),
     "recommended_window": None,
     "modes": {
         "cars": {
             "status": "modelled",
             **({} if noisy else {"delay": delay}), "forced_diversions": diverted, "detour": detour,
-            "summary": f"About {allowed['low']:,} to {allowed['high']:,} drivers {over} use the block as a shortcut from La Trobe St to A'Beckett St and must go another way.{banned_text} "
+            "summary": f"About {main['low']:,} to {main['high']:,} drivers {over} enter the block from La Trobe St and must go another way.{allowed_text} "
                        + (f"Most drive no further, some up to about {int(round(detour['high'], -1))} m. " if detour["typical"] == 0 else
                         f"Most drive up to about {int(round(detour['high'], -1))} m further. ") + delay_text,
         },
@@ -199,7 +206,13 @@ result = {
     "assumptions": [
         (f"One simulated hour, {span} on a weekday, after a 30 minute warm-up. Other hours of the works were not simulated." if one else
          f"Every hour of the works, {span} on a weekday, simulated separately after a 30 minute warm-up, and added up. The busiest hour for diversions is {label(peak_h)} to {label(peak_h + 1)}."),
-        "Street network from OpenStreetMap (© OpenStreetMap contributors), built with SUMO netconvert. Signal timings are guessed, not the real SCATS plans.",
+        "Street network from OpenStreetMap (© OpenStreetMap contributors), built with SUMO netconvert for left-hand traffic. "
+        + ("Signals are SUMO's delay-based actuated control (green is held while delayed cars keep arriving and empty phases are skipped, roughly as SCATS does), not the real SCATS plans." if actuated else
+           "Signal timings are guessed, not the real SCATS plans."),
+        ("Turn rules: OpenStreetMap turn restrictions and lane arrows, plus DTP signal sheets at 3 junctions (turn_rules.json): "
+         f"{sum(1 for r in turn_report['osm_restrictions'] if r['status'] == 'applied')} OpenStreetMap restrictions in the area applied, "
+         "the right turn from La Trobe St westbound into Swanston St banned (the signal sheet shows no car right-turn signal), and hook turns at Russell St and Elizabeth St made from the kerb lane.")
+        if turn_report else "Turn rules come from OpenStreetMap only.",
         (f"Traffic fitted to car counts per approach from SCATS stop-line detectors at the {len(demand['measured_sites'])} junctions around the closure "
          f"(August 2026 weekdays, detector roles from DTP signal sheets), and to {len(demand['counting_sites']) - len(demand['measured_sites'])} other CBD signal sites, "
          f"using SUMO routeSampler. Whole-site SCATS totals also count bikes, trams and queue loops, so the other sites' totals were cut to "
@@ -212,13 +225,16 @@ result = {
         f"Closure: the only car lane on Swanston St between La Trobe St and Little La Trobe St ({', '.join(demand['closed_edges'])}, northbound) is closed. The rest of the block is tram only in OpenStreetMap, as on the street.",
         "That lane is the only car entry to Little La Trobe St and the east end of A'Beckett St, so the closure cuts car access to them. "
         f"Trips ending there are removed from both runs rather than counted ({demand['removed_destination_cut_off_by_closure']} in this demand).",
-        f"Diversions: no counter measures the closed lane. Routes fitted to the counts plan {planned} trips through it {over}, but in normal runs {allowed['low']:,} to {allowed['high']:,} drivers use it as a shortcut around queues. "
-        f"The range is those drivers. Measured counts cap it: every car entering the block comes from La Trobe St, which carries {latrobe:,.0f} cars {over}, both directions together (SCATS detectors at site 2921).",
-        ("The shortcut needs a right turn from westbound La Trobe St into Swanston St. The signal plan for site 2921 shows no car right-turn signal there, only a bike hook turn. "
-         f"The same runs with that turn banned give {banned['low']:,} to {banned['high']:,} drivers (median {banned['typical']:,}), which is the low end of the range.") if banned else
-        "The shortcut needs a right turn from westbound La Trobe St into Swanston St. The simulation allows it, but the signal plan for site 2921 shows no car right-turn signal there. If the turn is banned, almost no cars use the block.",
+        f"Diversions: no counter measures the closed lane. Routes fitted to the counts plan {planned} trips through it {over}; in normal runs {main['low']:,} to {main['high']:,} drivers enter it, and the range is those drivers. "
+        f"Measured counts cap it: every car entering the block comes from La Trobe St, which carries {latrobe:,.0f} cars {over}, both directions together (SCATS detectors at site 2921).",
+        ("Cars can only enter the block by turning left from eastbound La Trobe St: the signal sheet for site 2921 shows no car right-turn signal from westbound La Trobe St, only a bike hook turn, so that turn is banned. "
+         f"If it were allowed, drivers would use the block as a shortcut to A'Beckett St: the same runs with the turn allowed give {allowed['low']:,} to {allowed['high']:,} drivers (median {allowed['typical']:,}), which is the high end of the range. Not yet checked on site.") if allowed else
+        "Cars can only enter the block by turning left from eastbound La Trobe St: the signal sheet for site 2921 shows no car right-turn signal from westbound La Trobe St, so that turn is banned. Not yet checked on site.",
         "Detour: the low value is the shortest way round for these drivers. Typical and high are the extra distance they actually drove with the block closed (median and upper quartile), with live rerouting.",
-        f"Up to {drop:.0%} of cars could not enter the network within 5 minutes and were dropped. Delay is likely understated.",
+        f"Up to {drop:.0%} of cars could not enter the network within 5 minutes and were dropped." + (" Delay is likely understated." if drop > 0.02 else ""),
+        (f"Calibration check (08_check_counts.py): in the normal runs the simulated traffic matches the counts within GEH 5 on {calib['geh_under_5']:.0%} of counted street-hours "
+         f"(worst hour {calib['worst_hour_geh_under_5']:.0%}), mean speed {calib['mean_speed_kmh']:.0f} km/h.") if calib else
+        "The simulation's own traffic was not checked against the counts, only the routes chosen before simulating.",
         f"Delay is the extra travel time of the same trips with and without the closure, for all trips {over}, across {len(args.seeds)} random seeds. "
         f"Two normal runs differ by up to {floor:,.0f} vehicle-hours on their own"
         + (f", and the closure runs differ from normal by {delay['low']:,} to {delay['high']:,}, so no delay is reported (like queue, it would be rated on noise)." if noisy else ", so a smaller effect would be reported as noise."),
@@ -230,8 +246,8 @@ result = {
 }
 os.makedirs(OUT, exist_ok=True)
 json.dump(result, open(os.path.join(OUT, "swanston.json"), "w"), indent=2, ensure_ascii=False)
-json.dump(dict(hours=hours, scale=args.scale, seeds=args.seeds, diversions=diverted, diversions_turn_allowed=allowed,
-               diversions_turn_banned=banned, by_hour=by_hour, planned_through_block=planned, delay=delay,
+json.dump(dict(hours=hours, scale=args.scale, seeds=args.seeds, diversions=diverted, diversions_main=main,
+               diversions_turn_allowed=allowed, by_hour=by_hour, calibration=calib, planned_through_block=planned, delay=delay,
                delay_noise_pairs=floor_pairs, detour_m=detour, simulated_detour_quartiles_m=[q(detours, 0.25), q(detours, 0.5), q(detours, 0.75)],
                n_detours=len(detours), queue_growth_max_m=round(max(growths)), base_vs_base_worst_lane_m=noise,
                max_dropped_share=round(drop, 3), per_seed=per_seed), open(os.path.join(OUT, "summary.json"), "w"), indent=2)

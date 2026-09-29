@@ -4,25 +4,25 @@
   "label": "Early result",
   "provenance": "precomputed",
   "confidence": "low",
-  "confidence_note": "Traffic is fitted to measured car counts at the surrounding junctions, but no counter measures the closed lane itself, routes are inferred, and signal timings are guessed.",
+  "confidence_note": "Traffic is fitted to measured car counts at the surrounding junctions and the simulation reproduces them on 71% of counted street-hours, but no counter measures the closed lane itself, routes are inferred, and the signals are SUMO's actuated control, not the real SCATS plans.",
   "period": "Monday 7am to 10pm, the works hours",
   "recommended_window": null,
   "modes": {
     "cars": {
       "status": "modelled",
       "forced_diversions": {
-        "low": 77,
-        "typical": 812,
-        "high": 871,
+        "low": 110,
+        "typical": 123,
+        "high": 1077,
         "unit": "vehicles"
       },
       "detour": {
         "low": 0,
-        "typical": 0,
-        "high": 315,
+        "typical": 13,
+        "high": 75,
         "unit": "m"
       },
-      "summary": "About 755 to 871 drivers over the works period (7am to 10pm) use the block as a shortcut from La Trobe St to A'Beckett St and must go another way. If cars can't turn right from La Trobe St into Swanston St, it is about 77. Most drive no further, some up to about 320 m. The change in total travel time is too small to separate from run-to-run variation."
+      "summary": "About 110 to 162 drivers over the works period (7am to 10pm) enter the block from La Trobe St and must go another way. If cars may turn right from La Trobe St into Swanston St, which the signal plan does not show, it is about 1,077. Most drive up to about 80 m further. The change in total travel time is too small to separate from run-to-run variation."
     },
     "public_transport": {
       "status": "not modelled",
@@ -38,20 +38,22 @@
     }
   },
   "assumptions": [
-    "Every hour of the works, 7am to 10pm on a weekday, simulated separately after a 30 minute warm-up, and added up. The busiest hour for diversions is 5pm to 6pm.",
-    "Street network from OpenStreetMap (© OpenStreetMap contributors), built with SUMO netconvert. Signal timings are guessed, not the real SCATS plans.",
-    "Traffic fitted to car counts per approach from SCATS stop-line detectors at the 9 junctions around the closure (August 2026 weekdays, detector roles from DTP signal sheets), and to 43 other CBD signal sites, using SUMO routeSampler. Whole-site SCATS totals also count bikes, trams and queue loops, so the other sites' totals were cut to 57%, the car share found at the measured junctions.",
-    "All of the counted traffic was inserted. The fitted traffic matches 99% of counted streets within the usual tolerance (GEH under 5) in every hour.",
+    "Every hour of the works, 7am to 10pm on a weekday, simulated separately after a 30 minute warm-up, and added up. The busiest hour for diversions is 6pm to 7pm.",
+    "Street network from OpenStreetMap (© OpenStreetMap contributors), built with SUMO netconvert for left-hand traffic. Signals are SUMO's delay-based actuated control (green is held while delayed cars keep arriving and empty phases are skipped, roughly as SCATS does), not the real SCATS plans.",
+    "Turn rules: OpenStreetMap turn restrictions and lane arrows, plus DTP signal sheets at 3 junctions (turn_rules.json): 39 OpenStreetMap restrictions in the area applied, the right turn from La Trobe St westbound into Swanston St banned (the signal sheet shows no car right-turn signal), and hook turns at Russell St and Elizabeth St made from the kerb lane.",
+    "Traffic fitted to car counts per approach from SCATS stop-line detectors at the 9 junctions around the closure (August 2026 weekdays, detector roles from DTP signal sheets), and to 34 other CBD signal sites, using SUMO routeSampler. Whole-site SCATS totals also count bikes, trams and queue loops, so the other sites' totals were cut to 57%, the car share found at the measured junctions.",
+    "All of the counted traffic was inserted. The fitted traffic matches 100% of counted streets within the usual tolerance (GEH under 5) in every hour.",
     "Closure: the only car lane on Swanston St between La Trobe St and Little La Trobe St (208489241, northbound) is closed. The rest of the block is tram only in OpenStreetMap, as on the street.",
     "That lane is the only car entry to Little La Trobe St and the east end of A'Beckett St, so the closure cuts car access to them. Trips ending there are removed from both runs rather than counted (0 in this demand).",
-    "Diversions: no counter measures the closed lane. Routes fitted to the counts plan 67 trips through it over the works period (7am to 10pm), but in normal runs 755 to 871 drivers use it as a shortcut around queues. The range is those drivers. Measured counts cap it: every car entering the block comes from La Trobe St, which carries 11,686 cars over the works period (7am to 10pm), both directions together (SCATS detectors at site 2921).",
-    "The shortcut needs a right turn from westbound La Trobe St into Swanston St. The signal plan for site 2921 shows no car right-turn signal there, only a bike hook turn. The same runs with that turn banned give 71 to 92 drivers (median 77), which is the low end of the range.",
+    "Diversions: no counter measures the closed lane. Routes fitted to the counts plan 88 trips through it over the works period (7am to 10pm); in normal runs 110 to 162 drivers enter it, and the range is those drivers. Measured counts cap it: every car entering the block comes from La Trobe St, which carries 11,686 cars over the works period (7am to 10pm), both directions together (SCATS detectors at site 2921).",
+    "Cars can only enter the block by turning left from eastbound La Trobe St: the signal sheet for site 2921 shows no car right-turn signal from westbound La Trobe St, only a bike hook turn, so that turn is banned. If it were allowed, drivers would use the block as a shortcut to A'Beckett St: the same runs with the turn allowed give 972 to 1,129 drivers (median 1,077), which is the high end of the range. Not yet checked on site.",
     "Detour: the low value is the shortest way round for these drivers. Typical and high are the extra distance they actually drove with the block closed (median and upper quartile), with live rerouting.",
-    "Up to 16% of cars could not enter the network within 5 minutes and were dropped. Delay is likely understated.",
-    "Delay is the extra travel time of the same trips with and without the closure, for all trips over the works period (7am to 10pm), across 5 random seeds. Two normal runs differ by up to 318 vehicle-hours on their own, and the closure runs differ from normal by -521 to 284, so no delay is reported (like queue, it would be rated on noise).",
-    "Queue growth could not be separated from run-to-run variation. Normal runs differ from each other by up to 205 m on their worst lane, so no queue is reported.",
-    "Cars stuck for 5 minutes are moved on by SUMO (teleported). Up to 167 teleports in a closure run.",
+    "Up to 8% of cars could not enter the network within 5 minutes and were dropped. Delay is likely understated.",
+    "Calibration check (08_check_counts.py): in the normal runs the simulated traffic matches the counts within GEH 5 on 71% of counted street-hours (worst hour 54%), mean speed 10 km/h.",
+    "Delay is the extra travel time of the same trips with and without the closure, for all trips over the works period (7am to 10pm), across 5 random seeds. Two normal runs differ by up to 502 vehicle-hours on their own, and the closure runs differ from normal by -436 to 361, so no delay is reported (like queue, it would be rated on noise).",
+    "Queue growth could not be separated from run-to-run variation. Normal runs differ from each other by up to 212 m on their worst lane, so no queue is reported.",
+    "Cars stuck for 5 minutes are moved on by SUMO (teleported). Up to 440 teleports in a closure run.",
     "Trams keep running in reality, but no tram services were simulated, so tram delays are not included."
   ],
-  "generated_at": "2026-09-29T20:58:01+00:00"
+  "generated_at": "2026-09-29T23:01:18+00:00"
 }

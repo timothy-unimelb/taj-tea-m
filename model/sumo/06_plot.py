@@ -94,7 +94,7 @@ ax.annotate("Swanston St closed\nLa Trobe St to Little La Trobe St", (cx, cy), x
 ax.set_xlim(jx - args.radius, jx + args.radius); ax.set_ylim(jy - args.radius, jy + args.radius); ax.set_aspect("equal"); ax.axis("off")
 hour = f"{args.hour % 12 or 12}{'am' if args.hour < 12 else 'pm'}"
 ax.set_title(f"Paths taken by drivers who used the closed block, SUMO, weekday {hour} peak hour. Early result.\n"
-             "Most use it as a shortcut around queues on La Trobe St. Traffic fitted to measured SCATS car counts.",
+             "They enter from eastbound La Trobe St (the right turn from westbound is banned). Traffic fitted to measured SCATS car counts.",
              fontsize=12, loc="left")
 ax.legend(handles=[Line2D([], [], color="#2f6fad", lw=4, label="Their normal routes"),
                    Line2D([], [], color="#c4462b", lw=4, label="Their routes with the closure"),

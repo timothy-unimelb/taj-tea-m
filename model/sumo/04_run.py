@@ -28,6 +28,7 @@ ap.add_argument("--teleport", type=int, default=300, help="seconds stuck before 
 ap.add_argument("--max-mem-gb", type=float, default=3.0)
 ap.add_argument("--max-minutes", type=float, default=20.0)
 ap.add_argument("--queue-radius", type=float, default=600.0)
+ap.add_argument("--warnings", action="store_true", help="keep SUMO warnings in log.txt (where teleports happen); off by default, the log gets big")
 args = ap.parse_args()
 
 tag = f"{args.scenario}_h{args.hour}_x{args.scale:g}_s{args.seed}"
@@ -68,7 +69,7 @@ print("jam detectors:", n)
 sumo_bin = os.path.join(os.environ["SUMO_HOME"], "bin", "sumo")
 cmd = [sumo_bin, "-n", netfile, "-r", routes, "-a", add, "--seed", str(args.seed),
        "--begin", str(begin), "--end", str(end), "--scale", str(args.scale),
-       "--step-length", "1", "--no-step-log", "--no-warnings",
+       "--step-length", "1", "--no-step-log", *([] if args.warnings else ["--no-warnings"]),
        "--tripinfo-output", f"{run}/tripinfo.xml",
        "--vehroute-output", f"{run}/vehroute.xml", "--vehroute-output.last-route", "true",
        "--vehroute-output.exit-times", "false",
