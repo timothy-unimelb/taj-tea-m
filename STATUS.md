@@ -10,9 +10,19 @@ Done:
 
 ## Tim
 Now:
-- [04:30] Swappable impact models (PLAN.md step 6a). Contract, switch, Tamara's model in TypeScript (live, default) and Swanston demo consistency are done and pushed. SUMO plug-in in progress in model/sumo/.
-- [branch tim] Real TGS analysis: Claude (via Vercel AI Gateway) reads the uploaded TGS and returns plan elements and scan points. app/api/analyse-tgs/, lib/, components/. Branch tim is based on raina. Code done, build and lint pass. Working locally on Claude Sonnet 5.5 with paid gateway credit: the sample TGS takes about 20 s.
+- [04:15] SUMO plug-in for Swanston (PLAN.md step 6a part 2), model/sumo/. A first run grew to 300 GB of memory and crashed the laptop: far too much traffic for the network, and settings that let stuck cars pile up in memory. The run script now kills SUMO over 3 GB or 20 minutes and simulates one peak hour. Full demand still gridlocks, so testing lower demand. Stop by about 6am if it isn't believable.
 Done:
+- [04:00] Swappable impact models: contract (lib/impact/types.ts, model/IMPACT_CONTRACT.md), IMPACT_MODEL switch, written severity rule, Tamara's model ported to TypeScript and live as the default, report reads only the impact result and shows method and assumptions. Swanston naming and copy, saved demo TGS analysis, tighter work hours prompt. Commit bc59d87. Vercel preview built.
+- [branch tim] Real TGS analysis: Claude Sonnet 5.5 via Vercel AI Gateway reads the uploaded TGS and returns plan elements and scan points. About 20 s and 3.5 cents per run.
+
+Review before merging `tim` into `main`:
+- Raina's doc changes that came with her branch: DESIGN.md is now "LOCKED" (it was "NOT SET"), the flow was replaced with her 9 screens, open questions were deleted from BRIEF.md, and "share sheet opens on return home" became an explicit Share button. Agree these as a team.
+- Swanston changes: the project is now "Swanston Street Work Zone". Report copy, the safety finding and two recommended actions were rewritten for this TGS. The safety finding and actions are still fixed demo copy, because scan measurement isn't connected. Trams and pedestrians show "Review required", not a rating, because no model covers them yet.
+- Default impact model: `mvm` (Tamara's lookup, run live in TypeScript). Nothing needs setting on Vercel. `IMPACT_MODEL=sumo` would switch to the SUMO result once it exists, and it only covers the Swanston sample.
+- Severity limits in lib/impact/severity.ts are a first cut by us. Check them with RPM Hire mentors and Tamara.
+- For Tamara: the P10/P90 docstring question, ranking windows by diversions when the road is closed, and whether a "road closed" group can be added. All in PLAN.md step 6a.
+- Known gap: every project, including "Elizabeth Street Closure", shows the Swanston result, because there is only one demo analysis.
+- Upload limit copy still says 20 MB but Vercel accepts 4.5 MB until Blob storage is in.
 
 ## Advait
 Now:
