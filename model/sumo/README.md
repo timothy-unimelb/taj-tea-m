@@ -7,7 +7,7 @@ An experiment. It simulates cars around the sample TGS closure (Swanston St clos
 ## What it does
 
 1. Downloads OpenStreetMap for the CBD and builds a SUMO street network (cars and trams).
-2. Builds weekday traffic that matches SCATS signal counts at about 70 CBD signal sites, including 2921 SWANSTON/LATROBE, hour by hour (SUMO routeSampler).
+2. Builds weekday traffic that matches SCATS signal counts at 52 CBD signal sites, including 2921 SWANSTON/LATROBE, hour by hour (SUMO routeSampler).
 3. Makes two versions of the same traffic: the normal street, and one where the Swanston St car lane on the closed block is shut. Trips that used the block get a new route. Trips that end at a place the closure cuts off are removed from both.
 4. Runs both for one hour (default 8am to 9am) after a 30 minute warm-up, for several random seeds.
 5. Compares the same trips across the two runs: extra travel time, how many drivers had to avoid the block, extra distance, and queue growth.
@@ -48,25 +48,27 @@ A normal one-hour run now takes 1 to 4 minutes and under 0.5 GB.
 
 ## Findings so far
 
-Weekday 8am to 9am, 6 random seeds, 50% of the counted traffic (`output/summary.json`):
+Weekday 8am to 9am, 6 random seeds, 50% of the counted traffic (`output/summary.json`). Reviewed by a second session on 30 Sep; its fixes are applied.
 
 | | Result |
 |---|---|
-| Drivers who must avoid the closed block | about 44 an hour at full traffic (22 simulated at 50%) |
-| Extra distance each | 227 m typical, 227 to 416 m for the middle half (shortest routes) |
+| Drivers who must avoid the closed block | tens to about a hundred an hour (44 to 100). No counter measures this lane. |
+| Extra distance each | 7 m shortest way round; simulated drivers went 114 m typical, 377 m upper quartile, with live rerouting |
 | Extra total travel time | −81 to +41 vehicle-hours across seeds: too small to separate from run-to-run variation |
-| Largest queue growth within 600 m | 53 to 184 m, on a different lane each seed, so partly variation |
+| Queue | not reported: two normal runs differ by 114 to 205 m on their worst lane, as much as any closure effect |
 | Teleports (cars stuck 5 minutes) | 36 to 72 per run |
 
-What this says: in OpenStreetMap the closed block is tram only apart from one northbound car lane, so few cars use it and a short detour absorbs them. This is much smaller than the lookup model's estimate (about 10,000 diversions a day), which assumes half of the intersection's 47,000 daily vehicles use Swanston St. The team should check which is closer to reality, for example with the SCATS detector counts for the Swanston approach at site 2921.
+What this says: the block's only car lane is a short northbound lane that must exit at Little La Trobe St or A'Beckett St. The rest is tram only, and Swanston St south of La Trobe St is permit only. So few cars use it. The lookup model's estimate (about 10,100 diversions a day) assumes half of site 2921's traffic uses Swanston St, but that traffic is on La Trobe St. The detector-level SCATS counts for site 2921 (the right-turn lane from La Trobe St westbound) would settle the real number.
 
 ## Not yet credible
 
-- **The network jams above 50% of the counted traffic.** 70% already grows without limit. Real signal plans, turn bans and hook turns are missing, and netconvert's junctions have less capacity than the real ones. Until that is fixed, delay and queue are understated.
-- **Delay and queue are within noise.** More seeds or longer runs would narrow them, but the network fix matters more.
-- **Live rerouting sends cars through the block as a shortcut in the base run** (40 to 69 an hour at 50%). Diversions count planned routes only.
-- **One hour only.** The TGS works run 7am to 10pm. Other hours were not simulated.
+- **No count constrains the closed lane.** SCATS counts are intersection totals, and routeSampler used the lane to fill the La Trobe St counts. 708 of the 1,067 daily trips through it share one origin and destination street, and one hour has 301 while others have 22 to 103. Hence the wide diversion range.
+- **The demand split overloads one approach.** At site 2921 the whole count lands on the two La Trobe St approaches, since both Swanston St approaches are tram only. OSM codes the eastbound one as one lane (about 800 cars an hour), against a target of 1,636 at full traffic. So the 50% run carries about a third of the count at this junction, and about 12% of cars never enter. Real signal plans and per-approach detector counts would fix this.
+- **Delay and queue are within noise.**
+- **Trips that lose access are removed, not counted.** The closed lane is the only car entry to Little La Trobe St and the east end of A'Beckett St.
+- **One hour only.** The TGS works run 7am to 10pm.
 - **No trams, pedestrians or trucks.** SUMO can do all three. Trams would need PTV GTFS timetables.
+- **Permit-only section.** netconvert let cars onto the permit-only section of Swanston St south of La Trobe St (OSM way 208505379). It doesn't connect to the La Trobe junction, but it adds some unrealistic traffic.
 
 ## History
 

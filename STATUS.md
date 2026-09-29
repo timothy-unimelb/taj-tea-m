@@ -11,7 +11,7 @@ Done:
 ## Tim
 Now:
 Done:
-- [04:25] SUMO plug-in for Swanston, model/sumo/ (README there). Early result, low confidence, precomputed, `IMPACT_MODEL=sumo`. About 44 drivers an hour must avoid the block, about 227 m detour, delay within noise. Runs at 50% of counted traffic because the simulated network jams above that. Slide image in model/sumo/output/swanston-closure.png. The first run crashed the laptop (300 GB); runs are now capped at 3 GB and 20 minutes.
+- [04:25] SUMO plug-in for Swanston, model/sumo/ (README there). Early result, low confidence, precomputed, `IMPACT_MODEL=sumo`. Tens to about a hundred drivers an hour must avoid the block, most detour about one block, delay and queue within noise. Reviewed by a second session and corrected. Slide image in model/sumo/output/swanston-closure.png. The first run crashed the laptop (300 GB); runs are now capped at 3 GB and 20 minutes.
 - [04:00] Swappable impact models: contract (lib/impact/types.ts, model/IMPACT_CONTRACT.md), IMPACT_MODEL switch, written severity rule, Tamara's model ported to TypeScript and live as the default, report reads only the impact result and shows method and assumptions. Swanston naming and copy, saved demo TGS analysis, tighter work hours prompt. Commit bc59d87. Vercel preview built.
 - [branch tim] Real TGS analysis: Claude Sonnet 5.5 via Vercel AI Gateway reads the uploaded TGS and returns plan elements and scan points. About 20 s and 3.5 cents per run.
 
@@ -19,7 +19,7 @@ Review before merging `tim` into `main`:
 - Raina's doc changes that came with her branch: DESIGN.md is now "LOCKED" (it was "NOT SET"), the flow was replaced with her 9 screens, open questions were deleted from BRIEF.md, and "share sheet opens on return home" became an explicit Share button. Agree these as a team.
 - Swanston changes: the project is now "Swanston Street Work Zone". Report copy, the safety finding and two recommended actions were rewritten for this TGS. The safety finding and actions are still fixed demo copy, because scan measurement isn't connected. Trams and pedestrians show "Review required", not a rating, because no model covers them yet.
 - Default impact model: `mvm` (Tamara's lookup, run live in TypeScript). Nothing needs setting on Vercel. `IMPACT_MODEL=sumo` switches to the SUMO early result, which only covers the Swanston sample; other sites fall back to `mvm`.
-- The two models disagree a lot for Swanston: lookup about 10,100 diversions over the day, SUMO about 44 an hour at peak. The lookup assumes half of the intersection's traffic uses the closed block, which is mostly tram only. Decide which to show in the video, and say which it is.
+- The two models disagree a lot for Swanston: lookup about 10,100 diversions over the day, SUMO tens to about a hundred an hour at peak. The lookup assumes half of the intersection's traffic uses the closed block, which is mostly tram only. Decide which to show in the video, and say which it is.
 - Severity limits in lib/impact/severity.ts are a first cut by us. Check them with RPM Hire mentors and Tamara.
 - For Tamara: the P10/P90 docstring question, ranking windows by diversions when the road is closed, and whether a "road closed" group can be added. All in PLAN.md step 6a.
 - Known gap: every project, including "Elizabeth Street Closure", shows the Swanston result, because there is only one demo analysis.

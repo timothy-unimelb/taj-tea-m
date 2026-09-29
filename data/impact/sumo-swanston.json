@@ -4,7 +4,7 @@
   "label": "Early result",
   "provenance": "precomputed",
   "confidence": "low",
-  "confidence_note": "The street network comes from OpenStreetMap with guessed signal timings, and traffic is fitted to signal counts, not measured routes.",
+  "confidence_note": "The street network comes from OpenStreetMap with guessed signal timings, traffic is fitted to signal counts rather than measured routes, and no counter measures the closed lane.",
   "period": "Monday 8am to 9am, the morning peak",
   "recommended_window": null,
   "modes": {
@@ -16,25 +16,19 @@
         "high": 41,
         "unit": "vehicle-hours"
       },
-      "max_queue": {
-        "low": 53,
-        "typical": 104,
-        "high": 184,
-        "unit": "m"
-      },
       "forced_diversions": {
         "low": 44,
-        "typical": 44,
-        "high": 44,
+        "typical": 52,
+        "high": 100,
         "unit": "vehicles"
       },
       "detour": {
-        "low": 227,
-        "typical": 227,
-        "high": 416,
+        "low": 7,
+        "typical": 114,
+        "high": 377,
         "unit": "m"
       },
-      "summary": "In the morning peak hour about 44 drivers must avoid the closed block, adding about 227 m each. The change in total travel time is too small to separate from run-to-run variation."
+      "summary": "In the morning peak, tens to about a hundred drivers an hour must avoid the closed block. Most detour about one block, depending on route choice. The change in total travel time is too small to separate from run-to-run variation."
     },
     "public_transport": {
       "status": "not modelled",
@@ -52,16 +46,16 @@
   "assumptions": [
     "One simulated hour, 8am to 9am on a weekday, after a 30 minute warm-up. Other hours of the works were not simulated.",
     "Street network from OpenStreetMap (© OpenStreetMap contributors), built with SUMO netconvert. Signal timings are guessed, not the real SCATS plans.",
-    "Traffic fitted to weekday counts at 52 SCATS signal sites in the CBD, including 2921 SWANSTON/LATROBE, using SUMO routeSampler and the SCATS weekday hourly profile. Only 50% of that traffic was inserted, because the simulated network jams above that (70% already grows without limit). Diversions are scaled back up to full traffic. Delay and queue are as simulated, so they are likely understated.",
-    "Closure: the car lane of Swanston St between La Trobe St and Little La Trobe St (208489241) is closed to all vehicles. The rest of that block is tram only in OpenStreetMap.",
-    "Drivers whose route used the closed block get a new shortest route before they leave, and every car can reroute every 5 minutes. 368 trips of 346,604 ended at a place the closure cuts off and were removed from both runs.",
-    "Delay is the extra travel time of the same trips with and without the closure, over all trips in the hour. Negative values mean the closure run happened to flow better, which is run-to-run variation.",
-    "Queue is the largest growth in jam length on any lane within 600 m. The worst lane differs between seeds, so part of it is variation too.",
-    "In OpenStreetMap the closed block is tram only apart from one northbound car lane, so few cars use it: about 44 an hour at full traffic.",
-    "Ranges come from 6 random seeds (delay, diversions, queue). The detour range is the middle half of the shortest-route detours of the diverted trips.",
-    "Diversions count trips whose planned route used the closed block. SUMO's live rerouting also sent some cars through the block as a shortcut in the normal run; those are not counted.",
-    "Cars stuck for 5 minutes are moved on by SUMO (teleported). Up to 72 teleports in a closure run, which points to congestion the real network may not have.",
+    "Traffic fitted to weekday counts at 52 SCATS signal sites in the CBD, including 2921 SWANSTON/LATROBE, using SUMO routeSampler and the SCATS weekday hourly profile.",
+    "Only 50% of that traffic was inserted. The counts are whole-intersection totals, and at site 2921 they all land on the two La Trobe St approaches, because both Swanston St approaches are tram only. OpenStreetMap codes the eastbound approach as one lane, so it can't carry its share. The run therefore carries less than the counted traffic at this junction, and some cars never enter the network. Delay is likely understated.",
+    "Closure: the only car lane on Swanston St between La Trobe St and Little La Trobe St (208489241, northbound) is closed. The rest of the block is tram only in OpenStreetMap, as on the street.",
+    "That lane is the only car entry to Little La Trobe St and the east end of A'Beckett St, so the closure cuts car access to them. Trips ending there were removed from both runs rather than counted.",
+    "Diversions: no counter measures the closed lane, so the range spans what the runs support: completed diverted trips, trips planned through the block, and the most cars entering it in a normal run (the last two scaled to full traffic).",
+    "Detour: the shortest way round is only a few metres, because nearby streets form a loop. The typical and high values are what simulated drivers actually drove, with live rerouting.",
+    "Delay is the extra travel time of the same trips with and without the closure, over all trips in the hour, across 6 random seeds. Negative values mean the closure run happened to flow better.",
+    "Queue growth could not be separated from run-to-run variation. Normal runs differ from each other by 114 to 205 m on their worst lane, so no queue is reported.",
+    "Cars stuck for 5 minutes are moved on by SUMO (teleported). Up to 72 teleports in a closure run.",
     "Trams keep running in reality, but no tram services were simulated, so tram delays are not included."
   ],
-  "generated_at": "2026-09-29T18:25:12+00:00"
+  "generated_at": "2026-09-29T18:48:19+00:00"
 }
