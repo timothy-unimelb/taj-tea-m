@@ -8,7 +8,7 @@ State: **done**, **in progress**, **next**, **later**.
 
 ## Where things stand (30 Sep, 9:05am)
 
-Read this first when picking up the work. All of it is on branch `tim`, pushed, with lint and build passing. `main` does not have it yet (see step 1).
+Read this first when picking up the work. All of it is on `main` (merged from `tim` on 30 Sep, 10am, with lint and build passing).
 
 **Real**
 - TGS analysis: Claude Sonnet 5.5 via Vercel AI Gateway reads an uploaded PDF, PNG or JPG (`app/api/analyse-tgs/route.ts`, prompt in `prompts/tgs-analysis.md`, output shape in `lib/tgs-analysis.ts`). About 20 s and 3.5 cents a run. "Use demo TGS" loads a saved result (`data/mock/tgs/swanston-analysis.json`) and says so.
@@ -32,7 +32,7 @@ Read this first when picking up the work. All of it is on branch `tim`, pushed, 
 - Uploads over 4.5 MB fail on Vercel although the screen says 20 MB (step 1, Blob).
 
 **Next, in order**
-1. Team review and merge `tim` into `main` (step 1). Decisions needed are listed in STATUS.md under Tim, "Review before merging".
+1. Decide whether the app switches to the new SUMO result (it would move the car rating from Moderate to High, see STATUS.md under Tim).
 2. Answers from Tamara on the questions in step 6a, including the site-total finding.
 3. Scan work: one real Scaniverse export measured offline (step 4).
 4. Impact model follow-ups (step 6): SUMO credibility (6b) before other sites (6c).
@@ -44,11 +44,11 @@ Read this first when picking up the work. All of it is on branch `tim`, pushed, 
 - `node_modules/.bin/jiti model/check_ts_port.ts` checks the TypeScript port against the Python.
 - SUMO: always run through `model/sumo/04_run.py`, which kills SUMO above 3 GB or 20 minutes. A run without limits used 300 GB and crashed the laptop.
 
-## 1. Foundations (done, merge pending)
+## 1. Foundations (done)
 
 - **done** Branch `tim` created from `raina`. It has Raina's prototype plus the work below. `main` is untouched.
 - **done** Server route for Claude calls: `app/api/analyse-tgs/route.ts`, through Vercel AI Gateway.
-- **next** Team reviews `tim`, then merge it into `main` with a pull request. Raina's branch changes shared docs (DESIGN.md "LOCKED", open questions removed, auto share dropped), so the team should agree to those first.
+- **done** `tim` merged into `main` on 30 Sep, 10am (fast-forward, lint and build passing). Raina's shared-doc changes (DESIGN.md "LOCKED", open questions removed, auto share dropped) came with it; the team can still revisit them.
 - **done** Vercel preview deployment of `tim` runs the TGS analysis. On Vercel the OIDC token comes with each request, so the route reads it with `@vercel/oidc`.
 - **later** File storage with Vercel Blob. The browser uploads straight to Blob and sends the route a link. Needed for files over 4.5 MB, which Vercel Functions reject, and for LiDAR scans. Chosen over Supabase Storage for now: same Vercel project, less setup. Revisit if we adopt Supabase for projects.
 - **done** One sample site throughout. The project and report now say Swanston Street, matching the TGS.
@@ -153,5 +153,6 @@ User accounts, error handling, tests on measurement and model code, AI cost limi
 - [30 Sep 5:09am] Tim: handover docs. "Where things stand" added at the top of this file, README rewritten, pointers in CLAUDE.md, model/README.md, DESIGN.md.
 - [30 Sep 7:00am] Tim: SUMO now fitted to car counts per approach from SCATS detectors and DTP signal sheets at 9 junctions (model/sumo/detector_approaches.json, 00_detector_counts.py). Whole-site totals overstated cars 1.3 to 3.5 times, which caused the old gridlock. Full traffic, 10 seeds: 21 to 97 shortcut drivers an hour, delay within noise. Lookup's 10,000 a day ruled out for Swanston. Caveat: the shortcut needs a right turn the signal plan doesn't show.
 - [30 Sep 7:30am] Tim: SUMO roadmap written into step 6. Less janky (6b: turn rules, actuated signals, simulated-vs-count check) before any site (6c: closure from the TGS, per-site config, sheet reading, service).
+- [30 Sep 10am] Tim: `tim` merged into `main` (fast-forward, 30 commits, lint and build pass). Vercel production now serves the Swanston report from the saved SUMO result.
 - [30 Sep 9am] Tim: SUMO less janky (6b items 3 and 4), done on branch `tim-sumo-refinement` and merged into `tim` at 9:55am. The network had been built for right-hand traffic and netconvert had dropped 20 OpenStreetMap turn restrictions; both fixed, with the sheet's right-turn ban as the main case. Delay-based signals. New calibration check of simulated traffic against the counts found three demand bugs (boundary sites, side-street-only sites, cars on tram-only Swanston St). Now 71% of counted street-hours within GEH 5, afternoon peak still too congested. Diversions about 123 (110 to 162) over the works hours, about 1,080 if the right turn is allowed. App numbers unchanged until the team reviews.
 - [30 Sep 7:45am] Tim: SUMO covers every hour of the works (7am to 10pm, 320 runs). About 810 shortcut drivers over the works hours with the La Trobe St right turn allowed, about 77 with it banned; the report shows 77 to 871. Delay left out when it is noise, so the rating rests on diversions (Moderate).
