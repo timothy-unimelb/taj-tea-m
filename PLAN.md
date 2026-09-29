@@ -18,7 +18,7 @@ State: **done**, **in progress**, **next**, **later**.
 ## 2. TGS analysis with Claude (done, with follow-ups)
 
 - **done** Claude Sonnet 5.5 reads the uploaded TGS and returns JSON: site, closure type, hours, lanes, detour, equipment, pedestrian measures, 4 to 8 scan points, unclear items. Schema in `lib/tgs-analysis.ts`. Shown on the TGS complete and scan upload screens. About 20 s and 3.5 cents per run.
-- **next** Test a PDF TGS. Only the WebP sample has been tested.
+- **done** PDF TGS tested: the Swanston sample as a PDF reads correctly in about 17 s. Work hours are read inconsistently (only in the small inset map), so tighten the prompt when the impact model needs them.
 - **later** Optional: save one good result for the demo TGS so rehearsals are free and instant. Real uploads still go to Claude.
 - **later** Recover the drawing's scale by matching it to map data (Vicmap or City of Melbourne open data). Not Google Maps: its terms ban extracting data.
 - **later** Upload limit copy says 20 MB but Vercel allows 4.5 MB until Blob is in. Raina's copy is locked, so check with her.
@@ -38,6 +38,15 @@ Plan in BRIEF.md "Scan measurement": Open3D, trimesh, laspy. Find ground, kerb a
 ## 5. Plan vs street comparison with Claude (later)
 
 Claude reads the TGS analysis and the scan measurements, flags each conflict ("footpath 1.4 m clear, plan needs 1.8 m") and suggests fixes from RPM's equipment inventory. Code produces every number. Claude only explains and recommends.
+
+## 6a. Swappable impact models (next, night of 30 Sep)
+
+The app must not be locked into one traffic model. Tamara may try other approaches, and SUMO is being tested. Order agreed by Tim on 30 Sep, 3:45am:
+
+1. **next** Define the impact input and output shapes and a switch that picks the model. The report reads only that output and shows which method produced it.
+2. **next** Plug-in: SUMO simulation of the Swanston closure, precomputed, with traffic scaled to real counts at signal site 2921. Clearly labelled as an early result.
+3. **next** Plug-in: Tamara's current model (`model/mvm/mvm_predict.py`) ported to TypeScript so it runs live.
+4. **next** Demo consistency: Swanston naming, report text matching this TGS, a written severity rule, a saved demo analysis.
 
 ## 6. Impact model connected (later)
 
@@ -60,3 +69,4 @@ User accounts, error handling, tests on measurement and model code, AI cost limi
 ## Log
 
 - [30 Sep] Tim: plan written. Steps 1 and 2 partly done on branch `tim` (commit cdcb9f7). Claude runs on Sonnet 5.5 through Vercel AI Gateway with paid credit, since the free credit covers no Claude models.
+- [30 Sep 3:45am] Tim: PDF TGS tested and works. SUMO installed and ran on the Swanston area as a spike. Agreed order for tonight in step 6a: swappable model shapes, SUMO, Tamara's model in TypeScript, demo consistency.
