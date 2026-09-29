@@ -10,6 +10,7 @@ Done:
 
 ## Tim
 Now:
+- [03:55] Swappable impact models (PLAN.md step 6a): impact contract types and model switch, SUMO plug-in for Swanston, Tamara's model in TypeScript, then demo consistency. lib/impact/, model/sumo/, components/site-report.tsx.
 - [branch tim] Real TGS analysis: Claude (via Vercel AI Gateway) reads the uploaded TGS and returns plan elements and scan points. app/api/analyse-tgs/, lib/, components/. Branch tim is based on raina. Code done, build and lint pass. Working locally on Claude Sonnet 5.5 with paid gateway credit: the sample TGS takes about 20 s.
 Done:
 
