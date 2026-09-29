@@ -18,6 +18,10 @@ Done:
 - [22:15] Wrote up Barrier Brain. BRIEF.md (brief, scan measurement approach, demo plan), DESIGN.md flow, CLAUDE.md, sample TGS in data/mock/tgs/.
 - [22:30] Added a decisions log to BRIEF.md and a rule in CLAUDE.md so every session keeps BRIEF.md up to date.
 
+## Tamara
+Now:
+Done:
+
 ## Others
 Now:
 Done:
