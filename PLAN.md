@@ -34,7 +34,7 @@ Read this first when picking up the work. All of it is on branch `tim`, pushed, 
 1. Team review and merge `tim` into `main` (step 1). Decisions needed are listed in STATUS.md under Tim, "Review before merging".
 2. Answers from Tamara on the questions in step 6a, including the site-total finding.
 3. Scan work: one real Scaniverse export measured offline (step 4).
-4. Impact model follow-ups (step 6).
+4. Impact model follow-ups (step 6): SUMO credibility (6b) before other sites (6c).
 
 **Running and checking**
 - `npm run dev` (needs `vercel env pull .env.local` for the Claude call). The Claude Browser config "barrier-brain" runs it on port 3001.
@@ -93,18 +93,40 @@ Questions for Tamara:
 - Answered from public data on 30 Sep (DTP detector counts and signal sheet for 2921): no detector counts the closed northbound lane, but only La Trobe St traffic can enter it, and La Trobe St carries 13,742 cars a day in both directions. So the lookup's 10,000 diversions a day is not possible here. The 46,939 site total counts every detector: bikes, trams, queue loops and a second set at the tram stop.
 - The site totals in `headline_stats/output/02_scats_site_daily.csv` sum every detector. At the four junctions checked, cars are 29% to 78% of the total. Should the lookup's daily volume use car stop-line detectors only? The detector roles come from DTP's Traffic Signal Configuration Data Sheets (`model/sumo/detector_approaches.json` has nine CBD sites).
 
-## 6. Impact model follow-ups (later)
+## 6. Impact model follow-ups
 
-The models are connected (step 6a). What would make the numbers stronger:
+The models are connected (step 6a). Order agreed by Tim on 30 Sep, 7:30am: make SUMO trustworthy first (6b), then make it work for any site (6c). A second street with shaky numbers proves less than one street with solid ones.
+
+### Lookup model (Tamara)
 
 - **done** Detector-level counts for site 2921 (30 Sep). They rule out the lookup's figure for Swanston, but no detector counts the closed lane itself.
-- **next** Check whether cars may turn right from westbound La Trobe St into Swanston St. SUMO's whole diversion result rests on it.
-- **next** Replace the lookup model's 50% closed-street share and whole-site totals with per-approach car detector counts, so it stops overstating streets with little car access. Method and nine mapped sites in `model/sumo/detector_approaches.json`; any site's signal sheet can be fetched on its own from DTP's zips with range requests.
-- Read signal sheets for more of the 52 SUMO counting sites, replacing the single 0.57 correction.
+- **next** Replace the lookup model's 50% closed-street share and whole-site totals with per-approach car detector counts, so it stops overstating streets with little car access. Method and nine mapped sites in `model/sumo/detector_approaches.json`.
 - A "road closed" group in the lookup, if RADAR has enough full closures.
-- SUMO for any site: parametrise `model/sumo/` by street, extent and location from the TGS analysis. About 1 to 2 hours. Runs take 5 to 10 minutes and up to 2 GB, so it must run offline or on a separate server, not in a Vercel function. Each new area needs its network checked for artificial jams.
-- SUMO credibility: real signal plans, per-approach counts, more hours than 8am to 9am, trams from PTV GTFS.
-- Other modes: pedestrians (City of Melbourne Pedestrian Counting System; sensor 187 at 330 Swanston St, 21 m from the site, counts about 8,000 people a weekday), trams and buses (PTV GTFS), trucks.
+
+### 6b. SUMO: less janky (first)
+
+Why the numbers are shaky now: signal timings are guessed (fixed 90 s cycles), so the simulated CBD is too congested (mean speed about a fifth of the limit, up to 12% of cars can't enter). The headline diversions are simulated shortcut drivers, so they depend on those made-up queues and on turn rules. Each step below says how we know it worked.
+
+1. **in progress** Right turn from La Trobe St into Swanston St: rerun with it banned (`model/sumo/ban.con.xml`) and report both. Also check on site or with the City of Melbourne whether cars may make that turn.
+2. **in progress** Whole works period, 7am to 10pm, instead of 8am to 9am. Each hour is its own run; totals add up per seed.
+3. **next** Turn rules everywhere (about 2 hours). Read OpenStreetMap turn restrictions in netconvert, ban right turns where a signal sheet shows no car right-turn signal, and model CBD hook turns. Done when every turn into or out of the closed block has a source (OSM tag or sheet).
+4. **next** Signals and a real calibration check (about half a day). Switch to actuated signals (`--tls.default-type actuated`), which respond to arriving cars roughly as SCATS does. Then compare what the simulation actually carries on each counted edge with the counts (GEH per edge), not just the routes chosen before simulating. Where the network can't carry its count, fix lanes or turns there. Done when simulated counts pass GEH under 5 at most counted edges, fewer than 2% of cars are dropped, and mean speed looks like a CBD peak.
+5. Queue on the detour streets (about 2 hours): average jam per lane on the streets the diverted drivers use, over seeds, against the base-vs-base noise floor. Report it only when it beats the floor.
+6. More of the 52 counting sites with signal sheets read, replacing the single 0.57 correction (see 6c step 4 for how to automate it).
+7. Later: routes shaped by real travel data (ABS journey to work, VISTA survey) instead of random trips fitted to counts.
+8. Later: other modes, 1 to 2 days each. Trams from PTV GTFS (SUMO `gtfs2pt.py`), which fills "public transport". Pedestrians with SUMO footpaths and City of Melbourne sensor counts (sensor 187 at 330 Swanston St, 21 m from the site, about 8,000 people a weekday). Pedestrians are probably what RPM Hire cares about most. Trucks as their own vehicle type.
+
+### 6c. SUMO: any site (after 6b)
+
+What is Swanston-only now: `find_closed_edges` (finds this block by name), the CBD network cut at Exhibition St, the 9 hand-read signal sheets, and precomputed results only.
+
+1. **Closure from the TGS analysis** (about half a day). Take street, extent, closure type, lanes and hours from Claude's TGS analysis. Find the junctions where the street meets each cross street, close every car lane between them (or that many lanes for "lanes closed") with SUMO's timed closures (`closingReroute`, `closingLaneReroute`) for the work hours. One network then serves every scenario. Replaces `find_closed_edges` and `net_closed.net.xml`.
+2. **One config per site, one command** (about 2 hours). A JSON per site (area, closure, hours, seeds) and one script that runs every step into `work/<site>/` and `output/<site>/`. `SUMO_WORK` and `SUMO_OUT` already point the scripts at other folders.
+3. **Networks outside the CBD** (about half a day, then minutes per area). Build about 1.5 km around the site, then an automatic health check: one base hour must keep speeds up and drop few cars, or the build fails. Edge-of-network gridlock crashed the laptop once, so this check is not optional.
+4. **Car counts for any signal site** (1 to 2 days). Parse the HTML sheets directly (their detector tables name bike, tram, queue and pedestrian loops). Have Claude read the scanned PDF sheets into the `detector_approaches.json` format (a few cents each on Sonnet). Check every result against the counts: tram loops are flat at tram frequency, bike loops are low and peaky, car loops on one street roughly agree between junctions. Keep one growing table; Victoria has about 4,500 signal sites. Any sheet can be fetched on its own from DTP's zips with range requests.
+5. **Run it as a service** (about 1 day). A small server for the `http` model: takes an ImpactRequest, runs SUMO, returns an ImpactResult. Cache the normal-traffic runs per area so each closure only needs the closure runs. Needs an always-on host such as Fly.io or Railway, a few dollars a month. New spend, so the team decides.
+
+If shortlisted for Thursday: 6b steps 3 and 4 first. A second street (6c steps 1 and 2) only if they are done.
 
 ## 7. Real report (in progress)
 
@@ -129,3 +151,4 @@ User accounts, error handling, tests on measurement and model code, AI cost limi
 - [30 Sep 5:05am] Tim: the TGS prompt now lives in prompts/tgs-analysis.md so the team can refine it without touching code.
 - [30 Sep 5:09am] Tim: handover docs. "Where things stand" added at the top of this file, README rewritten, pointers in CLAUDE.md, model/README.md, DESIGN.md.
 - [30 Sep 7:00am] Tim: SUMO now fitted to car counts per approach from SCATS detectors and DTP signal sheets at 9 junctions (model/sumo/detector_approaches.json, 00_detector_counts.py). Whole-site totals overstated cars 1.3 to 3.5 times, which caused the old gridlock. Full traffic, 10 seeds: 21 to 97 shortcut drivers an hour, delay within noise. Lookup's 10,000 a day ruled out for Swanston. Caveat: the shortcut needs a right turn the signal plan doesn't show.
+- [30 Sep 7:30am] Tim: SUMO roadmap written into step 6. Less janky (6b: turn rules, actuated signals, simulated-vs-count check) before any site (6c: closure from the TGS, per-site config, sheet reading, service).
