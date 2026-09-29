@@ -14,6 +14,7 @@ Done:
 
 ## Others
 Now:
+- [21:54] Advait: writing up the Barrier Brain brief. CLAUDE.md, BRIEF.md, DESIGN.md flow, README. Open questions still to answer.
 Done:
 
 ## Assumptions
