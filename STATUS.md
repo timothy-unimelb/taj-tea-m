@@ -20,6 +20,7 @@ Done:
 
 ## Tamara
 Now:
+- [23:00] Copying the closure-impact model (lookup from past closures + queue calc) from her local analysis folder into model/.
 Done:
 
 ## Others
