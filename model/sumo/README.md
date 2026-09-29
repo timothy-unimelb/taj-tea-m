@@ -26,14 +26,31 @@ bash 01_fetch_osm.sh          # OpenStreetMap extract, not committed
 bash 02_build_net.sh          # SUMO network
 python3 00_detector_counts.py # car counts per approach (downloads one month of SCATS counts, 135 MB)
 python3 capped.py -- python3 03_demand.py   # traffic fitted to the counts (about 1.5 minutes, 1.4 GB)
-for seed in 1 2 3 4 5 6 7 8 9 10; do
-  python3 04_run.py base --hour 8 --seed $seed
-  python3 04_run.py closure --hour 8 --seed $seed
-done
-python3 05_to_impact_json.py --hour 8 --seeds 1 2 3 4 5 6 7 8 9 10
-python3 06_plot.py --hour 8 --seeds 1 2 3 4 5 6 7 8 9 10
+for hour in $(seq 7 21); do for seed in 1 2 3 4 5; do   # every hour of the works, 7am to 10pm
+  python3 04_run.py base --hour $hour --seed $seed
+  python3 04_run.py closure --hour $hour --seed $seed
+done; done
+python3 05_to_impact_json.py --hours $(seq 7 21) --seeds 1 2 3 4 5
+python3 06_plot.py --hour 8 --seeds 1 2 3 4 5
 cp output/swanston.json ../../data/impact/sumo-swanston.json   # what the app shows
 ```
+
+The runs are independent, so `xargs -P 4` can run four at a time (each is capped by `04_run.py`).
+
+**Right turn banned.** The shortcut through the block needs a right turn from westbound La Trobe St into Swanston St, which the signal plan doesn't show for cars. To run the same thing without that turn:
+
+```bash
+mkdir -p work/noright && cp work/approach_counts.json work/noright/
+netconvert -s work/net.net.xml --connection-files ban.con.xml --no-internal-links true -o work/noright/net.net.xml
+# copy work/pool.rou.xml to work/noright/ without routes that use "279989317#0 208489241"
+export SUMO_WORK=$PWD/work/noright SUMO_OUT=$PWD/work/noright/output
+python3 capped.py -- python3 03_demand.py
+# ...the same 04_run.py loop, then 05_to_impact_json.py
+unset SUMO_WORK SUMO_OUT
+python3 05_to_impact_json.py --hours $(seq 7 21) --seeds 1 2 3 4 5 --banned-summary work/noright/output/summary.json
+```
+
+`ban.con.xml` deletes that one connection. `SUMO_WORK` and `SUMO_OUT` point every script at another folder.
 
 `04_run.py --scale 0.5` inserts half the traffic. `03_demand.py --site-totals` goes back to whole-site totals everywhere. `work/` holds everything generated and is not committed.
 
@@ -74,32 +91,37 @@ Site 2921 detector 3, on the closed block's southbound side, is not a car count.
 
 ## Findings so far
 
-Weekday 8am to 9am, full counted traffic, 10 random seeds (`output/summary.json`).
+Weekday works hours, 7am to 10pm: every hour simulated separately, 5 random seeds, full counted traffic (`output/summary.json`). The same runs were repeated with the right turn from westbound La Trobe St into Swanston St banned (`ban.con.xml`, results in `work/noright/output/`).
 
-| | Result |
-|---|---|
-| Drivers who must avoid the closed block | 21 to 97 an hour (median 64). Routes fitted to the counts plan none through it in this hour (67 a day). The drivers who use it come from westbound La Trobe St, turn right into the block and left into A'Beckett St, towards Queen St and William St: a shortcut around La Trobe St queues. |
-| Upper limit from counts | Every car entering the block comes from La Trobe St, which carries 884 cars in this hour, both directions, at 2921. |
-| Extra distance each | 0 m shortest way round (it is a shortcut); simulated drivers went 47 m typical, 304 m upper quartile |
-| Extra total travel time | −56 to +42 vehicle-hours across seeds. Two normal runs differ by up to 68 on their own, so this is noise |
-| Queue | not reported: two normal runs differ by 95 to 193 m on their worst lane |
-| Cars dropped at entry | up to 12% could not enter the network within 5 minutes |
-| Teleports (cars stuck 5 minutes) | 34 to 47 per run |
+| | Right turn allowed | Right turn banned |
+|---|---|---|
+| Drivers who must avoid the closed block, 7am to 10pm | 755 to 871 (median 812) | 71 to 92 (median 77) |
+| Busiest hours | 5pm to 6pm (about 100), 3pm and 6pm (about 90) | 6pm (about 30), otherwise under 20 an hour |
+| Extra distance each | median 0 m (it is a shortcut), upper quartile 315 m | median 30 m, upper quartile 64 m |
+| Extra total travel time | −521 to +284 vehicle-hours; two normal runs differ by up to 318, so noise | −125 to +122; noise |
+| Queue | not reported: worst-lane growth (218 m) is no bigger than between normal runs (205 m) | not reported |
 
-What this says: the closed block matters little for cars. The lookup model's estimate (about 10,100 diversions a day) assumed half of site 2921's 46,939 counted vehicles use Swanston St. The measured car count on La Trobe St is 13,742 a day in both directions together, and only turning traffic can enter the block. So the lookup's figure is not possible here.
+- The drivers who use the block come from westbound La Trobe St, turn right into it and left into A'Beckett St, towards Queen St and William St: a shortcut around La Trobe St queues. Routes fitted to the counts plan only 67 trips a day through it.
+- Upper limit from counts: every car entering the block comes from La Trobe St, which carries 11,686 cars from 7am to 10pm in both directions at 2921.
+- The app shows the allowed case as the typical and high values, and the banned case as the low value. Delay is left out of the result because it can't be told apart from noise (like queue).
+- Health of the runs: up to 16% of cars can't enter the network within 5 minutes, up to 167 teleports in a run.
+
+What this says: the closed block matters little for cars either way, and whether it matters at all depends on one turn rule. The lookup model's estimate (about 10,100 diversions a day) assumed half of site 2921's 46,939 counted vehicles use Swanston St. The measured car count on La Trobe St is 13,742 a day in both directions together, and only turning traffic can enter the block. So the lookup's figure is not possible here.
 
 ## Not yet credible
 
+The plan to fix these, in order, is PLAN.md step 6b (less janky) and then 6c (any site).
+
 - **No count constrains the closed lane.** The range is how many simulated drivers choose it as a shortcut, which depends on simulated queues.
-- **The shortcut may not be allowed.** It needs a right turn from westbound La Trobe St into Swanston St. SUMO allows it, but site 2921's signal sheet shows no car right-turn signal there (only a bike hook turn). If cars can't make that turn, almost no car uses the block and the closure's car impact is close to zero. Check on site or with the City of Melbourne.
+- **The shortcut may not be allowed.** It needs a right turn from westbound La Trobe St into Swanston St. SUMO allows it, but site 2921's signal sheet shows no car right-turn signal there (only a bike hook turn). Banning it cuts the diversions from about 810 to about 77 over the works hours. Check on site or with the City of Melbourne.
 - **Congestion is still too high.** Mean speed in the base run is about a fifth of the speed limit and up to 12% of cars can't enter. Guessed signal timings and the 43 sites without a sheet (corrected by one average factor) are the likely causes.
 - **Some sheets are old or don't match the counts.** 4523's sheet is from 2019 and three of its detectors that are off on the sheet now count traffic. Elizabeth St at 2906 and 4512 has no car detectors.
 - **Delay and queue are within noise.**
-- **One hour only.** The TGS works run 7am to 10pm.
 - **No trams, pedestrians or trucks.** SUMO can do all three. Trams would need PTV GTFS timetables. City of Melbourne pedestrian sensor 187 (330 Swanston St, 21 m from the site) counts about 8,000 people a weekday.
 
 ## History
 
+- 30 Sep, 7:45am: every hour of the works (7am to 10pm) simulated, with the La Trobe St right turn allowed and banned. Delay is left out of the result when it is noise.
 - 30 Sep, 6am: traffic fitted to car counts per approach from SCATS detectors and DTP signal sheets at 9 junctions. Full traffic now runs without gridlock in about 30 seconds. Diversions are now the shortcut drivers seen in normal runs.
 - First attempt (30 Sep, before 4am): 16 hours of traffic, about 500,000 trips, network to Spring St. Gridlocked and used 300 GB of memory.
 - The Spring St / Nicholson St / Victoria Pde junctions at the east edge gridlocked first, even at 30% traffic. The network is now cut at Exhibition St.

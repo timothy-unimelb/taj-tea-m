@@ -1,8 +1,9 @@
 """Shared helpers for the Swanston closure simulation."""
 import csv, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
-WORK = os.path.join(HERE, "work")
-OUT = os.path.join(HERE, "output")
+# SUMO_WORK and SUMO_OUT point a variant (such as a network with a turn banned) at its own folders.
+WORK = os.environ.get("SUMO_WORK", os.path.join(HERE, "work"))
+OUT = os.environ.get("SUMO_OUT", os.path.join(HERE, "output"))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
 SCATS_DAILY = os.path.join(REPO, "model/headline_stats/output/02_scats_site_daily.csv")
 SCATS_HOURLY = os.path.join(REPO, "model/headline_stats/output/01_scats_hourly_profile.csv")

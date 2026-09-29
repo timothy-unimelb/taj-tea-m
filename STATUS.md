@@ -10,8 +10,8 @@ Done:
 
 ## Tim
 Now:
-- [07:25] SUMO: test with the La Trobe St right turn into Swanston St banned, simulate the whole works period (7am to 10pm), small fixes. model/sumo/.
 Done:
+- [07:45] SUMO: every hour of the works (7am to 10pm), and the La Trobe St right turn banned as a second case. Report now says about 755 to 871 shortcut drivers over the works hours, about 77 if the turn is banned. Delay left out as noise. model/sumo/, data/impact/sumo-swanston.json. SUMO roadmap in PLAN.md step 6.
 - [07:00] SUMO fitted to measured car counts per approach (SCATS detectors + DTP signal sheets, 9 junctions). Full traffic, no gridlock, 10 seeds: 21 to 97 shortcut drivers an hour, delay within noise. Whole-site totals overstate cars 1.3 to 3.5x; flagged for Tamara in PLAN.md step 6a. model/sumo/, data/impact/sumo-swanston.json.
 - [05:15] Handover: PLAN.md "Where things stand" lists what is real, what is still demo data, known limits and next steps. README rewritten.
 - [05:05] TGS prompt moved to prompts/tgs-analysis.md so the team can refine it without editing code.
@@ -24,7 +24,7 @@ Done:
 Review before merging `tim` into `main`:
 - Raina's doc changes that came with her branch: DESIGN.md is now "LOCKED" (it was "NOT SET"), the flow was replaced with her 9 screens, open questions were deleted from BRIEF.md, and "share sheet opens on return home" became an explicit Share button. Agree these as a team.
 - Swanston changes: the project is now "Swanston Street Work Zone". Report copy, the safety finding and two recommended actions were rewritten for this TGS. The safety finding and actions are still fixed demo copy, because scan measurement isn't connected. Trams and pedestrians show "Review required", not a rating, because no model covers them yet.
-- SUMO numbers changed at 7am (measured car counts, full traffic). The Swanston report now says 21 to 97 drivers an hour, and adds that the shortcut needs a right turn the signal plan doesn't show.
+- SUMO numbers changed at 7:45am (measured car counts, full traffic, whole works period). The Swanston report now says about 755 to 871 drivers over 7am to 10pm, or about 77 if cars can't turn right from La Trobe St into Swanston St (the signal plan shows no car right-turn signal).
 - Default impact model: `sumo` where a SUMO result exists (only the Swanston sample), `mvm` (Tamara's lookup, live) everywhere else. Tim chose this at 5am because the lookup assumes half of the intersection's traffic uses the closed Swanston block, which is mostly tram only (about 10,100 diversions a day vs SUMO's tens to a hundred an hour). Set `IMPACT_MODEL=mvm` on Vercel to go back. The video should say the Swanston numbers are an early SUMO result.
 - Severity limits in lib/impact/severity.ts are a first cut by us. Check them with RPM Hire mentors and Tamara.
 - For Tamara: the P10/P90 docstring question, ranking windows by diversions when the road is closed, whether a "road closed" group can be added, and the detector counts for site 2921. All in PLAN.md step 6a.

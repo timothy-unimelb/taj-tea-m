@@ -74,6 +74,7 @@ cmd = [sumo_bin, "-n", netfile, "-r", routes, "-a", add, "--seed", str(args.seed
        "--vehroute-output.exit-times", "false",
        "--summary-output", f"{run}/summary.xml", "--summary-output.period", "60",
        "--time-to-teleport", str(args.teleport),
+       "--time-to-teleport.disconnected", "60",  # a car whose route the closure cut can't stall the run
        "--max-depart-delay", "300", "--ignore-route-errors", "true",
        "--collision.action", "warn",
        "--device.rerouting.probability", "1.0",

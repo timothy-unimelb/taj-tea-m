@@ -12,7 +12,7 @@
 5. The closure scenario re-routes only the trips whose route used the closed edge (duarouter on the
    closed network). All other trips keep the same route as the base scenario.
 """
-import argparse, json, math, os, random, subprocess, sys
+import argparse, json, math, os, random, re, subprocess, sys
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 from common import *
@@ -166,12 +166,15 @@ if not os.path.exists(w("pool.rou.xml")):
 
 # ---- sample routes to match counts ------------------------------------------------------------
 rs = os.path.join(os.environ["SUMO_HOME"], "tools", "routeSampler.py")
-subprocess.check_call([sys.executable, rs, "-r", w("pool.rou.xml"), "-d", w("counts.xml"),
+sampler = subprocess.run([sys.executable, rs, "-r", w("pool.rou.xml"), "-d", w("counts.xml"),
                        "--edgedata-attribute", "entered", "-o", w("sampled.rou.xml"), "--prefix", "v",
                        "--optimize", "full", "--weighted", "-s", str(args.seed), "--min-count", "1",
                        "--mismatch-output", w("mismatch.xml"), "--geh-ok", "5",
                        "-a", 'departLane="best" departSpeed="max"',
-                       "-b", "0", "-e", str((SIM_END_H - SIM_START_H) * 3600)])
+                       "-b", "0", "-e", str((SIM_END_H - SIM_START_H) * 3600)], capture_output=True, text=True, check=True)
+print(sampler.stdout)
+# share of counted edges within GEH 5 (a standard fit test for traffic counts), worst hour
+geh_ok = min(float(x) for x in re.findall(r"GEH<5.0 for ([\d.]+)%", sampler.stdout)) if "GEH<5.0" in sampler.stdout else None
 
 # ---- filter trips that start/end inside the closed block; write base + closure demand --------
 tree = ET.parse(w("sampled.rou.xml"))
@@ -274,6 +277,7 @@ summary = dict(
     measured_sites=sorted(int(k) for k in (ac or {}).get("sites", {})),
     car_share_of_site_total=car_share,
     counted_approaches_without_car_edge=unmatched,
+    geh_ok_share_worst_hour=geh_ok,
     counting_sites=sorted({s[0] for r in site_rows for s in r["sites"]}),
     skipped_sites=skipped,
     target_vehicles_per_hour_sum_over_approaches={h: round(v) for h, v in tot_site.items()},

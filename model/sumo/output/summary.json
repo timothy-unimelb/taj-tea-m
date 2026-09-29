@@ -1,197 +1,918 @@
 {
-  "hour": 8,
+  "hours": [
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+  ],
   "scale": 1.0,
-  "per_seed": [
-    {
-      "seed": 1,
-      "trips_in_hour_base": 12243,
-      "trips_in_hour_closure": 12288,
-      "matched": 11723,
-      "diverted_completed": 0,
-      "drove_block_in_base_run": 103,
-      "entered_block_in_base_run": 84.0,
-      "delay_veh_h_all": -56.1,
-      "delay_veh_h_diverted": 0.0,
-      "delay_veh_h_others": -56.1,
-      "max_queue_growth_m": 55.0,
-      "worst_lane": "208793254#0_0",
-      "teleports_base": 34,
-      "teleports_closure": 28
-    },
-    {
-      "seed": 2,
-      "trips_in_hour_base": 12208,
-      "trips_in_hour_closure": 12249,
-      "matched": 11585,
-      "diverted_completed": 0,
-      "drove_block_in_base_run": 105,
-      "entered_block_in_base_run": 86.0,
-      "delay_veh_h_all": -4.5,
-      "delay_veh_h_diverted": 0.0,
-      "delay_veh_h_others": -4.5,
-      "max_queue_growth_m": 174.9,
-      "worst_lane": "295469926_0",
-      "teleports_base": 28,
-      "teleports_closure": 24
-    },
-    {
-      "seed": 3,
-      "trips_in_hour_base": 12305,
-      "trips_in_hour_closure": 12242,
-      "matched": 11680,
-      "diverted_completed": 0,
-      "drove_block_in_base_run": 70,
-      "entered_block_in_base_run": 51.0,
-      "delay_veh_h_all": -35.8,
-      "delay_veh_h_diverted": 0.0,
-      "delay_veh_h_others": -35.8,
-      "max_queue_growth_m": 190.8,
-      "worst_lane": "135952928#1_1",
-      "teleports_base": 36,
-      "teleports_closure": 47
-    },
-    {
-      "seed": 4,
-      "trips_in_hour_base": 12316,
-      "trips_in_hour_closure": 12177,
-      "matched": 11609,
-      "diverted_completed": 0,
-      "drove_block_in_base_run": 58,
-      "entered_block_in_base_run": 42.0,
-      "delay_veh_h_all": -48.2,
-      "delay_veh_h_diverted": 0.0,
-      "delay_veh_h_others": -48.2,
-      "max_queue_growth_m": 169.1,
-      "worst_lane": "295469926_0",
-      "teleports_base": 44,
-      "teleports_closure": 47
-    },
-    {
-      "seed": 5,
-      "trips_in_hour_base": 12316,
-      "trips_in_hour_closure": 12308,
-      "matched": 11711,
-      "diverted_completed": 0,
-      "drove_block_in_base_run": 122,
-      "entered_block_in_base_run": 97.0,
-      "delay_veh_h_all": -13.6,
-      "delay_veh_h_diverted": 0.0,
-      "delay_veh_h_others": -13.6,
-      "max_queue_growth_m": 179.8,
-      "worst_lane": "581959650#1_1",
-      "teleports_base": 28,
-      "teleports_closure": 34
-    },
-    {
-      "seed": 6,
-      "trips_in_hour_base": 12230,
-      "trips_in_hour_closure": 12162,
-      "matched": 11594,
-      "diverted_completed": 0,
-      "drove_block_in_base_run": 25,
-      "entered_block_in_base_run": 21.0,
-      "delay_veh_h_all": 36.4,
-      "delay_veh_h_diverted": 0.0,
-      "delay_veh_h_others": 36.4,
-      "max_queue_growth_m": 74.8,
-      "worst_lane": "-197845905#2_0",
-      "teleports_base": 29,
-      "teleports_closure": 29
-    },
-    {
-      "seed": 7,
-      "trips_in_hour_base": 12260,
-      "trips_in_hour_closure": 12240,
-      "matched": 11662,
-      "diverted_completed": 0,
-      "drove_block_in_base_run": 49,
-      "entered_block_in_base_run": 41.0,
-      "delay_veh_h_all": -7.1,
-      "delay_veh_h_diverted": 0.0,
-      "delay_veh_h_others": -7.1,
-      "max_queue_growth_m": 99.4,
-      "worst_lane": "1183823827#1_0",
-      "teleports_base": 42,
-      "teleports_closure": 41
-    },
-    {
-      "seed": 8,
-      "trips_in_hour_base": 12353,
-      "trips_in_hour_closure": 12194,
-      "matched": 11688,
-      "diverted_completed": 0,
-      "drove_block_in_base_run": 111,
-      "entered_block_in_base_run": 88.0,
-      "delay_veh_h_all": -12.1,
-      "delay_veh_h_diverted": 0.0,
-      "delay_veh_h_others": -12.1,
-      "max_queue_growth_m": 79.2,
-      "worst_lane": "279989319_1",
-      "teleports_base": 37,
-      "teleports_closure": 32
-    },
-    {
-      "seed": 9,
-      "trips_in_hour_base": 12241,
-      "trips_in_hour_closure": 12241,
-      "matched": 11689,
-      "diverted_completed": 0,
-      "drove_block_in_base_run": 90,
-      "entered_block_in_base_run": 66.0,
-      "delay_veh_h_all": 21.4,
-      "delay_veh_h_diverted": 0.0,
-      "delay_veh_h_others": 21.4,
-      "max_queue_growth_m": 186.3,
-      "worst_lane": "581959650#1_1",
-      "teleports_base": 43,
-      "teleports_closure": 34
-    },
-    {
-      "seed": 10,
-      "trips_in_hour_base": 12256,
-      "trips_in_hour_closure": 12215,
-      "matched": 11643,
-      "diverted_completed": 0,
-      "drove_block_in_base_run": 80,
-      "entered_block_in_base_run": 62.0,
-      "delay_veh_h_all": 42.0,
-      "delay_veh_h_diverted": 0.0,
-      "delay_veh_h_others": 42.0,
-      "max_queue_growth_m": 80.5,
-      "worst_lane": "581989735#1_1",
-      "teleports_base": 39,
-      "teleports_closure": 43
-    }
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
   ],
   "diversions": {
-    "low": 21,
-    "typical": 64,
-    "high": 97,
+    "low": 77,
+    "typical": 812,
+    "high": 871,
     "unit": "vehicles"
   },
-  "planned_in_hour": 0,
+  "diversions_turn_allowed": {
+    "low": 755,
+    "typical": 812,
+    "high": 871,
+    "unit": "vehicles"
+  },
+  "diversions_turn_banned": {
+    "low": 71,
+    "typical": 77,
+    "high": 92,
+    "unit": "vehicles"
+  },
+  "by_hour": {
+    "7": {
+      "diversions_median": 2.0,
+      "diversions_range": [
+        1.0,
+        16.0
+      ]
+    },
+    "8": {
+      "diversions_median": 84.0,
+      "diversions_range": [
+        42.0,
+        97.0
+      ]
+    },
+    "9": {
+      "diversions_median": 70.0,
+      "diversions_range": [
+        47.0,
+        114.0
+      ]
+    },
+    "10": {
+      "diversions_median": 27.0,
+      "diversions_range": [
+        23.0,
+        32.0
+      ]
+    },
+    "11": {
+      "diversions_median": 7.0,
+      "diversions_range": [
+        2.0,
+        11.0
+      ]
+    },
+    "12": {
+      "diversions_median": 67.0,
+      "diversions_range": [
+        51.0,
+        70.0
+      ]
+    },
+    "13": {
+      "diversions_median": 9.0,
+      "diversions_range": [
+        3.0,
+        20.0
+      ]
+    },
+    "14": {
+      "diversions_median": 27.0,
+      "diversions_range": [
+        23.0,
+        43.0
+      ]
+    },
+    "15": {
+      "diversions_median": 93.0,
+      "diversions_range": [
+        64.0,
+        114.0
+      ]
+    },
+    "16": {
+      "diversions_median": 51.0,
+      "diversions_range": [
+        25.0,
+        98.0
+      ]
+    },
+    "17": {
+      "diversions_median": 100.0,
+      "diversions_range": [
+        94.0,
+        116.0
+      ]
+    },
+    "18": {
+      "diversions_median": 89.0,
+      "diversions_range": [
+        82.0,
+        118.0
+      ]
+    },
+    "19": {
+      "diversions_median": 68.0,
+      "diversions_range": [
+        61.0,
+        78.0
+      ]
+    },
+    "20": {
+      "diversions_median": 64.0,
+      "diversions_range": [
+        52.0,
+        71.0
+      ]
+    },
+    "21": {
+      "diversions_median": 44.0,
+      "diversions_range": [
+        39.0,
+        59.0
+      ]
+    }
+  },
+  "planned_through_block": 67,
+  "delay": {
+    "low": -521,
+    "typical": 28,
+    "high": 284,
+    "unit": "vehicle-hours"
+  },
+  "delay_noise_pairs": [
+    -287.6,
+    192.7,
+    318.5,
+    -230.5
+  ],
   "detour_m": {
     "low": 0,
-    "typical": 47,
-    "high": 304,
+    "typical": 0,
+    "high": 315,
     "unit": "m"
   },
-  "shortest_detour_median_m": 0,
   "simulated_detour_quartiles_m": [
-    -177,
-    47,
-    304
+    -289,
+    -16,
+    315
   ],
-  "n_diverted_trips_matched": 776,
+  "n_detours": 4106,
+  "queue_growth_max_m": 218,
   "base_vs_base_worst_lane_m": [
+    41,
+    68,
+    177,
+    54,
     101,
     131,
     98,
     95,
-    170,
-    178,
+    193,
+    86,
     193,
     102,
-    110
+    27,
+    189,
+    205,
+    109,
+    87,
+    198,
+    101,
+    86,
+    195,
+    48,
+    68,
+    94,
+    156,
+    93,
+    101,
+    186,
+    41,
+    189,
+    105,
+    124,
+    189,
+    113,
+    194,
+    185,
+    157,
+    117,
+    137,
+    86,
+    105,
+    165,
+    164,
+    95,
+    88,
+    122,
+    166,
+    83,
+    171,
+    68,
+    188,
+    62,
+    68,
+    67,
+    85,
+    92,
+    103,
+    101,
+    68,
+    66
+  ],
+  "max_dropped_share": 0.16,
+  "per_seed": [
+    {
+      "hour": 7,
+      "seed": 1,
+      "trips_base": 10511,
+      "matched": 10392,
+      "drove_block_in_base_run": 1,
+      "entered_block_in_base_run": 1.0,
+      "delay_veh_h": -2.8
+    },
+    {
+      "hour": 7,
+      "seed": 2,
+      "trips_base": 10506,
+      "matched": 10261,
+      "drove_block_in_base_run": 16,
+      "entered_block_in_base_run": 16.0,
+      "delay_veh_h": -4.8
+    },
+    {
+      "hour": 7,
+      "seed": 3,
+      "trips_base": 10556,
+      "matched": 10305,
+      "drove_block_in_base_run": 2,
+      "entered_block_in_base_run": 2.0,
+      "delay_veh_h": 8.6
+    },
+    {
+      "hour": 7,
+      "seed": 4,
+      "trips_base": 10495,
+      "matched": 10283,
+      "drove_block_in_base_run": 2,
+      "entered_block_in_base_run": 2.0,
+      "delay_veh_h": 4.3
+    },
+    {
+      "hour": 7,
+      "seed": 5,
+      "trips_base": 10561,
+      "matched": 10411,
+      "drove_block_in_base_run": 9,
+      "entered_block_in_base_run": 9.0,
+      "delay_veh_h": 4.8
+    },
+    {
+      "hour": 8,
+      "seed": 1,
+      "trips_base": 12243,
+      "matched": 11723,
+      "drove_block_in_base_run": 103,
+      "entered_block_in_base_run": 84.0,
+      "delay_veh_h": -56.1
+    },
+    {
+      "hour": 8,
+      "seed": 2,
+      "trips_base": 12208,
+      "matched": 11585,
+      "drove_block_in_base_run": 105,
+      "entered_block_in_base_run": 86.0,
+      "delay_veh_h": -4.5
+    },
+    {
+      "hour": 8,
+      "seed": 3,
+      "trips_base": 12305,
+      "matched": 11680,
+      "drove_block_in_base_run": 70,
+      "entered_block_in_base_run": 51.0,
+      "delay_veh_h": -35.8
+    },
+    {
+      "hour": 8,
+      "seed": 4,
+      "trips_base": 12316,
+      "matched": 11609,
+      "drove_block_in_base_run": 58,
+      "entered_block_in_base_run": 42.0,
+      "delay_veh_h": -48.2
+    },
+    {
+      "hour": 8,
+      "seed": 5,
+      "trips_base": 12316,
+      "matched": 11711,
+      "drove_block_in_base_run": 122,
+      "entered_block_in_base_run": 97.0,
+      "delay_veh_h": -13.6
+    },
+    {
+      "hour": 9,
+      "seed": 1,
+      "trips_base": 10853,
+      "matched": 10271,
+      "drove_block_in_base_run": 64,
+      "entered_block_in_base_run": 70.0,
+      "delay_veh_h": -34.4
+    },
+    {
+      "hour": 9,
+      "seed": 2,
+      "trips_base": 10882,
+      "matched": 10282,
+      "drove_block_in_base_run": 65,
+      "entered_block_in_base_run": 52.0,
+      "delay_veh_h": -12.1
+    },
+    {
+      "hour": 9,
+      "seed": 3,
+      "trips_base": 10906,
+      "matched": 10311,
+      "drove_block_in_base_run": 130,
+      "entered_block_in_base_run": 114.0,
+      "delay_veh_h": -69.6
+    },
+    {
+      "hour": 9,
+      "seed": 4,
+      "trips_base": 10838,
+      "matched": 10224,
+      "drove_block_in_base_run": 43,
+      "entered_block_in_base_run": 47.0,
+      "delay_veh_h": 22.7
+    },
+    {
+      "hour": 9,
+      "seed": 5,
+      "trips_base": 10787,
+      "matched": 10222,
+      "drove_block_in_base_run": 76,
+      "entered_block_in_base_run": 71.0,
+      "delay_veh_h": -35.3
+    },
+    {
+      "hour": 10,
+      "seed": 1,
+      "trips_base": 10135,
+      "matched": 9669,
+      "drove_block_in_base_run": 29,
+      "entered_block_in_base_run": 30.0,
+      "delay_veh_h": -32.6
+    },
+    {
+      "hour": 10,
+      "seed": 2,
+      "trips_base": 10108,
+      "matched": 9699,
+      "drove_block_in_base_run": 35,
+      "entered_block_in_base_run": 32.0,
+      "delay_veh_h": -4.5
+    },
+    {
+      "hour": 10,
+      "seed": 3,
+      "trips_base": 10136,
+      "matched": 9590,
+      "drove_block_in_base_run": 24,
+      "entered_block_in_base_run": 23.0,
+      "delay_veh_h": 4.7
+    },
+    {
+      "hour": 10,
+      "seed": 4,
+      "trips_base": 10177,
+      "matched": 9726,
+      "drove_block_in_base_run": 27,
+      "entered_block_in_base_run": 24.0,
+      "delay_veh_h": -23.6
+    },
+    {
+      "hour": 10,
+      "seed": 5,
+      "trips_base": 10093,
+      "matched": 9630,
+      "drove_block_in_base_run": 28,
+      "entered_block_in_base_run": 27.0,
+      "delay_veh_h": -27.7
+    },
+    {
+      "hour": 11,
+      "seed": 1,
+      "trips_base": 10371,
+      "matched": 9836,
+      "drove_block_in_base_run": 6,
+      "entered_block_in_base_run": 7.0,
+      "delay_veh_h": 2.1
+    },
+    {
+      "hour": 11,
+      "seed": 2,
+      "trips_base": 10397,
+      "matched": 9838,
+      "drove_block_in_base_run": 1,
+      "entered_block_in_base_run": 2.0,
+      "delay_veh_h": 28.4
+    },
+    {
+      "hour": 11,
+      "seed": 3,
+      "trips_base": 10347,
+      "matched": 9814,
+      "drove_block_in_base_run": 8,
+      "entered_block_in_base_run": 9.0,
+      "delay_veh_h": 29.4
+    },
+    {
+      "hour": 11,
+      "seed": 4,
+      "trips_base": 10349,
+      "matched": 9838,
+      "drove_block_in_base_run": 3,
+      "entered_block_in_base_run": 4.0,
+      "delay_veh_h": 9.9
+    },
+    {
+      "hour": 11,
+      "seed": 5,
+      "trips_base": 10343,
+      "matched": 9802,
+      "drove_block_in_base_run": 10,
+      "entered_block_in_base_run": 11.0,
+      "delay_veh_h": -6.2
+    },
+    {
+      "hour": 12,
+      "seed": 1,
+      "trips_base": 10593,
+      "matched": 10153,
+      "drove_block_in_base_run": 74,
+      "entered_block_in_base_run": 70.0,
+      "delay_veh_h": -18.2
+    },
+    {
+      "hour": 12,
+      "seed": 2,
+      "trips_base": 10613,
+      "matched": 10140,
+      "drove_block_in_base_run": 51,
+      "entered_block_in_base_run": 51.0,
+      "delay_veh_h": -4.1
+    },
+    {
+      "hour": 12,
+      "seed": 3,
+      "trips_base": 10630,
+      "matched": 10206,
+      "drove_block_in_base_run": 67,
+      "entered_block_in_base_run": 67.0,
+      "delay_veh_h": -37.6
+    },
+    {
+      "hour": 12,
+      "seed": 4,
+      "trips_base": 10599,
+      "matched": 10117,
+      "drove_block_in_base_run": 62,
+      "entered_block_in_base_run": 61.0,
+      "delay_veh_h": -5.1
+    },
+    {
+      "hour": 12,
+      "seed": 5,
+      "trips_base": 10603,
+      "matched": 10098,
+      "drove_block_in_base_run": 73,
+      "entered_block_in_base_run": 68.0,
+      "delay_veh_h": 5.1
+    },
+    {
+      "hour": 13,
+      "seed": 1,
+      "trips_base": 10540,
+      "matched": 9956,
+      "drove_block_in_base_run": 21,
+      "entered_block_in_base_run": 9.0,
+      "delay_veh_h": -4.5
+    },
+    {
+      "hour": 13,
+      "seed": 2,
+      "trips_base": 10514,
+      "matched": 9980,
+      "drove_block_in_base_run": 6,
+      "entered_block_in_base_run": 4.0,
+      "delay_veh_h": -13.5
+    },
+    {
+      "hour": 13,
+      "seed": 3,
+      "trips_base": 10482,
+      "matched": 9896,
+      "drove_block_in_base_run": 8,
+      "entered_block_in_base_run": 15.0,
+      "delay_veh_h": 53.2
+    },
+    {
+      "hour": 13,
+      "seed": 4,
+      "trips_base": 10512,
+      "matched": 9920,
+      "drove_block_in_base_run": 27,
+      "entered_block_in_base_run": 20.0,
+      "delay_veh_h": -0.6
+    },
+    {
+      "hour": 13,
+      "seed": 5,
+      "trips_base": 10494,
+      "matched": 9978,
+      "drove_block_in_base_run": 5,
+      "entered_block_in_base_run": 3.0,
+      "delay_veh_h": 3.6
+    },
+    {
+      "hour": 14,
+      "seed": 1,
+      "trips_base": 11285,
+      "matched": 10679,
+      "drove_block_in_base_run": 45,
+      "entered_block_in_base_run": 33.0,
+      "delay_veh_h": -15.3
+    },
+    {
+      "hour": 14,
+      "seed": 2,
+      "trips_base": 11273,
+      "matched": 10793,
+      "drove_block_in_base_run": 31,
+      "entered_block_in_base_run": 27.0,
+      "delay_veh_h": -0.7
+    },
+    {
+      "hour": 14,
+      "seed": 3,
+      "trips_base": 11304,
+      "matched": 10798,
+      "drove_block_in_base_run": 25,
+      "entered_block_in_base_run": 23.0,
+      "delay_veh_h": 11.4
+    },
+    {
+      "hour": 14,
+      "seed": 4,
+      "trips_base": 11304,
+      "matched": 10649,
+      "drove_block_in_base_run": 44,
+      "entered_block_in_base_run": 43.0,
+      "delay_veh_h": 31.9
+    },
+    {
+      "hour": 14,
+      "seed": 5,
+      "trips_base": 11293,
+      "matched": 11031,
+      "drove_block_in_base_run": 44,
+      "entered_block_in_base_run": 27.0,
+      "delay_veh_h": -20.6
+    },
+    {
+      "hour": 15,
+      "seed": 1,
+      "trips_base": 12160,
+      "matched": 11434,
+      "drove_block_in_base_run": 96,
+      "entered_block_in_base_run": 76.0,
+      "delay_veh_h": -137.1
+    },
+    {
+      "hour": 15,
+      "seed": 2,
+      "trips_base": 12201,
+      "matched": 11428,
+      "drove_block_in_base_run": 64,
+      "entered_block_in_base_run": 64.0,
+      "delay_veh_h": 53.4
+    },
+    {
+      "hour": 15,
+      "seed": 3,
+      "trips_base": 12288,
+      "matched": 11445,
+      "drove_block_in_base_run": 97,
+      "entered_block_in_base_run": 107.0,
+      "delay_veh_h": 31.7
+    },
+    {
+      "hour": 15,
+      "seed": 4,
+      "trips_base": 12133,
+      "matched": 11358,
+      "drove_block_in_base_run": 114,
+      "entered_block_in_base_run": 114.0,
+      "delay_veh_h": -74.0
+    },
+    {
+      "hour": 15,
+      "seed": 5,
+      "trips_base": 12141,
+      "matched": 11394,
+      "drove_block_in_base_run": 95,
+      "entered_block_in_base_run": 93.0,
+      "delay_veh_h": -91.2
+    },
+    {
+      "hour": 16,
+      "seed": 1,
+      "trips_base": 12217,
+      "matched": 11405,
+      "drove_block_in_base_run": 28,
+      "entered_block_in_base_run": 25.0,
+      "delay_veh_h": -48.6
+    },
+    {
+      "hour": 16,
+      "seed": 2,
+      "trips_base": 12312,
+      "matched": 11462,
+      "drove_block_in_base_run": 50,
+      "entered_block_in_base_run": 30.0,
+      "delay_veh_h": 217.9
+    },
+    {
+      "hour": 16,
+      "seed": 3,
+      "trips_base": 12301,
+      "matched": 11486,
+      "drove_block_in_base_run": 76,
+      "entered_block_in_base_run": 82.0,
+      "delay_veh_h": 150.7
+    },
+    {
+      "hour": 16,
+      "seed": 4,
+      "trips_base": 12271,
+      "matched": 11343,
+      "drove_block_in_base_run": 100,
+      "entered_block_in_base_run": 98.0,
+      "delay_veh_h": 47.4
+    },
+    {
+      "hour": 16,
+      "seed": 5,
+      "trips_base": 12277,
+      "matched": 11369,
+      "drove_block_in_base_run": 55,
+      "entered_block_in_base_run": 51.0,
+      "delay_veh_h": 86.5
+    },
+    {
+      "hour": 17,
+      "seed": 1,
+      "trips_base": 12306,
+      "matched": 11481,
+      "drove_block_in_base_run": 111,
+      "entered_block_in_base_run": 97.0,
+      "delay_veh_h": -197.3
+    },
+    {
+      "hour": 17,
+      "seed": 2,
+      "trips_base": 12311,
+      "matched": 11443,
+      "drove_block_in_base_run": 144,
+      "entered_block_in_base_run": 116.0,
+      "delay_veh_h": 37.4
+    },
+    {
+      "hour": 17,
+      "seed": 3,
+      "trips_base": 12333,
+      "matched": 11465,
+      "drove_block_in_base_run": 116,
+      "entered_block_in_base_run": 94.0,
+      "delay_veh_h": -22.2
+    },
+    {
+      "hour": 17,
+      "seed": 4,
+      "trips_base": 12248,
+      "matched": 11203,
+      "drove_block_in_base_run": 125,
+      "entered_block_in_base_run": 100.0,
+      "delay_veh_h": 89.8
+    },
+    {
+      "hour": 17,
+      "seed": 5,
+      "trips_base": 12323,
+      "matched": 11421,
+      "drove_block_in_base_run": 126,
+      "entered_block_in_base_run": 112.0,
+      "delay_veh_h": 69.8
+    },
+    {
+      "hour": 18,
+      "seed": 1,
+      "trips_base": 10838,
+      "matched": 10310,
+      "drove_block_in_base_run": 81,
+      "entered_block_in_base_run": 89.0,
+      "delay_veh_h": 20.1
+    },
+    {
+      "hour": 18,
+      "seed": 2,
+      "trips_base": 10787,
+      "matched": 10271,
+      "drove_block_in_base_run": 72,
+      "entered_block_in_base_run": 86.0,
+      "delay_veh_h": -9.9
+    },
+    {
+      "hour": 18,
+      "seed": 3,
+      "trips_base": 10755,
+      "matched": 10208,
+      "drove_block_in_base_run": 88,
+      "entered_block_in_base_run": 97.0,
+      "delay_veh_h": -35.1
+    },
+    {
+      "hour": 18,
+      "seed": 4,
+      "trips_base": 10767,
+      "matched": 10176,
+      "drove_block_in_base_run": 80,
+      "entered_block_in_base_run": 82.0,
+      "delay_veh_h": -32.2
+    },
+    {
+      "hour": 18,
+      "seed": 5,
+      "trips_base": 10848,
+      "matched": 10290,
+      "drove_block_in_base_run": 96,
+      "entered_block_in_base_run": 118.0,
+      "delay_veh_h": -58.1
+    },
+    {
+      "hour": 19,
+      "seed": 1,
+      "trips_base": 8730,
+      "matched": 8545,
+      "drove_block_in_base_run": 83,
+      "entered_block_in_base_run": 71.0,
+      "delay_veh_h": 12.2
+    },
+    {
+      "hour": 19,
+      "seed": 2,
+      "trips_base": 8777,
+      "matched": 8569,
+      "drove_block_in_base_run": 83,
+      "entered_block_in_base_run": 68.0,
+      "delay_veh_h": -6.9
+    },
+    {
+      "hour": 19,
+      "seed": 3,
+      "trips_base": 8745,
+      "matched": 8514,
+      "drove_block_in_base_run": 69,
+      "entered_block_in_base_run": 61.0,
+      "delay_veh_h": -24.7
+    },
+    {
+      "hour": 19,
+      "seed": 4,
+      "trips_base": 8740,
+      "matched": 8525,
+      "drove_block_in_base_run": 76,
+      "entered_block_in_base_run": 68.0,
+      "delay_veh_h": -35.7
+    },
+    {
+      "hour": 19,
+      "seed": 5,
+      "trips_base": 8736,
+      "matched": 8518,
+      "drove_block_in_base_run": 89,
+      "entered_block_in_base_run": 78.0,
+      "delay_veh_h": -17.7
+    },
+    {
+      "hour": 20,
+      "seed": 1,
+      "trips_base": 7534,
+      "matched": 7478,
+      "drove_block_in_base_run": 58,
+      "entered_block_in_base_run": 67.0,
+      "delay_veh_h": 5.8
+    },
+    {
+      "hour": 20,
+      "seed": 2,
+      "trips_base": 7535,
+      "matched": 7510,
+      "drove_block_in_base_run": 70,
+      "entered_block_in_base_run": 71.0,
+      "delay_veh_h": -14.7
+    },
+    {
+      "hour": 20,
+      "seed": 3,
+      "trips_base": 7514,
+      "matched": 7454,
+      "drove_block_in_base_run": 55,
+      "entered_block_in_base_run": 52.0,
+      "delay_veh_h": 22.8
+    },
+    {
+      "hour": 20,
+      "seed": 4,
+      "trips_base": 7541,
+      "matched": 7489,
+      "drove_block_in_base_run": 64,
+      "entered_block_in_base_run": 64.0,
+      "delay_veh_h": 24.7
+    },
+    {
+      "hour": 20,
+      "seed": 5,
+      "trips_base": 7543,
+      "matched": 7472,
+      "drove_block_in_base_run": 62,
+      "entered_block_in_base_run": 62.0,
+      "delay_veh_h": 13.2
+    },
+    {
+      "hour": 21,
+      "seed": 1,
+      "trips_base": 6845,
+      "matched": 6838,
+      "drove_block_in_base_run": 23,
+      "entered_block_in_base_run": 39.0,
+      "delay_veh_h": -14.5
+    },
+    {
+      "hour": 21,
+      "seed": 2,
+      "trips_base": 6828,
+      "matched": 6798,
+      "drove_block_in_base_run": 35,
+      "entered_block_in_base_run": 50.0,
+      "delay_veh_h": 22.5
+    },
+    {
+      "hour": 21,
+      "seed": 3,
+      "trips_base": 6838,
+      "matched": 6824,
+      "drove_block_in_base_run": 45,
+      "entered_block_in_base_run": 59.0,
+      "delay_veh_h": -6.5
+    },
+    {
+      "hour": 21,
+      "seed": 4,
+      "trips_base": 6839,
+      "matched": 6834,
+      "drove_block_in_base_run": 28,
+      "entered_block_in_base_run": 43.0,
+      "delay_veh_h": 17.0
+    },
+    {
+      "hour": 21,
+      "seed": 5,
+      "trips_base": 6836,
+      "matched": 6820,
+      "drove_block_in_base_run": 30,
+      "entered_block_in_base_run": 44.0,
+      "delay_veh_h": 1.8
+    }
   ]
 }
