@@ -20,8 +20,8 @@ Done:
 
 ## Tamara
 Now:
-- [23:00] Copying the closure-impact model (lookup from past closures + queue calc) from her local analysis folder into model/.
 Done:
+- [23:15] Added the closure-impact model in model/: code, notes and output CSVs (not the 5 GB warehouse). `python model/mvm/mvm_predict.py` runs it. Not connected to the app yet. THIRD_PARTY.md and BRIEF.md updated.
 
 ## Others
 Now:

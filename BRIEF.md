@@ -60,7 +60,7 @@ From the whiteboard sketch. The sketch splits the flow into two phases: preparat
 - **Scan.** Scaniverse in LiDAR mesh mode, exported as PLY, LAS or OBJ. A later version may use our own scanner that keeps data when the phone moves.
 - **Scan check.** A scan fails if it misses the spot it was meant to cover. Check: the phone's location at upload (browser geolocation) must be within about 15 m of the scan point. Later, also check the scan contains the expected feature, such as a kerb.
 - **Analyse scans.** Two parts. Code measures the scan. The agent interprets the measurements. See "Scan measurement" below.
-- **Impact model.** The planned approach is machine learning trained on past road closures: about 30,000 Melbourne closures from RADAR, matched to SCATS signal counts from 2024 to 2026. **For the demo the results are mocked.** Fallbacks, heaviest first: SUMO microsimulation, a work-zone queue model, diversion routing on OpenStreetMap.
+- **Impact model.** Built, in `model/`. It is not machine learning. It is a lookup table learned from about 2,700 past Melbourne closures (RADAR, 2024 to 2026) matched to SCATS signal counts within 200 m, plus an hour-by-hour queue calculation. Inputs: closure type, work hours, daily traffic, lanes open. Outputs: likely traffic change as a range, chance of a big drop, delay, queue length, forced diversions and the best work window. It runs in Python from CSVs in the repo. Not yet connected to the app. See `model/README.md`.
 - **Base reference data.** Traffic, pedestrian and public transport data from APIs. Where it feeds in is not decided.
 - **Report.** Generated in the app and saved to the device as a PDF. On return home, the phone's share sheet opens so the planner can email it to their team (Web Share API).
 - **Storage.** Past projects live in the browser's localStorage for the demo. Supabase may come later.
@@ -146,6 +146,7 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - [29 Sep] Advait: past projects live in localStorage. Supabase maybe later.
 - [29 Sep] Advait: target is the Wed 30 Sep 12:30pm submission (3 slides plus a video demo), mocked where needed. Thursday only if shortlisted.
 - [29 Sep] Advait: the agents run on Claude. Claude reads the TGS for real in the Wednesday video. The other steps can stay mocked.
+- [29 Sep] Tamara: the impact model is a lookup from past closures plus a queue calculation, not machine learning. It is explainable, and its point estimate does not beat "no change", so it is shown as a range and a risk. Code and outputs in `model/`.
 
 ## Terms
 
