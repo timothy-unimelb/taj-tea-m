@@ -2,7 +2,7 @@
 
 An experiment. It simulates cars around the sample TGS closure (Swanston St closed between La Trobe St and Little La Trobe St) with and without the closure, and turns the difference into the app's impact result (`model/IMPACT_CONTRACT.md`).
 
-**Status: early result, low confidence.** Plugged into the app as `IMPACT_MODEL=sumo` (precomputed, Swanston sample only), and the app's default for this sample. Since 30 Sep 6am, traffic is fitted to measured car counts per approach, not whole-intersection totals. Since 30 Sep 9am (branch `tim-sumo-refinement`) every turn has a source, signals respond to traffic, and the simulation's own traffic is checked against the counts. The app still shows the 7:45am numbers until the team reviews the new ones.
+**Status: early result, low confidence.** Plugged into the app as `IMPACT_MODEL=sumo` (precomputed, Swanston sample only), and the app's default for this sample. Since 30 Sep 6am, traffic is fitted to measured car counts per approach, not whole-intersection totals. Since 30 Sep 9am every turn has a source, signals respond to traffic, and the simulation's own traffic is checked against the counts. The app still shows the 7:45am numbers until the team reviews the new ones.
 
 ## What it does
 
