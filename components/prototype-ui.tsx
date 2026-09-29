@@ -7,7 +7,7 @@ import { ArrowRightIcon, CheckIcon, CloudArrowUpIcon, FilePlusIcon, FilePdfIcon,
 export function Brand({ compact = false }: { compact?: boolean }) {
   return <span className={`brand ${compact ? "brand-compact" : ""}`}>
     <Image
-      src={compact ? "/assets/barrier-brain-mark.png" : "/assets/barrier-brain-logo.png"}
+      src={compact ? "/assets/barrier-brain-mark.png" : "/assets/barrier-brain-logo-v2.png"}
       alt="Barrier Brain"
       width={compact ? 28 : 180}
       height={compact ? 28 : 45}
