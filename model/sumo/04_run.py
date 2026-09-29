@@ -10,6 +10,11 @@ Outputs go to work/runs/<scenario>_h<hour>_x<scale>_s<seed>/ :
   summary.xml    network summary every minute (running, waiting, teleports)
   log.txt        SUMO log
 
+--gui opens the same run in sumo-gui (SUMO's viewer), zoomed on the closed block, so you can watch cars, signals and
+queues. Same limits; use --max-minutes 60 if you want to watch for a while. Outputs go to a separate _gui folder.
+On a Mac the pip build of sumo-gui is an X11 program: it needs XQuartz installed and running (DISPLAY set).
+--fcd MINUTES records car positions near the block instead, and 09_clip.py turns two runs into a GIF.
+
 Safety limits (added 30 Sep after a run grew to 300 GB of memory and crashed the laptop):
   --max-mem-gb   kill SUMO if it uses more memory than this (default 3 GB)
   --max-minutes  kill SUMO if it runs longer than this (default 20)
@@ -29,9 +34,12 @@ ap.add_argument("--max-mem-gb", type=float, default=3.0)
 ap.add_argument("--max-minutes", type=float, default=20.0)
 ap.add_argument("--queue-radius", type=float, default=600.0)
 ap.add_argument("--warnings", action="store_true", help="keep SUMO warnings in log.txt (where teleports happen); off by default, the log gets big")
+ap.add_argument("--gui", action="store_true", help="watch the run in sumo-gui, zoomed on the closed block (same limits; outputs go to a _gui folder). Needs XQuartz on a Mac.")
+ap.add_argument("--fcd", type=float, default=0, help="save car positions every second from the start of the hour, within --fcd-radius of the block (fcd.xml, for 09_clip.py; about 150 MB a run, delete it after)")
+ap.add_argument("--fcd-radius", type=float, default=320.0)
 args = ap.parse_args()
 
-tag = f"{args.scenario}_h{args.hour}_x{args.scale:g}_s{args.seed}"
+tag = f"{args.scenario}_h{args.hour}_x{args.scale:g}_s{args.seed}" + ("_gui" if args.gui else "")
 run = os.path.join(WORK, "runs", tag)
 os.makedirs(run, exist_ok=True)
 netfile = NET if args.scenario == "base" else os.path.join(WORK, "net_closed.net.xml")
@@ -64,9 +72,23 @@ with open(add, "w") as f:
                 n += 1
     f.write("</additional>\n")
 print("jam detectors:", n)
+fcd_opts = []
+if args.fcd:
+    with open(os.path.join(run, "fcd_edges.txt"), "w") as f:
+        f.write("\n".join("edge:" + e.getID() for e in net.getEdges()
+                          if math.hypot(e.getShape()[len(e.getShape()) // 2][0] - jx, e.getShape()[len(e.getShape()) // 2][1] - jy) <= args.fcd_radius))
+    fcd_opts = ["--fcd-output", f"{run}/fcd.xml", "--fcd-output.filter-edges.input-file", f"{run}/fcd_edges.txt",
+                "--device.fcd.begin", str(t0), "--device.fcd.period", "1", "--fcd-output.attributes", "x,y,speed,angle"]
 
 # Call the SUMO binary itself (not the pip wrapper) so the memory check sees the real process.
-sumo_bin = os.path.join(os.environ["SUMO_HOME"], "bin", "sumo")
+sumo_bin = os.path.join(os.environ["SUMO_HOME"], "bin", "sumo-gui" if args.gui else "sumo")
+gui_opts = []
+if args.gui:
+    # start straight away, zoomed on the closed block, about real time (delay per step in ms)
+    view = os.path.join(run, "view.xml")
+    with open(view, "w") as f:
+        f.write(f'<viewsettings>\n  <scheme name="real world"/>\n  <viewport zoom="1400" x="{jx:.0f}" y="{jy + 60:.0f}"/>\n  <delay value="60"/>\n</viewsettings>\n')
+    gui_opts = ["--start", "--quit-on-end", "false", "--gui-settings-file", view, "--window-size", "1400,900"]
 cmd = [sumo_bin, "-n", netfile, "-r", routes, "-a", add, "--seed", str(args.seed),
        "--begin", str(begin), "--end", str(end), "--scale", str(args.scale),
        "--step-length", "1", "--no-step-log", *([] if args.warnings else ["--no-warnings"]),
@@ -83,7 +105,7 @@ cmd = [sumo_bin, "-n", netfile, "-r", routes, "-a", add, "--seed", str(args.seed
        "--device.rerouting.adaptation-interval", "60", "--device.rerouting.adaptation-steps", "5",
        "--device.rerouting.threads", "2",
        "--tls.actuated.jam-threshold", "30",
-       "--log", f"{run}/log.txt"]
+       "--log", f"{run}/log.txt", *gui_opts, *fcd_opts]
 print(" ".join(cmd))
 
 

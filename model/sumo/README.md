@@ -74,6 +74,13 @@ Where the rules come from, in order:
 
 **Hook turns.** In a Melbourne hook turn the driver keeps to the kerb lane, waits in a box at the far side of the junction, and turns right when the cross street gets green. The model moves the right-turn connection to the kerb lane. The box itself is not modelled: a waiting hook turner sits at the stop line in the kerb lane, so kerb-lane capacity is understated at those approaches while a turn waits. SUMO has no hook-turn phase; the turn gets the same permissive green plus a short protected window that netconvert gives every crossing turn.
 
+## Watching it
+
+Two ways to see the simulation rather than its numbers:
+
+- **Live, in SUMO's viewer:** `python3 04_run.py closure --hour 17 --seed 1 --gui --max-minutes 60` opens the run in sumo-gui, zoomed on the block, with the same memory and time limits. On a Mac the bundled sumo-gui is an X11 program, so it needs XQuartz installed and running first (not installed on the laptop as of 30 Sep).
+- **A recorded clip:** run an hour with `--fcd 10` for both scenarios (`python3 04_run.py base --hour 17 --seed 6 --fcd 10`, then `closure`), then `python3 09_clip.py --hour 17 --seed 6 --minutes 10`. It writes `output/swanston-clip-17.gif`: ten simulated minutes, normal street on the left and closure on the right, cars as dots coloured by speed. Delete the `fcd.xml` files afterwards, they are about 150 MB each.
+
 ## Safety limits
 
 The first run on 30 Sep grew to 300 GB of memory and crashed the laptop. It had about 500,000 trips over 16 hours, the network gridlocked, cars that couldn't enter waited in memory forever, and every rerouted car kept its old routes. Now:
