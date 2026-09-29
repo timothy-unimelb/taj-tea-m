@@ -11,7 +11,7 @@ State: **done**, **in progress**, **next**, **later**.
 - **done** Branch `tim` created from `raina`. It has Raina's prototype plus the work below. `main` is untouched.
 - **done** Server route for Claude calls: `app/api/analyse-tgs/route.ts`, through Vercel AI Gateway.
 - **next** Team reviews `tim`, then merge it into `main` with a pull request. Raina's branch changes shared docs (DESIGN.md "LOCKED", open questions removed, auto share dropped), so the team should agree to those first.
-- **next** Check the Vercel preview deployment of `tim` runs the TGS analysis (OIDC login on Vercel, untested).
+- **done** Vercel preview deployment of `tim` runs the TGS analysis. On Vercel the OIDC token comes with each request, so the route reads it with `@vercel/oidc`.
 - **later** File storage with Vercel Blob. The browser uploads straight to Blob and sends the route a link. Needed for files over 4.5 MB, which Vercel Functions reject, and for LiDAR scans. Chosen over Supabase Storage for now: same Vercel project, less setup. Revisit if we adopt Supabase for projects.
 - **later** One sample site throughout. The TGS is Swanston St, but the project and report still say "Swan Street Work Zone" (`data/mock/barrier-brain.json`).
 

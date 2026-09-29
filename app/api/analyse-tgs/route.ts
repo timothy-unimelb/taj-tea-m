@@ -1,15 +1,18 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { getVercelOidcToken } from "@vercel/oidc";
 import { tgsAnalysisSchema, type TgsAnalysis } from "@/lib/tgs-analysis";
 
 // Claude can take a minute to read a detailed drawing.
 export const maxDuration = 120;
 
-// Claude runs through Vercel AI Gateway. On Vercel the project's OIDC token
-// authenticates; locally it comes from `vercel env pull .env.local`.
-const client = new Anthropic({
-  apiKey: process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN,
-  baseURL: "https://ai-gateway.vercel.sh",
-});
+// Claude runs through Vercel AI Gateway. The project's OIDC token authenticates.
+// On Vercel it arrives with each request; locally it comes from .env.local.
+async function gatewayClient() {
+  return new Anthropic({
+    apiKey: process.env.AI_GATEWAY_API_KEY || await getVercelOidcToken(),
+    baseURL: "https://ai-gateway.vercel.sh",
+  });
+}
 
 // Sonnet 5.5 keeps costs down for a student budget.
 const MODEL = "anthropic/claude-sonnet-5.5";
@@ -50,6 +53,7 @@ export async function POST(request: Request) {
   if (!upload) return fail("Choose a PDF, PNG or JPG file.", 415);
 
   try {
+    const client = await gatewayClient();
     const response = await client.messages.create({
       model: MODEL,
       max_tokens: 16000,

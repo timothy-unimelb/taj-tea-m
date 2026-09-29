@@ -9,6 +9,7 @@ The competition requires a list of all third-party material and APIs, including 
 | Tailwind CSS | Library | Styling | MIT | No |
 | Vercel | Hosting | Deploys the app | Vercel terms | No |
 | Vercel AI Gateway | API | Routes the app's Claude calls | Vercel terms | Usage-based |
+| @vercel/oidc | Library | Gets the Vercel login token the AI Gateway calls use | Apache-2.0 | No |
 | Claude API (Anthropic) | API | Reads the uploaded TGS and lists scan points, via Vercel AI Gateway | Anthropic terms | Usage-based |
 | Phosphor Icons | Icon library | Consistent line icons and status symbols in the frontend | MIT | No |
 | User-supplied Barrier Brain UI reference board | Design and image source | Visual source; original street, LiDAR, plan and aerial artwork reused in the prototype | Supplied by the project user; underlying asset provenance not provided | No purchase by this implementation |
