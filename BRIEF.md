@@ -87,7 +87,7 @@ This runs as a Python function (Vercel supports Python functions, or a small sep
 
 The frontend layout is locked by the final Barrier Brain UI board supplied on 29 Sep. See DESIGN.md for the complete flow.
 
-- Header: project, date, the work hours from the TGS, overall impact from the severity rule.
+- Header: project, date, the period the impact numbers cover, overall impact from the severity rule.
 - Overview, Traffic, Pedestrians, Public transport and Safety tabs.
 - Amber review-required decision, impact summary, aerial site overview and two expandable recommended actions.
 - Document-style PDF preview, explicit Share action, and planning disclaimer.

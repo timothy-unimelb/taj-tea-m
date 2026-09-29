@@ -14,7 +14,7 @@ Locked frontend flow, 29 Sep. Mobile browser at 393 x 852, responsive from 375 t
 5. **Incomplete scan.** Four of five areas captured. Intersection approach missing. View missing area or upload additional scan. No Continue action.
 6. **Complete scan.** Five of five areas captured. Generate impact report.
 7. **Generating report.** Five progressive processing steps, then automatically show the report.
-8. **Site Impact Report.** Overview, Traffic, Pedestrians, Public transport and Safety tabs. Amber review-required decision, impact summary, aerial site overview and expandable recommended actions.
+8. **Site Impact Report.** Overview, Traffic, Pedestrians, Public transport and Safety tabs. Amber review-required decision, impact summary, aerial site overview and expandable recommended actions. A "How this was estimated" disclosure (method, confidence, assumptions) sits at the end of the Overview and in the PDF preview; mode tabs list the model's ranges.
 9. **Export preview.** Document-style report with site image, findings, actions and planning disclaimer. Browser print/save PDF. Share is an explicit action with native share or a copy-link fallback.
 
 Use deterministic demo analysis values. Keep explanatory copy separate. The UI supports planning, not formal traffic management approval.

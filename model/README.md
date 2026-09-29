@@ -24,6 +24,17 @@ It has two parts. Neither uses machine learning.
 | `headline_stats/output/` | Hourly traffic profile and daily volume per signal site. The prediction reads these. |
 | `mvm/0*.sql`, `mvm/run_mvm.py`, `headline_stats/` | Code that rebuilds the tables above. |
 
+## In the app
+
+The app does not run this Python. It runs a TypeScript port of `mvm_predict.py` live (`lib/impact/models/mvm-core.ts`), plus a SUMO simulation for the Swanston sample (`sumo/`). Both return the same result shape, described in `IMPACT_CONTRACT.md`.
+
+| Path | What it is |
+|---|---|
+| `IMPACT_CONTRACT.md` | The input and output shape every impact model uses, and the severity rule |
+| `export_app_tables.py` | Copies the three CSVs the model reads into `data/impact/mvm-tables.json` for the app. Rerun after the CSVs change |
+| `check_ts_port.ts` | Checks the TypeScript port against this Python: `node_modules/.bin/jiti model/check_ts_port.ts` |
+| `sumo/` | SUMO simulation of the Swanston closure. Early result. Read its README first |
+
 ## Running it
 
 ```bash

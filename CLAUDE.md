@@ -11,6 +11,8 @@ Built for the RPM Hire problem statement at the UniMelb FEIT Hackathon 2026. Rea
 - Mobile first. Lay every screen out for a phone. It is a Next.js app on Vercel, not a native app.
 - Scan measurement is mocked for the Wednesday demo. Mock data goes in `data/mock/`. A sample TGS is in `data/mock/tgs/`.
 - Impact models are swappable. Each returns the same result shape, and `IMPACT_MODEL` picks one. See `model/IMPACT_CONTRACT.md`.
+- Prompts for Claude live in `prompts/` as Markdown, so the team can edit them without touching code.
+- Never run SUMO outside `model/sumo/04_run.py`. It caps memory and time. An uncapped run used 300 GB and crashed a laptop.
 - Agent calls run on the server. Keys stay in env vars.
 
 This is a hackathon build. The idea will change. Build to what is written here now, and keep the code easy to change.
@@ -29,7 +31,7 @@ It is an app for one workflow, not a marketing site. No landing page, hero secti
 
 STATUS.md tracks what each Claude session is working on. Anyone can ask "what's happening?" and get a straight answer.
 
-1. Read it, BRIEF.md and PLAN.md at the start of every session. PLAN.md holds the build steps and their state. Update it when a step changes.
+1. Read it, BRIEF.md and PLAN.md at the start of every session. PLAN.md holds the build steps and their state, and starts with "Where things stand": what is real, what is demo data, and what is next. Update it when a step changes.
 2. Before starting a task, add it under "Now" in the section of the person running this session.
 3. Update that line when something changes: a decision, a blocker, a partial result.
 4. When the task is done, move it to "Done" with one line on what changed and where.

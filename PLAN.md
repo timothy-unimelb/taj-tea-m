@@ -6,7 +6,43 @@ Keep it current. When a step's state changes, update it here in the same commit.
 
 State: **done**, **in progress**, **next**, **later**.
 
-## 1. Foundations (in progress)
+## Where things stand (30 Sep, 5am)
+
+Read this first when picking up the work. All of it is on branch `tim`, pushed, with lint and build passing. `main` does not have it yet (see step 1).
+
+**Real**
+- TGS analysis: Claude Sonnet 5.5 via Vercel AI Gateway reads an uploaded PDF, PNG or JPG (`app/api/analyse-tgs/route.ts`, prompt in `prompts/tgs-analysis.md`, output shape in `lib/tgs-analysis.ts`). About 20 s and 3.5 cents a run. "Use demo TGS" loads a saved result (`data/mock/tgs/swanston-analysis.json`) and says so.
+- Impact estimate: `/api/impact` builds an ImpactRequest from the TGS analysis (nearest SCATS site by street name, `lib/impact/request.ts`) and runs the chosen model (`lib/impact/index.ts`). Default: the SUMO early result for the Swanston sample, Tamara's lookup model live for every other site. Contract in `model/IMPACT_CONTRACT.md`.
+- Report: traffic numbers as ranges, one written severity rule for every model (`lib/impact/severity.ts`), "Review required" or "Not modelled" for modes no model covers, and a "How this was estimated" section with method, confidence and assumptions (`lib/data.ts` `buildReport`, `components/site-report.tsx`).
+- All 9 of Raina's screens, laid out for a phone, including the PDF-style preview and Share.
+
+**Still fixed demo data**
+- Scan upload and check: the file is not read, "4 of 5" then "5 of 5 captured" are scripted (steps 3 and 4).
+- Scan measurement and the plan vs street comparison (steps 4 and 5).
+- The safety finding and the first two recommended actions, written for the Swanston sample (`data/mock/barrier-brain.json`). They show for any TGS.
+- Projects list: three fixed entries, and every project shows the Swanston report.
+- The aerial site image on the report is artwork from the design board.
+- Pedestrians, trams, buses and trucks: no model covers them. Tram streets come from a hand-made list in `lib/impact/request.ts`.
+
+**Known limits of what is real**
+- SUMO (`model/sumo/README.md`): Swanston only, 8am to 9am only, 50% of counted traffic, no counter on the closed lane. Delay and queue are within noise.
+- Tamara's model: its typical estimate does not beat "no change", it has no road closed group, and it assumes half the signal site's traffic uses the closed street, which overstates streets with little car access.
+- Uploads over 4.5 MB fail on Vercel although the screen says 20 MB (step 1, Blob).
+
+**Next, in order**
+1. Team review and merge `tim` into `main` (step 1). Decisions needed are listed in STATUS.md under Tim, "Review before merging".
+2. Answers from Tamara on the questions in step 6a.
+3. Scan work: one real Scaniverse export measured offline (step 4).
+4. Impact model follow-ups (step 6).
+
+**Running and checking**
+- `npm run dev` (needs `vercel env pull .env.local` for the Claude call). The Claude Browser config "barrier-brain" runs it on port 3001.
+- Vercel previews of `tim` need a Vercel login.
+- `IMPACT_MODEL=mvm`, `sumo` or `http` (with `IMPACT_MODEL_URL`) switches the model.
+- `node_modules/.bin/jiti model/check_ts_port.ts` checks the TypeScript port against the Python.
+- SUMO: always run through `model/sumo/04_run.py`, which kills SUMO above 3 GB or 20 minutes. A run without limits used 300 GB and crashed the laptop.
+
+## 1. Foundations (done, merge pending)
 
 - **done** Branch `tim` created from `raina`. It has Raina's prototype plus the work below. `main` is untouched.
 - **done** Server route for Claude calls: `app/api/analyse-tgs/route.ts`, through Vercel AI Gateway.
@@ -40,7 +76,7 @@ Plan in BRIEF.md "Scan measurement": Open3D, trimesh, laspy. Find ground, kerb a
 
 Claude reads the TGS analysis and the scan measurements, flags each conflict ("footpath 1.4 m clear, plan needs 1.8 m") and suggests fixes from RPM's equipment inventory. Code produces every number. Claude only explains and recommends.
 
-## 6a. Swappable impact models (next, night of 30 Sep)
+## 6a. Swappable impact models (done, 30 Sep)
 
 The app must not be locked into one traffic model. Tamara may try other approaches, and SUMO is being tested. Order agreed by Tim on 30 Sep, 3:45am:
 
@@ -55,19 +91,23 @@ Questions for Tamara:
 - The lookup has no "road closed" group. Could one be built from RADAR?
 - SUMO says tens to about a hundred drivers an hour use the closed Swanston block (one car lane, the rest is tram only). The lookup model assumes half of site 2921's 47,000 daily vehicles use Swanston St, so it predicts about 10,000 diversions a day. Can the SCATS detector counts for the Swanston approach settle which is closer?
 
-## 6. Impact model connected (later)
+## 6. Impact model follow-ups (later)
 
-Run `model/mvm/mvm_predict.py` as a service. Inputs from step 2 (closure type, hours, lanes) and traffic data (daily traffic, nearest signal site). Fix first:
+The models are connected (step 6a). What would make the numbers stronger:
 
-- The worst-case docstring says P10 but the code uses P90. Check with Tamara.
-- Road size comes from the nearest signal site, not the daily traffic given.
-- Show results as ranges and risk, not single numbers like "620 m".
+- **next** Settle how many cars really use the closed Swanston block: the detector-level SCATS counts for site 2921 (right-turn lane from La Trobe St westbound). Tamara has the warehouse. This decides between the two models' very different answers.
+- Replace the lookup model's 50% closed-street share with per-approach detector counts, so it stops overstating streets with little car access.
+- A "road closed" group in the lookup, if RADAR has enough full closures.
+- SUMO for any site: parametrise `model/sumo/` by street, extent and location from the TGS analysis. About 1 to 2 hours. Runs take 5 to 10 minutes and up to 2 GB, so it must run offline or on a separate server, not in a Vercel function. Each new area needs its network checked for artificial jams.
+- SUMO credibility: real signal plans, per-approach counts, more hours than 8am to 9am, trams from PTV GTFS.
+- Other modes: pedestrians (City of Melbourne Pedestrian Counting System), trams and buses (PTV GTFS), trucks.
 
-Then add the other modes: pedestrians (City of Melbourne Pedestrian Counting System), trams and buses (PTV GTFS), trucks.
+## 7. Real report (in progress)
 
-## 7. Real report (later)
-
-Build the report from real outputs instead of `barrier-brain.json`. Server-rendered PDF. Sharing and team access need user accounts.
+- **done** Traffic numbers, ratings, method and assumptions come from the impact result.
+- **later** Safety finding and recommended actions from the plan vs street comparison (step 5) instead of `barrier-brain.json`.
+- **later** A real site map instead of the design board's aerial image.
+- **later** Server-rendered PDF. Sharing and team access need user accounts.
 
 ## 8. Production basics (after the hackathon)
 
@@ -83,3 +123,4 @@ User accounts, error handling, tests on measurement and model code, AI cost limi
 - [30 Sep 4:45am] Tim: a second session reviewed the SUMO work. Fixed without rerunning: diversions now a range (44 to 100), detour 7 m shortest vs 114 m driven, queue dropped as noise, access loss and demand split stated, image caption corrected.
 - [30 Sep 4:55am] Tim: SUMO is now the default where it has a result (the Swanston sample); Tamara's model covers every other site. Her model now warns that it may overstate diversions on tram streets.
 - [30 Sep 5:05am] Tim: the TGS prompt now lives in prompts/tgs-analysis.md so the team can refine it without touching code.
+- [30 Sep 5:09am] Tim: handover docs. "Where things stand" added at the top of this file, README rewritten, pointers in CLAUDE.md, model/README.md, DESIGN.md.
