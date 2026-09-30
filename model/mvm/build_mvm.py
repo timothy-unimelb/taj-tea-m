@@ -3,7 +3,7 @@
     python model/mvm/build_mvm.py                   # ~1 min; writes model/mvm/output/*.csv
     python model/mvm/build_mvm.py --parquet "D:/data/closure_site_hour.parquet"
 
-Same method as the SQL files 02-05 (which read the warehouse), in pandas:
+Steps 2-5 of the original model (REPLICATION_CONTEXT.md section 4), in pandas:
   02 volume per site x day x time band, complete site-days only
   03 closure day vs median of the same site/band on d-7 .. d-42 (clean days only)
   04 lookup table (the model): P10/P50/P90 by closure type x work window x time band x road class

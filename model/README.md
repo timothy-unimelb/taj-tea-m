@@ -21,10 +21,10 @@ It has two parts. Neither uses machine learning.
 | `mvm/output/mvm_lookup.csv` | The model: the lookup table (144 rows). |
 | `mvm/output/mvm_per_closure.csv` | Each past closure with its measured traffic change and location. |
 | `mvm/output/mvm_validation_*.csv` | How well the model predicted 2026 closures when trained on earlier ones. |
-| `headline_stats/output/` | Hourly traffic profile and daily volume per signal site. The prediction reads these. |
-| `mvm/build_mvm.py` | Rebuilds the four `mvm/output/` CSVs from the flat parquet. This is the main build. |
-| `mvm/0*.sql`, `mvm/run_mvm.py`, `headline_stats/` | The original build from the local warehouse. Kept for reference, and still the only way to rebuild `headline_stats/output/`. |
+| `headline_stats/output/` | Hourly traffic profile and daily volume per signal site. The prediction, the app and `sumo/` read these. |
 | `build_parquet.py` | Joins the raw files behind the model into one flat parquet table. See below. |
+| `mvm/build_mvm.py` | Rebuilds the four `mvm/output/` CSVs from the flat parquet. |
+| `headline_stats/build_headline_stats.py` | Rebuilds the two `headline_stats/output/` CSVs from the raw SCATS files. |
 
 ## In the app
 
@@ -48,21 +48,26 @@ This compares night, day and 24-hour works for a sample lane closure and marks t
 
 ## What is not in the repo
 
-The raw downloads (about 41 GB) and Tamara's local data warehouse (`warehouse/city.duckdb`, about 5 GB) are too big for git. The model is built in two steps from the raw files, without the warehouse:
+The raw downloads (about 41 GB) are too big for git. Everything here is built from them with pandas. No database is needed.
+
+**Getting the raw files:** they are too large to include in the repo, so they are kept in the team Google Drive folder instead: https://drive.google.com/drive/u/2/folders/15Fs9leoTLK9MTWIcwbgNhG2X72k8Cpge. Download it and keep the layout `raw/<dataset>/<download date>/<file>`. Then pass the folder that holds `raw/` as `--root`. The model only needs five datasets in `raw/`: `radar_roadworks_vic`, `scats_volume`, `scats_volume_annual`, `scats_sites` and `aadt`.
 
 1. `python model/build_parquet.py` joins the raw files into one parquet (about 5 minutes).
 2. `python model/mvm/build_mvm.py` builds the lookup and validation CSVs from it (about 15 seconds).
+3. `python model/headline_stats/build_headline_stats.py` builds the traffic profile and site tables (about 7 minutes).
 
-The CSVs are committed, so predictions work without either step. Paths in `REPLICATION_CONTEXT.md` point to Tamara's local folder.
+The CSVs are committed, so predictions work without any of these steps. Each script takes `--root` for the folder that holds `raw/`.
+
+The model was first built from a local DuckDB warehouse. That route was retired on 30 Sep 2026. The scripts above reproduce its outputs. `mvm/REPLICATION_CONTEXT.md` records the original method and its checks, and its paths point to Tamara's local folder.
 
 ## Flat dataset (parquet)
 
-`build_parquet.py` reads the raw downloads directly with pandas, without the warehouse. It writes one compressed file, `parquet/closure_site_hour.parquet`, in the local data folder. The file is too big for git.
+`build_parquet.py` reads the raw downloads directly with pandas. It writes one compressed file, `parquet/closure_site_hour.parquet`, in the local data folder. The file is too big for git.
 
 One row is one closure, one signal site within 200 m, one day and one hour. Each closure's rows start 6 weeks before it, so its baseline weeks come with it. Columns cover:
 
 - **Traffic:** hourly SCATS count for the site, daily total, whether the site-day is complete, and whether another closure was active near the site that day.
-- **Closure:** type, work hours, street, dates and the DTP text, parsed as in `mvm/01_closures_pairs.sql`.
+- **Closure:** type, work hours, street, dates and the DTP text, parsed with the original model's rules.
 - **Site:** name, location, distance to the closure, and whether it is on the same street.
 - **Road:** AADT of the nearest road segment within 100 m. Many segments cover one direction only, so check `aadt_directions`.
 - **Calendar:** weekday, weekend and Victorian public holidays.

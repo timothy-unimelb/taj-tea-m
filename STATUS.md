@@ -45,8 +45,8 @@ Done:
 
 ## Tamara
 Now:
-- [10:40] Removing the last links to the local warehouse: rebuilding model/headline_stats from raw SCATS files in pandas, then deleting the warehouse-only scripts and SQL.
 Done:
+- [11:00] Model no longer needs the local warehouse. Added model/headline_stats/build_headline_stats.py (same outputs, rebuilt from raw SCATS). Removed warehouse-only scripts and SQL. model/README.md links the raw files on Google Drive.
 - [10:20] Model now builds from the parquet: model/mvm/build_mvm.py (15 s). Same outputs as the warehouse build (differences 1e-16). CSVs regenerated; app tables not re-exported since values are unchanged.
 - [09:30] Added model/build_parquet.py. Joins the raw closure, SCATS, site, AADT and holiday files into one parquet (closure x site x day x hour, 4.8M rows, 7 MB). Output is local only, in parquet/ of the data folder. Counts match the warehouse exactly.
 - [23:15] Added the closure-impact model in model/: code, notes and output CSVs (not the 5 GB warehouse). `python model/mvm/mvm_predict.py` runs it. Not connected to the app yet. THIRD_PARTY.md and BRIEF.md updated.
@@ -58,6 +58,7 @@ Done:
 
 ## Assumptions
 [Anything a session guessed at because it wasn't specified. One line each, with the person's name.]
+- Tamara: the Google Drive folder of raw files keeps the local layout raw/<dataset>/<date>/<file>, so --root works on a download of it.
 - Advait: scan check passes if the phone is within about 15 m of the scan point at upload.
 - Advait: sample TGS licence (Invarion) not confirmed. Check before submission.
 

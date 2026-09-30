@@ -117,7 +117,7 @@ Other things to know about RADAR:
   | 24 hours | ≈1,022 veh-h | — | — |
 
 ## 6. How to rebuild
-**Update, 30 Sep 2026:** the main build now runs from the raw files without the warehouse. In the Barrier Brain repo, run `python model/build_parquet.py`, then `python model/mvm/build_mvm.py`. It reproduces every output CSV to within floating-point rounding (1e-16). The warehouse route below still works.
+**Update, 30 Sep 2026:** the repo no longer uses the warehouse. The build runs from the raw files: `python model/build_parquet.py`, then `python model/mvm/build_mvm.py` and `python model/headline_stats/build_headline_stats.py`. It reproduces the output CSVs to within floating-point rounding. The warehouse steps below, and the SQL in section 8, are the original method, kept as a record. Those files are no longer in the repo.
 
 Prerequisite: RADAR is loaded (`stg.radar_roadworks` exists). If not:
 1. `pipeline\fetch_closures.bat` (downloads group `closures`);

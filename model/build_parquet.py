@@ -8,8 +8,8 @@ to its last day. So each closure carries its own baseline weeks. Columns come fr
   RADAR roadworks (closures), SCATS volumes (counts, summed to site x hour), SCATS site locations,
   AADT road segments (nearest segment to the closure) and Victorian public holidays.
 
-Filters and parsing match model/mvm/01_closures_pairs.sql and the warehouse ETL, so the counts can be checked
-against model/mvm/REPLICATION_CONTEXT.md (6,514 closures; 4,477 pairs, 3,075 closures, 591 sites).
+Filters and parsing follow the original model (see model/mvm/REPLICATION_CONTEXT.md), so the counts can be
+checked against it: 6,514 closures; 4,477 pairs, 3,075 closures, 591 sites.
 Raw files are only read, never changed. Needs pandas, numpy, pyarrow and pyproj."""
 import argparse, datetime as dt, io, json, pathlib, time, warnings, zipfile
 from concurrent.futures import ProcessPoolExecutor
@@ -67,7 +67,7 @@ def load_closures(raw):
     days = (pd.to_datetime(c.d_to) - pd.to_datetime(c.d_from)).dt.days
     c = c[(c.d_to >= PERIOD[0]) & (c.d_from <= PERIOD[1]) & days.between(0, 7)].copy()
 
-    # parse the DTP text, same rules as 01_closures_pairs.sql
+    # parse the DTP text (rules from the original model, REPLICATION_CONTEXT.md section 4)
     desc = c.description.fillna("")
     low = desc.str.lower()
     c["closure_type"] = np.select(
@@ -191,7 +191,8 @@ def _day_to_site_hour(csv_bytes, sites):
                                                     "NM_REGION", "CT_ALARM_24HOUR"], dtype=str)
     d["site_no"] = pd.to_numeric(d.NB_SCATS_SITE, errors="coerce")
     alarm = pd.to_numeric(d.CT_ALARM_24HOUR, errors="coerce").fillna(0)
-    d = d[d.site_no.isin(sites) & (alarm == 0)]                     # the ETL drops detectors with alarms that day
+    keep = alarm == 0                                               # detectors with alarms that day are dropped
+    d = d[keep & d.site_no.isin(sites)] if sites is not None else d[keep & d.site_no.notna()]
     if d.empty:
         return None
     v = d[V_COLS].apply(pd.to_numeric, errors="coerce").to_numpy(dtype="float64").reshape(len(d), 24, 4)
@@ -210,12 +211,12 @@ def _day_to_site_hour(csv_bytes, sites):
     g = long.groupby(["site_no", "date_local", "hour_local"])
     out = g.agg(n_detectors=("detector", "nunique"), n_missing_slots=("n_missing_slots", "sum"),
                 region=("region", "max"))
-    out.insert(0, "volume", g.volume.sum(min_count=1))              # NaN when every slot was missing, as in the ETL
+    out.insert(0, "volume", g.volume.sum(min_count=1))              # NaN when every slot was missing
     return out.reset_index()
 
 
 def _month_task(args):
-    """one monthly zip of daily VSDATA CSVs (or a monthly zip inside the 2024 annual zip)"""
+    """one monthly zip of daily VSDATA CSVs (or a monthly zip inside the 2024 annual zip); sites=None keeps all"""
     zip_path, inner, sites = args
     with zipfile.ZipFile(zip_path) as z:
         zf = zipfile.ZipFile(io.BytesIO(z.read(inner))) if inner else z
@@ -224,16 +225,19 @@ def _month_task(args):
     return (inner or pathlib.Path(zip_path).name), len(parts), (pd.concat(parts) if parts else None)
 
 
-def load_scats(raw, sites, workers):
+def load_scats(raw, sites, workers, months_wanted=None):
+    """site x hour counts. sites=None keeps every site; months_wanted limits to month names like 'april_2025'"""
     tasks, months = [], set()
-    for key in ("scats_volume", "scats_volume_annual"):             # same order and de-duplication as the ETL
+    for key in ("scats_volume", "scats_volume_annual"):             # monthly zips first; each month read once
         for zp in sorted(snapshot_all(raw, key)):
             with zipfile.ZipFile(zp) as z:
                 inner = [n for n in z.namelist() if n.lower().endswith(".zip")]
             for label in (inner or [None]):
                 month = pathlib.PurePosixPath(label or zp.name).stem.lower()
-                if month not in months:
-                    months.add(month); tasks.append((str(zp), label, set(sites)))
+                if month in months or (months_wanted and month.replace("traffic_signal_volume_data_", "")
+                                                           not in months_wanted):
+                    continue
+                months.add(month); tasks.append((str(zp), label, None if sites is None else set(sites)))
     log(f"SCATS: {len(tasks)} monthly zips to read with {workers} workers")
     out = []
     with ProcessPoolExecutor(workers) as ex:
@@ -270,7 +274,7 @@ def _nth_weekday(y, month, weekday, n):
 
 
 def vic_public_holidays(y0=2023, y1=2027):
-    """same rules as pipeline/run_etl.py (meta.vic_public_holidays in the warehouse)"""
+    """Victorian public holidays, including observed days and the AFL Grand Final Friday"""
     out = []
     for y in range(y0, y1 + 1):
         for m, dd, name in [(1, 1, "New Year's Day"), (1, 26, "Australia Day")]:
