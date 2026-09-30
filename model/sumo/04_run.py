@@ -78,7 +78,7 @@ if args.fcd:
         f.write("\n".join("edge:" + e.getID() for e in net.getEdges()
                           if math.hypot(e.getShape()[len(e.getShape()) // 2][0] - jx, e.getShape()[len(e.getShape()) // 2][1] - jy) <= args.fcd_radius))
     fcd_opts = ["--fcd-output", f"{run}/fcd.xml", "--fcd-output.filter-edges.input-file", f"{run}/fcd_edges.txt",
-                "--device.fcd.begin", str(t0), "--device.fcd.period", "1", "--fcd-output.attributes", "x,y,speed,angle"]
+                "--device.fcd.begin", str(t0), "--device.fcd.period", "1", "--fcd-output.attributes", "id,x,y,speed,angle"]
 
 # Call the SUMO binary itself (not the pip wrapper) so the memory check sees the real process.
 sumo_bin = os.path.join(os.environ["SUMO_HOME"], "bin", "sumo-gui" if args.gui else "sumo")
