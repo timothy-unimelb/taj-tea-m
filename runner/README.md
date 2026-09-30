@@ -2,7 +2,7 @@
 
 Runs the team's Python (Tamara's model, later SUMO) on demand, away from Vercel. Nothing runs while idle: each run gets its own container, which sleeps when the job ends. Inputs and results live in R2 (Cloudflare's file storage).
 
-Status (30 Sep): built and tested locally in Docker, and `wrangler deploy --dry-run` passes. **Not deployed yet.** The app does not call it yet.
+Status (30 Sep, 4:20pm): **deployed** at `https://barrier-brain-runner.timothymanojmathews.workers.dev`. Both jobs run there: `mvm-sample` in about 8 s, `mvm-build` in about 26 s, with the same lookup CSVs as the repo (other outputs differ only in the last float digit and row order). The app does not call it yet: set `RUNNER_URL` and `RUNNER_TOKEN` in Vercel first. The token is in `runner/.runner-token` (git ignores it).
 
 ## How it works
 
@@ -16,7 +16,7 @@ Vercel app ──HTTPS + token──▶ Worker ──▶ container (one per run)
 2. Otherwise it writes `status.json` as `queued`, starts a new container and hands it the job. It answers `202` with a `run_id` at once.
 3. The container downloads the job's inputs from R2, runs its steps in order, uploads its outputs, and writes `status.json` as `succeeded` or `failed`, along with `log.txt`.
 4. The app polls `GET /runs/<run_id>` and reads files with `GET /runs/<run_id>/files/<path>`.
-5. Cloudflare puts a container to sleep after 2 minutes without requests. A job can run longer than that with nobody polling, so before it sleeps the Worker asks the container whether a job is still running and keeps it up if so. Each job's `timeout_s` ends a stuck run.
+5. A container exits as soon as its job succeeds. A failed one stays up for a minute so `GET /runs/<run_id>/container` can show its error, then the Worker kills it. A job can run longer than that with nobody polling, so before killing it the Worker asks the container whether a job is still running. Each job's `timeout_s` ends a stuck step, and a watchdog kills the container 5 minutes after that.
 
 ## Swapping inputs, outputs and scripts
 
@@ -47,7 +47,7 @@ If `build_mvm.py` read only the columns it uses, the peak would drop to 3.7 GB w
 
 Docker Desktop on this Mac has 1.9 GB, so `mvm-build` cannot run in local Docker. Everything else does.
 
-## Setting it up (not done yet)
+## Setting it up (done 30 Sep, kept for a new account)
 
 Needs the Cloudflare account that has the Workers Paid plan, and Docker running (Wrangler builds the image).
 
@@ -86,7 +86,11 @@ npm run check                                  # type check the Worker
 
 ## Cost
 
-Containers are billed only while running: memory, CPU and disk by the second, beyond what the Workers Paid plan includes. An 8-second `build_mvm` run plus 2 minutes of idle before sleep is a fraction of a cent. R2 has 10 GB of free storage and no download fees.
+The Workers Paid plan includes 25 GiB-hours of memory, 375 vCPU-minutes and 200 GB-hours of disk a month for containers. Memory and disk are billed for the whole time a container is up, CPU only while it works. A run on `standard-4` is up about 30 s, about 0.1 GiB-hours, so about 250 runs a month are included. Past that, a run costs about a tenth of a cent. R2 has 10 GB of free storage.
+
+The real risk is a container that never stops: about 11 cents an hour each at 12 GiB. That happened on 30 Sep, because the server ran as PID 1 and ignored SIGTERM. Now four things stop a container: it exits when its job succeeds, it handles SIGTERM, the Worker destroys it after 1 idle minute, and a watchdog kills it 5 minutes past the job's `timeout_s`. Keep a usage-based billing alert on in the Cloudflare dashboard as a backstop.
+
+`GET /runs/<run_id>/container` shows whether a run's container is up and its last error, which is where to look when a run stays `queued`.
 
 ## Next
 

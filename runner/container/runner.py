@@ -20,12 +20,16 @@ class Storage:
     """R2 via boto3 when credentials are present, else a local folder that mimics the same keys."""
 
     def __init__(self):
+        if os.environ.get("RUNNER_STORAGE") == "r2" and not os.environ.get("R2_ACCOUNT_ID"):
+            raise RuntimeError("RUNNER_STORAGE=r2 but R2_ACCOUNT_ID and the R2 keys were not passed in")
         if os.environ.get("R2_ACCOUNT_ID"):
             import boto3
+            from botocore.config import Config
             self.bucket = os.environ["R2_BUCKET_NAME"]
             self.s3 = boto3.client("s3", endpoint_url=f"https://{os.environ['R2_ACCOUNT_ID']}.r2.cloudflarestorage.com",
                                    aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
-                                   aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"], region_name="auto")
+                                   aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"], region_name="auto",
+                                   config=Config(connect_timeout=10, read_timeout=120, retries={"max_attempts": 3}))
             self.root = None
         else:
             self.root = pathlib.Path(os.environ.get("LOCAL_R2_DIR", pathlib.Path(__file__).resolve().parents[1] / ".local-r2"))

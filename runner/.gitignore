@@ -3,3 +3,4 @@ build/
 .local-r2/
 .wrangler/
 __pycache__/
+.runner-token

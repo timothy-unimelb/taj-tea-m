@@ -7,6 +7,7 @@
 //   GET  /runs/:run_id             status.json (state: queued | running | succeeded | failed)
 //   GET  /runs/:run_id/log         log.txt
 //   GET  /runs/:run_id/files/<p>   one output file, <p> as listed in status.outputs
+//   GET  /runs/:run_id/container   the run's container: running or not, and its last error
 //
 // Every request needs "Authorization: Bearer <RUNNER_TOKEN>".
 
@@ -28,8 +29,9 @@ const jobs = config.jobs as Record<string, { description: string; cache?: boolea
 
 export class JobContainer extends Container<Env> {
   defaultPort = 8080;
-  sleepAfter = "2m";
+  sleepAfter = "1m";
   envVars = {
+    RUNNER_STORAGE: "r2",
     AWS_ACCESS_KEY_ID: this.env.AWS_ACCESS_KEY_ID,
     AWS_SECRET_ACCESS_KEY: this.env.AWS_SECRET_ACCESS_KEY,
     R2_ACCOUNT_ID: this.env.R2_ACCOUNT_ID,
@@ -39,17 +41,27 @@ export class JobContainer extends Container<Env> {
   // Idle means "no requests", not "no work": a job can run for minutes with
   // nobody polling. Stay up while the runner says it is busy; returning
   // without stop() renews the timer. The runner's own timeout_s ends a stuck job.
+  // destroy() kills at once: a container we pay for must never outlive its job.
   override async onActivityExpired() {
+    const live = await this.liveStatus();
+    if (live?.busy) return;
+    await this.destroy();
+  }
+
+  // The container's own /status, or null when it is not running.
+  // containerFetch would start a stopped container again, so only ask a live one.
+  async liveStatus() {
     const { status } = await this.getState();
-    // containerFetch would start a stopped container again, so only ask a live one.
-    if (status !== "running" && status !== "healthy") return this.stop();
+    if (status !== "running" && status !== "healthy") return null;
     try {
-      const status = (await (await this.containerFetch("http://container/status")).json()) as { busy: boolean };
-      if (status.busy) return;
+      return (await (await this.containerFetch("http://container/status")).json()) as {
+        busy: boolean;
+        run_id: string | null;
+        last_error: string | null;
+      };
     } catch {
-      // not answering: stop it
+      return null;
     }
-    await this.stop();
   }
 }
 
@@ -122,6 +134,10 @@ export default {
     if (request.method === "GET" && parts[0] === "runs" && parts[1]) {
       const prefix = `runs/${parts[1]}`;
       if (parts.length === 2) return r2Response(env, `${prefix}/status.json`, "application/json");
+      if (parts.length === 3 && parts[2] === "container") {
+        const container = env.JOB_CONTAINER.getByName(parts[1]);
+        return json({ state: (await container.getState()).status, status: await container.liveStatus() });
+      }
       if (parts.length === 3 && parts[2] === "log") return r2Response(env, `${prefix}/log.txt`, "text/plain");
       if (parts[2] === "files" && parts.length > 3) {
         const path = parts.slice(3).join("/");
