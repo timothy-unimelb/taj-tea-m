@@ -75,7 +75,8 @@ diverted = diverted_ids()
 base, clos = positions("base"), positions("closure")
 times = sorted(set(base) & set(clos))
 print(len(times), "frames;", len(diverted), "cars use the block in the normal run over the whole hour")
-PURPLE = "#7b3294"
+PINK, PURPLE = "#e7298a", "#7b3294"   # left: cars using the block; right: the same cars sent around it
+COL = (PINK, PURPLE)
 
 fig, axes = plt.subplots(1, 2, figsize=(9, 5.7))
 lines = []
@@ -95,15 +96,16 @@ for i, (ax, title) in enumerate(zip(axes, ("Normal street", "Swanston St block c
     ax.set_xlim(cx - args.radius, cx + args.radius); ax.set_ylim(cy - args.radius, cy + args.radius)
     ax.set_aspect("equal"); ax.axis("off"); ax.set_title(title, fontsize=13)
     scat.append(ax.scatter([], [], s=9, c=[], cmap="RdYlGn", vmin=0, vmax=10, alpha=0.45, linewidths=0, zorder=3))
-    trails.append(ax.scatter([], [], s=7, color=PURPLE, alpha=0.5, linewidths=0, zorder=3.5))
-    divs.append(ax.scatter([], [], s=40, color=PURPLE, edgecolors="white", linewidths=0.7, zorder=4))
+    trails.append(ax.scatter([], [], s=7, color=COL[i], alpha=0.5, linewidths=0, zorder=3.5))
+    divs.append(ax.scatter([], [], s=40, color=COL[i], edgecolors="white", linewidths=0.7, zorder=4))
 label = fig.text(0.5, 0.125, "", ha="center", fontsize=10)
 title = f"SUMO simulation, weekday {args.hour % 12 or 12}{'am' if args.hour < 12 else 'pm'}, the streets around the closed block"
 if args.subtitle:
     title += f" ({args.subtitle})"
 fig.text(0.5, 0.965, title, ha="center", fontsize=11, color="#222")
 from matplotlib.lines import Line2D
-fig.legend(handles=[Line2D([], [], marker="o", color="none", markerfacecolor=PURPLE, markersize=9, label="Diverted car and its path"),
+fig.legend(handles=[Line2D([], [], marker="o", color="none", markerfacecolor=PINK, markersize=9, label="Car using the block (left)"),
+                    Line2D([], [], marker="o", color="none", markerfacecolor=PURPLE, markersize=9, label="Same car, diverted (right)"),
                     Line2D([], [], marker="o", color="none", markerfacecolor="#d73027", markersize=7, label="Stopped car"),
                     Line2D([], [], marker="o", color="none", markerfacecolor="#fdae61", markersize=7, label="Slow car"),
                     Line2D([], [], marker="o", color="none", markerfacecolor="#1a9850", markersize=7, label="Moving car"),
@@ -132,7 +134,7 @@ def draw(i):
         tr.set_offsets(past or [[-1e6, -1e6]])
     m, s = divmod(int(t - t0), 60)
     label.set_text(f"{args.hour}:{m:02d}:{s:02d}   {len(base[t])} cars in view.   "
-                   f"Purple cars so far: {len(seen[0])} through the block (left), {len(seen[1])} sent around it (right)")
+                   f"So far: {len(seen[0])} pink cars through the block (left), {len(seen[1])} purple cars sent around it (right)")
     return scat + trails + divs + [label]
 
 
