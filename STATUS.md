@@ -47,6 +47,7 @@ Merged into `main` 30 Sep 10am. Still worth a team look:
 
 ## Advait
 Now:
+- [20:30] Automating scan registration, continuing Tamara's work: uploaded scans register to each other and are placed on the map without a manual step. TypeScript in lib/scan/, a CLI in tools/scan_register/, reference data via an API route. Real scan files not on this machine yet; testing on synthetic scans.
 - Preparing the Thursday 1 Oct pitch. The live demo change list is PITCH_CHECKLIST.md (Tim and Joel building).
 Done:
 - [12:30] Pre-screening PDF submitted and filed at artifacts/submission/pre-screening.pdf. BRIEF.md (Demo plan, Decisions) points to it. PITCH_CHECKLIST.md lists the changes to make before the pitch, including the PDF's three "what's left" items.
