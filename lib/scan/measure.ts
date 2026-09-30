@@ -253,11 +253,15 @@ function measure(c: Cloud, file: string): ScanMeasurement {
     for (let iu = 0; iu < nu; iu++) { const g = low[iu * nv + iv]; if (g < 0.4 && !blocked[iu * nv + iv]) col.push(g); }
     profile.push(col.length >= 3 ? median(col) : NaN);
   }
+  // A kerb has about 0.8 m of well-scanned, flat ground on each side. That rules
+  // out small steps at the ragged edge of a scan.
   let kerb = -1, kerbStep = 0;
-  for (let iv = 3; iv < nv - 3; iv++) {
-    const before = median([profile[iv - 3], profile[iv - 2], profile[iv - 1]].filter(Number.isFinite));
-    const after = median([profile[iv + 1], profile[iv + 2], profile[iv + 3]].filter(Number.isFinite));
-    const step = after - before;
+  const band = (from: number, to: number) => profile.slice(Math.max(0, from), Math.max(0, to)).filter(Number.isFinite);
+  for (let iv = 10; iv < nv - 10; iv++) {
+    const near0 = band(iv - 5, iv - 1), far0 = band(iv - 10, iv - 5), near1 = band(iv + 2, iv + 6), far1 = band(iv + 6, iv + 11);
+    if (near0.length < 3 || far0.length < 3 || near1.length < 3 || far1.length < 3) continue;
+    if (Math.abs(median(near0) - median(far0)) > 0.05 || Math.abs(median(near1) - median(far1)) > 0.05) continue;
+    const step = median([...near1, ...far1]) - median([...near0, ...far0]);
     if (Math.abs(step) >= 0.06 && Math.abs(step) <= 0.3 && Math.abs(step) > Math.abs(kerbStep)) { kerb = iv; kerbStep = step; }
   }
   const kerbFound = kerb >= 0;
@@ -272,8 +276,7 @@ function measure(c: Cloud, file: string): ScanMeasurement {
   let roadFromKerb: number | null = null;
   const obstacles: Obstacle[] = [];
   if (kerbFound) {
-    const widths: number[] = []; const roads: number[] = [];
-    let narrowest = { w: Infinity, at: 0 };
+    const widths: { w: number; at: number; seen: number; iu: number }[] = []; const roads: number[] = [];
     for (let iu = 0; iu < nu; iu++) {
       // Longest run of free footpath in this slice. One empty 10 cm bin (a scan gap) doesn't break a run.
       let run = 0, gap = 0, bestRun = 0, seen = 0;
@@ -287,7 +290,7 @@ function measure(c: Cloud, file: string): ScanMeasurement {
         bestRun = Math.max(bestRun, run);
       }
       // Only slices where the footpath was actually scanned count.
-      if (seen >= 10) { const w = (bestRun + 1) * BIN; widths.push(w); if (w < narrowest.w) narrowest = { w, at: iu * SLICE }; }
+      if (seen >= 10) widths.push({ w: (bestRun + 1) * BIN, at: iu * SLICE, seen, iu });
       // Flat road from the kerb outward, until a raised edge, an obstacle or the scan's reach.
       let r = 2;
       for (let iv = kerb - 2 * footDir; iv >= 0 && iv < nv; iv -= footDir) {
@@ -297,7 +300,17 @@ function measure(c: Cloud, file: string): ScanMeasurement {
       }
       if (r > 2) roads.push(r * BIN);
     }
-    if (widths.length) footpath = { min_clear_m: round(narrowest.w, 1), median_clear_m: round(median(widths), 1), narrowest_at_m: round(narrowest.at, 1) };
+    // Trust well-scanned slices away from the ragged ends, and count a pinch
+    // only when it holds for two slices in a row (1 m), not a one-slice scan gap.
+    const typicalSeen = median(widths.map(x => x.seen));
+    const good = widths.filter(x => x.seen >= 0.6 * typicalSeen && x.iu >= 2 && x.iu < nu - 2);
+    let narrowest = good[0];
+    for (let i = 0; i + 1 < good.length; i++) {
+      if (good[i + 1].iu !== good[i].iu + 1) continue;
+      const w = Math.max(good[i].w, good[i + 1].w);
+      if (!narrowest || w < narrowest.w) narrowest = { ...good[i], w };
+    }
+    if (good.length >= 4 && narrowest) footpath = { min_clear_m: round(narrowest.w, 1), median_clear_m: round(median(good.map(x => x.w)), 1), narrowest_at_m: round(narrowest.at, 1) };
     else notes.push("The footpath side of the kerb has too few points to measure a width.");
     if (roads.length) roadFromKerb = round(median(roads), 1);
 
@@ -325,9 +338,11 @@ function measure(c: Cloud, file: string): ScanMeasurement {
         }
       }
       const along = (u1 - u0 + 1) * SLICE, across = (v1 - v0 + 1) * BIN;
-      if (along > 0.7 * length || top < 0.15) continue; // building line, or noise
       const nearEdge = footDir > 0 ? v0 : v1;
-      obstacles.push({ along_m: round(u0 * SLICE, 1), from_kerb_m: round(Math.abs(nearEdge - kerb) * BIN, 1), width_m: round(across, 1), length_m: round(along, 1), height_m: round(top, 1) });
+      // Skip the building line, noise, and anything beyond the footpath or bigger than street furniture.
+      const fromKerb = Math.abs(nearEdge - kerb) * BIN, pathWidth = footpath?.median_clear_m ?? 3;
+      if (along > 0.7 * length || top < 0.15 || across > 3 || along > 6 || fromKerb > pathWidth + 0.5) continue;
+      obstacles.push({ along_m: round(u0 * SLICE, 1), from_kerb_m: round(fromKerb, 1), width_m: round(across, 1), length_m: round(along, 1), height_m: round(top, 1) });
     }
     // Keep the biggest obstacles, listed along the street.
     obstacles.sort((a, b) => b.height_m * b.width_m * b.length_m - a.height_m * a.width_m * a.length_m);

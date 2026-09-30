@@ -1,6 +1,8 @@
 // Joins several georeferenced LAS scans of one site into a single LAS file,
 // as if the whole site had been captured in one scan. The scans share map
 // coordinates (UTM zone 55S from Scaniverse), so no alignment is needed.
+// Phone altitude drifts between scans, so each scan is shifted up or down to
+// match the ground of the scans before it where they overlap.
 // Keeps the first file's header records (its map projection).
 //
 // Run: node data/test/merge-las.mjs out.las in1.las in2.las ...
@@ -27,13 +29,23 @@ const hv = new DataView(header.buffer, header.byteOffset, header.byteLength);
 const points = Buffer.alloc(total * first.recordLength);
 const [sx, sy, sz] = first.scale, [ox, oy, oz] = first.origin;
 const min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
+const xyzOf = (s, i) => [0, 1, 2].map(k => s.v.getInt32(s.offset + i * s.recordLength + k * 4, true) * s.scale[k] + s.origin[k]);
+// Lowest point in each 0.5 m cell: the ground.
+const groundOf = s => { const g = new Map(); for (let i = 0; i < s.count; i++) { const [x, y, z] = xyzOf(s, i); const k = `${Math.floor(x * 2)},${Math.floor(y * 2)}`; if (!(g.get(k) <= z)) g.set(k, z); } return g; };
+const merged = new Map();
 let n = 0;
 for (const s of scans) {
+  const ground = groundOf(s), diffs = [];
+  for (const [k, z] of ground) if (merged.has(k)) diffs.push(merged.get(k) - z);
+  diffs.sort((a, b) => a - b);
+  const dz = diffs.length >= 50 ? diffs[Math.floor(diffs.length / 2)] : 0;
+  console.log(`shift ${dz.toFixed(3)} m from ${diffs.length} overlapping cells`);
+  for (const [k, z] of ground) if (!(merged.get(k) <= z + dz)) merged.set(k, z + dz);
   for (let i = 0; i < s.count; i++) {
     const src = s.offset + i * s.recordLength, dst = n * first.recordLength;
     s.b.copy(points, dst, src, src + s.recordLength);
     // Re-express X, Y, Z against the first file's scale and origin.
-    const xyz = [0, 1, 2].map(k => s.v.getInt32(src + k * 4, true) * s.scale[k] + s.origin[k]);
+    const xyz = xyzOf(s, i); xyz[2] += dz;
     points.writeInt32LE(Math.round((xyz[0] - ox) / sx), dst);
     points.writeInt32LE(Math.round((xyz[1] - oy) / sy), dst + 4);
     points.writeInt32LE(Math.round((xyz[2] - oz) / sz), dst + 8);
