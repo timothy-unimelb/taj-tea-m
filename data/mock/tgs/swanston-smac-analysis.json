@@ -1,0 +1,142 @@
+{
+  "note": "A saved Claude analysis of the test TGS (data/test/swanston-smac-lane-closure.jpg), so the demo makes no Claude call. One misread dimension in plan_elements was corrected by hand. Real uploads are still analysed live.",
+  "saved_at": "2026-09-30T19:39:00+10:00",
+  "model": "anthropic/claude-sonnet-5.5",
+  "file": "swanston-smac-lane-closure.jpg",
+  "analysis": {
+    "site": {
+      "street": "Swanston Street",
+      "extent": "Between Grattan St and Faraday St (southbound, east side)",
+      "area": "Parkville, opposite Sidney Myer Asia Centre, City of Melbourne"
+    },
+    "closure_type": "lanes closed",
+    "work_hours": "Mon to Fri 9:30am to 3:30pm",
+    "work_days": "Monday to Friday",
+    "work_start": "09:30",
+    "work_end": "15:30",
+    "lanes_per_direction": 1,
+    "lanes_open": 0,
+    "direction_closed": true,
+    "detour": "Southbound traffic detours via Faraday St, Cardigan St and Grattan St to Swanston St (per inset map and signs). Detour signs: 'Detour via Faraday St', 'Use Cardigan St', 'Detour Grattan St to Swanston St'.",
+    "plan_elements": [
+      "Work zone identified: Swanston St east side, Grattan St to Faraday St, opposite Sidney Myer Asia Centre",
+      "Lane closure of about 84 m, with a 38 m work area starting 22 m north of Grattan St",
+      "Southbound closed at Faraday St with a detour via Faraday and Cardigan Sts",
+      "Water filled barriers run along the work area beside the bike lane",
+      "Two VMS boards at the Faraday St end and two traffic controllers (TC 1 and TC 2) hold pedestrians and cyclists while plant crosses the bike lane",
+      "Footpath stays open with 1.5 m clear; bike lane stays open to the left of the barriers",
+      "Tram works note: within 20 m of tracks, Yarra Trams approval needed, barriers 0.8 m clear of tram envelope",
+      "Northbound lane and trams unaffected; no right turn from Grattan St into Swanston St north"
+    ],
+    "equipment": [
+      {
+        "item": "VMS board (Class A)",
+        "count": 2,
+        "detail": "VMS 1: 'Swanston St Sth closed at Faraday' / 'Detour via Faraday St'. VMS 2: 'Swanston St Sth closed' / 'Use Cardigan St'"
+      },
+      {
+        "item": "Water filled barriers",
+        "count": 0,
+        "detail": "Red line along the east side of the work area, length not stated"
+      },
+      {
+        "item": "Traffic controller",
+        "count": 2,
+        "detail": "TC 1 and TC 2 at each end of the work area, hold pedestrians and cyclists while plant crosses the bike lane"
+      },
+      {
+        "item": "Road work ahead sign",
+        "count": 1,
+        "detail": "Orange sign on the Faraday St side, near the northern approach"
+      },
+      {
+        "item": "End road work sign",
+        "count": 1,
+        "detail": "Near the southern end of the zone"
+      },
+      {
+        "item": "Southbound closed / detour sign",
+        "count": 1,
+        "detail": "'Southbound closed, detour' sign at the northern end of the zone"
+      },
+      {
+        "item": "Detour signs",
+        "count": 3,
+        "detail": "Detour to Faraday St, detour to Grattan St to Swanston St, and detour via Faraday St signs"
+      },
+      {
+        "item": "Footpath open sign",
+        "count": 1,
+        "detail": "'Footpath open, keep 1.5 m clear'"
+      },
+      {
+        "item": "Bike lane open sign",
+        "count": 1,
+        "detail": "'Bike lane open, keep left of barriers'"
+      },
+      {
+        "item": "Bollards / cones",
+        "count": 0,
+        "detail": "Orange dots at the taper; spacing table given but count not readable"
+      }
+    ],
+    "pedestrian_management": [
+      "Footpath stays open with 1.5 m clear width",
+      "Pedestrian route shown in cyan along the east footpath past the work area",
+      "TC 1 and TC 2 hold pedestrians while plant crosses the bike lane"
+    ],
+    "scan_points": [
+      {
+        "name": "Northern taper",
+        "location": "Swanston St southbound near Faraday St",
+        "reason": "Plan assumes there is room for the lane closure taper, VMS boards and signs",
+        "capture": "Both kerbs, the full road width, the tram tracks and the footpath"
+      },
+      {
+        "name": "Work zone footpath",
+        "location": "East footpath of Swanston St opposite Sidney Myer Asia Centre",
+        "reason": "Plan assumes 1.5 m clear footpath beside the work area and barriers",
+        "capture": "Full footpath width from building line to kerb, plus any trees, poles or street furniture"
+      },
+      {
+        "name": "Barrier line and bike lane",
+        "location": "Swanston St east side, along the 84 m closure",
+        "reason": "Plan assumes room for barriers, bike lane and 0.8 m clearance from the tram envelope",
+        "capture": "Kerb, bike lane, barrier line and nearest tram rail across the width"
+      },
+      {
+        "name": "Southern end and Grattan St",
+        "location": "Swanston St at Grattan St, southern taper and end of works",
+        "reason": "Plan assumes space for the end taper, detour turn and the end road work sign",
+        "capture": "Intersection corners, kerb lines, lane widths and the tram tracks"
+      },
+      {
+        "name": "Traffic controller positions",
+        "location": "TC 1 near the northern end and TC 2 near the southern end of the bike lane",
+        "reason": "Plan assumes safe standing space to hold pedestrians and cyclists",
+        "capture": "Footpath and bike lane at each position, with sight lines along the lane"
+      },
+      {
+        "name": "VMS positions",
+        "location": "Swanston St near Faraday St (VMS 1 and VMS 2)",
+        "reason": "Plan assumes enough space for the boards without blocking the footpath",
+        "capture": "Footpath width, kerb and nearby poles at each position"
+      },
+      {
+        "name": "Faraday St detour turn",
+        "location": "Swanston St and Faraday St intersection",
+        "reason": "Plan assumes southbound traffic can turn and follow the detour",
+        "capture": "Intersection corners, lane widths and kerb lines"
+      }
+    ],
+    "uncertainties": [
+      "Speed limit not shown, so bollard spacing cannot be confirmed",
+      "Work zone parking or plant storage location not clearly shown, though the legend lists a storage area",
+      "Exact barrier and cone counts not readable",
+      "Number of southbound lanes not clearly drawn; assumed one car lane",
+      "Contractor and traffic consultant fields are blank",
+      "Drawing is marked 'Test drawing, not for use on site'",
+      "Full detour route is partly shown in the inset only and street names are small"
+    ]
+  }
+}

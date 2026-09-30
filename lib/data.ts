@@ -3,20 +3,44 @@
 // To switch to real data, change this file only.
 
 import demo from "@/data/mock/barrier-brain.json";
-import savedDemoAnalysis from "@/data/mock/tgs/swanston-analysis.json";
-import sampleTgs from "@/data/mock/tgs/swanston-st-closure.webp";
+import laTrobeAnalysis from "@/data/mock/tgs/swanston-analysis.json";
+import laTrobeTgs from "@/data/mock/tgs/swanston-st-closure.webp";
+import smacAnalysis from "@/data/mock/tgs/swanston-smac-analysis.json";
+import smacTgs from "@/data/test/swanston-smac-lane-closure.jpg";
+import smacReport from "@/data/mock/reports/swanston-smac-report.json";
 import type { TgsAnalysis } from "@/lib/tgs-analysis";
 import type { ImpactResult, ModeId, ModeImpact, Range, Severity } from "@/lib/impact/types";
 import type { ScanPointResult, SiteCheck } from "@/lib/site-check";
 
-export const sampleTgsUrl = sampleTgs.src;
+// Report points written in advance for a demo TGS, so its report needs no Claude call.
+// Each point's checks answer the questions the report must cover (PITCH_CHECKLIST.md).
+type Check = { label: string; text: string };
+export type SavedReport = {
+  points: Record<"traffic" | "pedestrians" | "transport" | "safety", { summary?: string; reason?: string; checks: Check[] }>;
+  site_check: SiteCheck;
+  sources: string[];
+};
 
-// A saved Claude analysis of the demo TGS, so rehearsals are instant and free.
-export const demoAnalysis = savedDemoAnalysis.analysis as TgsAnalysis;
+// The demo TGS files, each with a saved Claude analysis so rehearsals are instant and free.
+// The first is the one "Use demo TGS" loads. A project can name another in data/mock.
+const DEMO_TGS = [
+  { fileName: "swanston-smac-lane-closure.jpg", size: "0.9 MB", url: smacTgs.src, analysis: smacAnalysis.analysis as TgsAnalysis, report: smacReport as SavedReport },
+  { fileName: "swanston-st-closure.webp", size: "0.4 MB", url: laTrobeTgs.src, analysis: laTrobeAnalysis.analysis as TgsAnalysis, report: null },
+];
+const demoTgsNamed = (fileName?: string) => DEMO_TGS.find(t => t.fileName === fileName) ?? DEMO_TGS[0];
+export const demoTgsFile = (fileName?: string) => ({ name: demoTgsNamed(fileName).fileName, size: demoTgsNamed(fileName).size });
+export const demoTgsUrl = (fileName?: string) => demoTgsNamed(fileName).url;
+export const demoAnalysis = DEMO_TGS[0].analysis;
 
-// Claude reads an uploaded TGS for real. The demo TGS uses the saved analysis.
-export async function analyseTgs(file: File | undefined, signal?: AbortSignal): Promise<TgsAnalysis> {
-  if (!file) return demoAnalysis;
+// The saved report points for an analysis, if it is a demo TGS's saved analysis.
+export function savedReportFor(analysis: TgsAnalysis | null): SavedReport | null {
+  return DEMO_TGS.find(t => t.analysis === (analysis ?? demoAnalysis))?.report ?? null;
+}
+
+// Claude reads an uploaded TGS for real. A demo TGS uses its saved analysis.
+export async function analyseTgs(tgs: { name: string; file?: File } | null, signal?: AbortSignal): Promise<TgsAnalysis> {
+  const file = tgs?.file;
+  if (!file) return demoTgsNamed(tgs?.name).analysis;
   const body = new FormData();
   body.append("file", file);
   const response = await fetch("/api/analyse-tgs", { method: "POST", body, signal });
@@ -105,20 +129,27 @@ const POINT: Record<ModeId, string> = { cars: "traffic", trucks: "traffic", pede
 // `check` is Claude's plan vs street check of real scans. Without it the demo findings show.
 // The impact model's own findings (gaps in the plan, lib/impact/types.ts) show under their
 // report point, in the key findings and as recommendations, ahead of the site check's.
-export function buildReport(impact: ImpactResult, check: SiteCheck | null = null, scansMeasured = 0) {
+// `saved` is a demo TGS's report points, written in advance. With it, each point shows its
+// checks, and its site check stands in for Claude's.
+export function buildReport(impact: ImpactResult, check: SiteCheck | null = null, scansMeasured = 0, saved: SavedReport | null = null) {
   const { cars, trucks, pedestrians, public_transport: transport } = impact.modes;
   const findings = impact.findings ?? [];
   const gaps = (point: string) => findings.filter(f => POINT[f.mode] === point).map(f => `Plan gap: ${f.summary}`);
   const findingActions: Action[] = findings.map(f => ({ category: POINT[f.mode], title: f.title, summary: f.summary, impact: f.impact, why: f.why, recommendation: f.recommendation }));
+  check = check ?? saved?.site_check ?? null;
   const safety = check
-    ? { severity: check.safety_severity, description: check.safety_summary, basis: `From ${scansMeasured} measured scan${scansMeasured === 1 ? "" : "s"} compared with the plan.` }
+    ? { severity: check.safety_severity, description: check.safety_summary, basis: scansMeasured ? `From ${scansMeasured} measured scan${scansMeasured === 1 ? "" : "s"} compared with the plan.` : "From the plan, the traffic model and council data." }
     : demo.safety;
   const traffic = trucks.status === "modelled" ? [...details(cars), ...details(trucks).map(line => `Trucks. ${line}`)] : details(cars);
+  const point = (id: keyof SavedReport["points"], label: string, severity: Severity, description: string, reason: string, lines: string[]) => {
+    const own = saved?.points[id];
+    return { id, label, severity, description: own?.summary ?? description, reason: own?.reason ?? reason, details: own ? [] : lines, checks: own?.checks ?? [] };
+  };
   const impactSummary = [
-    { id: "traffic", label: "Traffic", severity: cars.severity!, description: describe(cars), reason: cars.severity_reason!, details: [...traffic, ...gaps("traffic")] },
-    { id: "pedestrians", label: "Pedestrian access", severity: pedestrians.severity!, description: describe(pedestrians), reason: pedestrians.severity_reason!, details: [...details(pedestrians), ...gaps("pedestrians")] },
-    { id: "transport", label: "Public transport", severity: transport.severity!, description: describe(transport), reason: transport.severity_reason!, details: [...details(transport), ...gaps("transport")] },
-    { id: "safety", label: "Site safety", severity: safety.severity as Severity, description: safety.description, reason: safety.basis, details: [] },
+    point("traffic", "Traffic", cars.severity!, describe(cars), cars.severity_reason!, [...traffic, ...gaps("traffic")]),
+    point("pedestrians", "Pedestrian access", pedestrians.severity!, describe(pedestrians), pedestrians.severity_reason!, [...details(pedestrians), ...gaps("pedestrians")]),
+    point("transport", "Public transport", transport.severity!, describe(transport), transport.severity_reason!, [...details(transport), ...gaps("transport")]),
+    point("safety", "Site safety", safety.severity as Severity, safety.description, safety.basis, []),
   ];
   const window = impact.recommended_window;
   const trafficAction = window && !window.window.startsWith("Planned hours") ? {
@@ -137,10 +168,10 @@ export function buildReport(impact: ImpactResult, check: SiteCheck | null = null
     impactSummary,
     decision: check ? check.decision : demo.explanations.decision,
     conflicts: check?.conflicts ?? [],
-    keyFindings: [describe(cars), describe(pedestrians), describe(transport), safety.description, ...findings.map(f => f.summary)],
+    keyFindings: [...impactSummary.map(p => p.description), ...findings.map(f => f.summary)],
     actions,
-    sourceNote: `${check ? `Based on the TGS and ${scansMeasured} measured scan${scansMeasured === 1 ? "" : "s"}.` : "Based on the TGS. Site findings are sample findings for the demo scan."} Traffic estimate: ${impact.method}${impact.label ? ` (${impact.label.toLowerCase()})` : ""}.`,
-    sources: ["TGS analysis", check ? "Measured site scans" : "Demo site scan", `${impact.method}${impact.label ? `, ${impact.label.toLowerCase()}` : ""}`, ...new Set(findings.map(f => f.source))],
+    sourceNote: `${check && scansMeasured ? `Based on the TGS and ${scansMeasured} measured scan${scansMeasured === 1 ? "" : "s"}.` : check ? "Based on the TGS." : "Based on the TGS. Site findings are sample findings for the demo scan."} Traffic estimate: ${impact.method}${impact.label ? ` (${impact.label.toLowerCase()})` : ""}.`,
+    sources: ["TGS analysis", check && scansMeasured ? "Measured site scans" : "Demo site scan", `${impact.method}${impact.label ? `, ${impact.label.toLowerCase()}` : ""}`, ...new Set([...findings.map(f => f.source), ...(saved?.sources ?? [])])],
     method: {
       name: impact.method,
       label: impact.label,

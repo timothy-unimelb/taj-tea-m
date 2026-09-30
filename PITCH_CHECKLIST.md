@@ -23,21 +23,21 @@ Traffic
 - [x] Hours of delay within an x km radius. (Tim: for the test TGS, from SUMO. About 16 vehicle-hours within about 600 m. Other sites show the lookup's delay with no radius.)
 - [x] Which streets take the detour, and whether each can carry the extra volume. (Tim: for the test TGS, from SUMO. Cars an hour on Faraday St, Cardigan St and Grattan St against a lane's capacity, on the Traffic tab.)
 - [x] Queue length. (Tim: for the test TGS, from SUMO. Other sites show the lookup's queue.)
-- [ ] Is the detour safe.
+- [x] Is the detour safe. (Tim: for the demo TGS, saved report point. Not as drawn: VMS 1 and 2 stand past the Faraday St turn, and Faraday St westbound becomes a dead end.)
 
 Pedestrians
-- [ ] Are they at risk, given the detour.
-- [ ] How much further they walk.
-- [ ] A third point Claude picks from the data set or nearby information.
+- [x] Are they at risk, given the detour. (Tim: demo TGS. Detour turns across zebra crossings with no signals at Faraday St and Cardigan St.)
+- [x] How much further they walk. (Tim: demo TGS. None, the footpath stays open.)
+- [x] A third point Claude picks from the data set or nearby information. (Tim: demo TGS. Lunchtime crowding from the council sensor: 708 an hour needs the full 1.5 m.)
 - [x] Pedestrian safety follows the council's rules. Councils have logic for how crowded a footpath gets before people step onto the road. Pass that rule to the agent when it analyses the scan for the report. (Joel: rule in `prompts/site-check.md`, counts from the nearest council sensors via `lib/pedestrians.ts`. See BRIEF.md decisions.)
 
 Public transport
-- [ ] Can buses and trams still run as planned.
-- [ ] Are bus and tram stops accessible.
-- [ ] Is a PTV permit needed (usually within 20 m of a tram stop).
+- [x] Can buses and trams still run as planned. (Tim: demo TGS. Trams yes, bus 546 no.)
+- [x] Are bus and tram stops accessible. (Tim: demo TGS. Yes, Melbourne University tram stop and its crossing stay open.)
+- [x] Is a PTV permit needed (usually within 20 m of a tram stop). (Tim: demo TGS. Yes, the lane closure and VMS 2 are within 20 m of the platform.)
 
 Site safety
-- [ ] Three valid, useful, actionable points. Claude picks them from the data sources, the problem statement, our solution and the demo TGS, drawing on the traffic, pedestrian and public transport points. Keep the screen light. Possible point: is any part of the site accidentally exposed.
+- [x] Three valid, useful, actionable points. Claude picks them from the data sources, the problem statement, our solution and the demo TGS, drawing on the traffic, pedestrian and public transport points. Keep the screen light. Possible point: is any part of the site accidentally exposed. (Tim: demo TGS. Move VMS 1 and 2 north of Faraday St; hold people while plant crosses; check the tram clearance at set-out. All report points for the demo TGS are written in advance in `data/mock/reports/`, other TGSs do not get them yet.)
 
 Recommended before deployment
 - [x] Matches the points in the report. At most 5. (Joel: each recommendation names its report point, most severe point first, one per point before any second, max 5, same list in the PDF)

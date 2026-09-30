@@ -1,10 +1,17 @@
 {
   "projects": [
     {
+      "id": "swanston-grattan",
+      "name": "Swanston Street Kerbside Works",
+      "date": "30 Sep 2026",
+      "status": "Draft"
+    },
+    {
       "id": "swanston-street",
       "name": "Swanston Street Work Zone",
       "date": "29 Sep 2026",
-      "status": "Draft"
+      "status": "Draft",
+      "tgs": "swanston-st-closure.webp"
     },
     {
       "id": "elizabeth-street",
@@ -20,16 +27,14 @@
     }
   ],
   "tgs": {
-    "fileName": "swanston-st-closure.webp",
-    "size": "0.4 MB",
     "findings": [
-      "Work zone identified: Swanston St, La Trobe St to Little La Trobe St",
-      "Road closure identified",
-      "4 VMS boards identified"
+      "Work zone identified: Swanston St east side, Grattan St to Faraday St",
+      "Southbound lane closure identified",
+      "2 VMS boards identified"
     ],
     "requiredVerification": [
-      "Lane width",
       "Footpath clearance",
+      "Barrier line and bike lane",
       "Work zone boundary",
       "Intersection approach"
     ]
