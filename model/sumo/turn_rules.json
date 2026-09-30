@@ -6,11 +6,17 @@
       "site": 2921,
       "junction": "SWANSTON/LATROBE",
       "kind": "ban",
-      "from": {"name": "La Trobe Street", "direction": "westbound"},
-      "to": {"name": "Swanston Street", "direction": "northbound"},
-      "source": "DTP Traffic Signal Configuration Data Sheet DOC/24/198884 (12/08/2024): no car right-turn signal group from La Trobe St westbound into Swanston St, only a bike hook turn. OpenStreetMap has no restriction here.",
-      "confidence": "medium",
-      "note": "Not yet checked on site. This is the turn the shortcut through the closed block needs. Skip it with 07_turn_rules.py --allow 2921-latrobe-westbound-right-ban for the sensitivity case."
+      "from": {
+        "name": "La Trobe Street",
+        "direction": "westbound"
+      },
+      "to": {
+        "name": "Swanston Street",
+        "direction": "northbound"
+      },
+      "source": "DTP Traffic Signal Configuration Data Sheet DOC/24/198884 (12/08/2024): no car right-turn signal group from La Trobe St westbound into Swanston St, only a bike hook turn. OpenStreetMap has no restriction here. Confirmed on Google Street View (imagery Nov 2025, 199 La Trobe St facing west): No Right Turn sign, No Left Turn sign (bicycles excepted) and a straight-ahead-only sign on the westbound approach; see output/2921-latrobe-westbound-signs-streetview-nov2025.png.",
+      "confidence": "high",
+      "note": "Checked on Street View 30 Sep 2026, not on site. This is the turn the shortcut through the closed block needs, so the right-turn-allowed case is a what-if, not a possible reading of the street. Skip the rule with 07_turn_rules.py --allow 2921-latrobe-westbound-right-ban for that case."
     },
     {
       "id": "2920-latrobe-hook-turns",
@@ -18,8 +24,14 @@
       "junction": "RUSSELL/LATROBE",
       "kind": "hook_turn",
       "approaches": [
-        {"name": "La Trobe Street", "direction": "eastbound"},
-        {"name": "La Trobe Street", "direction": "westbound"}
+        {
+          "name": "La Trobe Street",
+          "direction": "eastbound"
+        },
+        {
+          "name": "La Trobe Street",
+          "direction": "westbound"
+        }
       ],
       "source": "DTP sheet, operation spec 1/07/2024: two hook-turn boxes inside the junction (detectors 13 and 14). La Trobe St has centre tram tracks, so its right turns are hook turns. Russell St has no trams.",
       "confidence": "medium"
@@ -30,8 +42,14 @@
       "junction": "ELIZABETH/LATROBE",
       "kind": "hook_turn",
       "approaches": [
-        {"name": "La Trobe Street", "direction": "eastbound"},
-        {"name": "La Trobe Street", "direction": "westbound"}
+        {
+          "name": "La Trobe Street",
+          "direction": "eastbound"
+        },
+        {
+          "name": "La Trobe Street",
+          "direction": "westbound"
+        }
       ],
       "source": "DTP sheet, plan 555670C rev B (19/07/2024): three hook-turn boxes (detectors 11, 12 and 19). Both streets have tram tracks. OpenStreetMap's turn:lanes tags (left;right|through) already make the Elizabeth St right turns hook turns, and restriction relation 9348872 bans one La Trobe St right turn, which leaves one La Trobe St hook turn: three boxes in all, as on the sheet.",
       "confidence": "medium"
@@ -39,6 +57,13 @@
   ],
   "no_sheet_turn_info": {
     "about": "Junctions with a detector sheet read (detector_approaches.json) whose turn signals were not read. Their turn rules come from OpenStreetMap only.",
-    "sites": [2904, 2906, 2913, 2914, 4512, 4523]
+    "sites": [
+      2904,
+      2906,
+      2913,
+      2914,
+      4512,
+      4523
+    ]
   }
 }
