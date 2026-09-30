@@ -6,8 +6,8 @@
 
 ## Joel
 Now:
-- [11:50] Testing the full flow on Vercel with the test TGS (data/test) and a real Scaniverse LAS scan.
 Done:
+- [11:55] End-to-end test on Vercel with the test TGS (data/test) and the 4 real Scaniverse scans merged into one site scan: TGS read by Claude (17 s), site check by Claude (14 s), report generated. Kerb found (150 mm); footpath widths withheld as unreliable. Found: the lookup model keeps a lane open for a lane closure even when the direction has only one lane, so Traffic shows Low for this TGS.
 - [11:48] Merged `joel` into main. One site scan covers every scan point. Scan screens use the TGS scan points. Real PLY/LAS scans are measured in the browser; kerb found on the real scans, footpath widths withheld as unreliable. Claude plan vs street check (/api/site-check) with a rule fallback.
 
 ## Tim
