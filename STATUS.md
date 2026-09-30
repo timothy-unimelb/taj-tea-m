@@ -46,7 +46,9 @@ Merged into `main` 30 Sep 10am. Still worth a team look:
 
 ## Advait
 Now:
+- Preparing the Thursday 1 Oct pitch. The live demo change list is PITCH_CHECKLIST.md (Tim and Joel building).
 Done:
+- [12:30] Pre-screening PDF submitted and filed at artifacts/submission/pre-screening.pdf. BRIEF.md (Demo plan, Decisions) points to it. PITCH_CHECKLIST.md lists the changes to make before the pitch, including the PDF's three "what's left" items.
 - [12:05] Scan upload screen now says "photogrammetry scanning app", not LiDAR. components/barrier-brain-prototype.tsx. CSS class and asset key names left as they are. Build passes.
 - [22:15] Wrote up Barrier Brain. BRIEF.md (brief, scan measurement approach, demo plan), DESIGN.md flow, CLAUDE.md, sample TGS in data/mock/tgs/.
 - [22:30] Added a decisions log to BRIEF.md and a rule in CLAUDE.md so every session keeps BRIEF.md up to date.

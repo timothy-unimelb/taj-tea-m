@@ -1,0 +1,58 @@
+# Pitch checklist
+
+Changes to make before the Thursday 1 Oct pitch. The demo runs live on stage, so the flow must move fast and the report must make the pitch's points: time, safety and efficiency. Tim and Joel are building these. Tick items off as they land and say where.
+
+The pre-screening PDF the judges have read is at `artifacts/submission/pre-screening.pdf`.
+
+## Upload site scan screen
+
+- [ ] Allow more than one scan. Button and heading say "Upload scans".
+- [ ] Code that stitches several scans into one site scan, as part of the flow.
+- [ ] The site scan button says .zip but that is not what it takes. Fix the copy.
+- [ ] External scan evidence (mobile scan capture, point cloud export, map export): show only after a scan is uploaded.
+- [ ] "Upload additional scan" goes back to the upload screen. For the demo, move through the flow faster. No trip back.
+
+## Impact report
+
+Lead with time, safety and efficiency: hours of delay across the city, pedestrian safety, which streets take the detour, queue length. One public transport point. It is in the problem statement so it stays, but it matters less than the others.
+
+- [ ] Each mode shows its own detail. It does not yet.
+- [ ] Site overview image is distorted. Fix.
+
+Traffic
+- [ ] Hours of delay within an x km radius.
+- [ ] Which streets take the detour, and whether each can carry the extra volume.
+- [ ] Queue length.
+- [ ] Is the detour safe.
+
+Pedestrians
+- [ ] Are they at risk, given the detour.
+- [ ] How much further they walk.
+- [ ] A third point Claude picks from the data set or nearby information.
+- [ ] Pedestrian safety follows the council's rules. Councils have logic for how crowded a footpath gets before people step onto the road. Pass that rule to the agent when it analyses the scan for the report. (Find the rule: open question in BRIEF.md.)
+
+Public transport
+- [ ] Can buses and trams still run as planned.
+- [ ] Are bus and tram stops accessible.
+- [ ] Is a PTV permit needed (usually within 20 m of a tram stop).
+
+Site safety
+- [ ] Three valid, useful, actionable points. Claude picks them from the data sources, the problem statement, our solution and the demo TGS, drawing on the traffic, pedestrian and public transport points. Keep the screen light. Possible point: is any part of the site accidentally exposed.
+
+Recommended before deployment
+- [ ] Matches the points in the report. At most 5.
+
+## Export PDF
+
+- [ ] More detail. The reader is a project planner who reads graphs and wants detail. Include charts and relevant data visualisations.
+- [ ] Everything in "Recommended before deployment" is in the PDF.
+
+## Last screen
+
+- [ ] The Back button becomes a Close button that returns to the first screen.
+
+## From the pre-screening PDF's "what's left"
+
+- [ ] Stitch the working pieces into one end-to-end flow on Vercel.
+- [ ] Run the model's inference in the cloud from the app, not on our laptops.
+- [ ] Turn the point cloud registration process into a script.
