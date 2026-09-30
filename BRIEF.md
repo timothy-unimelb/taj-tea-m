@@ -133,7 +133,6 @@ Mocked for Wednesday: scan measurement, and the safety findings that depend on i
 When one is answered, delete it here, add a line to Decisions, and update the section it affects.
 
 - Is the impact based on the plan as drawn, or the plan fitted to the scanned street?
-- How does a photogrammetry scan get its true scale, and is it accurate enough to measure footpath widths?
 
 ## Decisions
 
@@ -160,6 +159,7 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - [30 Sep] Advait: site scans use photogrammetry instead of LiDAR.
 - [30 Sep] Joel: scan points come from the TGS analysis on every scan screen (it was 8 points, then 5 fixed areas). One site scan covers every scan point (Joel, later on 30 Sep: reverted from one scan per point). The scan is measured in the browser in TypeScript, not in Python, so no upload limit applies. Claude compares plan and measurements (`/api/site-check`) and writes the safety finding and actions; rules on the measurements are the fallback. The demo scan keeps the fixed Swanston findings.
 - [30 Sep] Joel: real Scaniverse LAS scans (iPhone 16, no LiDAR, so photogrammetry; georeferenced) find the kerb, but footpath widths are not yet reliable on them. The app says "not measured reliably, check on site" instead of reporting a width.
+- [30 Sep] Advait: the photogrammetry scan gets its true scale from the GPS positions in the LAS file.
 
 ## Terms
 
@@ -178,7 +178,7 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - **GTFS.** The standard timetable format for public transport. PTV publishes static and realtime feeds for trams and buses.
 - **Pedestrian Counting System.** City of Melbourne sensors that count people walking, hourly, at about 100 locations.
 - **LiDAR.** A depth sensor in iPhone Pro models. It measures to within a few centimetres at up to about 5 m.
-- **Photogrammetry.** Building a 3D model from many overlapping photos. It needs a known length in the scene to get the true scale.
+- **Photogrammetry.** Building a 3D model from many overlapping photos. It needs a known length to get the true scale. Ours comes from the GPS positions stored in the LAS file.
 - **Scaniverse.** A free phone app by Niantic that makes 3D scans from photos or LiDAR.
 - **SUMO.** A free, open-source traffic microsimulator that imports OpenStreetMap.
 - **Georeferencing.** Matching points on a drawing to real map coordinates to recover its scale and position.
