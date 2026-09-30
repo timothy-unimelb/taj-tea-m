@@ -45,6 +45,7 @@ Done:
 
 ## Tamara
 Now:
+- [11:15] Adding the flat parquet (7.4 MB) to the repo at model/data/, so the model builds without the raw files.
 Done:
 - [11:00] Model no longer needs the local warehouse. Added model/headline_stats/build_headline_stats.py (same outputs, rebuilt from raw SCATS). Removed warehouse-only scripts and SQL. model/README.md links the raw files on Google Drive.
 - [10:20] Model now builds from the parquet: model/mvm/build_mvm.py (15 s). Same outputs as the warehouse build (differences 1e-16). CSVs regenerated; app tables not re-exported since values are unchanged.
