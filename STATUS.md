@@ -45,6 +45,7 @@ Done:
 
 ## Tamara
 Now:
+- [10:40] Removing the last links to the local warehouse: rebuilding model/headline_stats from raw SCATS files in pandas, then deleting the warehouse-only scripts and SQL.
 Done:
 - [10:20] Model now builds from the parquet: model/mvm/build_mvm.py (15 s). Same outputs as the warehouse build (differences 1e-16). CSVs regenerated; app tables not re-exported since values are unchanged.
 - [09:30] Added model/build_parquet.py. Joins the raw closure, SCATS, site, AADT and holiday files into one parquet (closure x site x day x hour, 4.8M rows, 7 MB). Output is local only, in parquet/ of the data folder. Counts match the warehouse exactly.
