@@ -22,7 +22,9 @@ The competition requires a list of all third-party material and APIs, including 
 | Traffic Lights (SCATS site locations) | Dataset | Locations of signal sites near each closure. `model/` | DTP, CC-BY 4.0 | No |
 | Victoria Traffic Count Locations (AADT) | Dataset | Daily traffic input for the queue calculation. `model/` | DTP, CC-BY 4.0 | No |
 | DuckDB | Library | Builds the impact model tables. `model/` | MIT | No |
-| pandas | Library | Runs impact model predictions. `model/` | BSD 3-Clause | No |
+| pandas | Library | Runs impact model predictions and builds the flat dataset. `model/` | BSD 3-Clause | No |
+| PyArrow | Library | Writes the flat dataset as parquet. `model/build_parquet.py` | Apache 2.0 | No |
+| pyproj (PROJ) | Library | Converts signal site coordinates from VicGrid to latitude and longitude. `model/build_parquet.py` | MIT | No |
 | Eclipse SUMO | Tool | Traffic simulation of the Swanston St closure. `model/sumo/` | EPL-2.0 | No |
 | OpenStreetMap data | Dataset | Street network for the SUMO simulation, via the Overpass API. `model/sumo/` | ODbL, © OpenStreetMap contributors | No |
 | pyproj | Library | Map coordinate conversion for the SUMO scripts. `model/sumo/` | MIT | No |

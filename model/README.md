@@ -23,6 +23,7 @@ It has two parts. Neither uses machine learning.
 | `mvm/output/mvm_validation_*.csv` | How well the model predicted 2026 closures when trained on earlier ones. |
 | `headline_stats/output/` | Hourly traffic profile and daily volume per signal site. The prediction reads these. |
 | `mvm/0*.sql`, `mvm/run_mvm.py`, `headline_stats/` | Code that rebuilds the tables above. |
+| `build_parquet.py` | Joins the raw files behind the model into one flat parquet table. See below. |
 
 ## In the app
 
@@ -47,6 +48,24 @@ This compares night, day and 24-hour works for a sample lane closure and marks t
 ## What is not in the repo
 
 The rebuild code needs Tamara's local data warehouse (`warehouse/city.duckdb`, about 5 GB, built from about 41 GB of raw downloads). It is too big for git. The CSVs here are its outputs, so predictions work without it. Paths in `REPLICATION_CONTEXT.md` point to that local folder.
+
+## Flat dataset (parquet)
+
+`build_parquet.py` reads the raw downloads directly with pandas, without the warehouse. It writes one compressed file, `parquet/closure_site_hour.parquet`, in the local data folder. The file is too big for git.
+
+One row is one closure, one signal site within 200 m, one day and one hour. Each closure's rows start 6 weeks before it, so its baseline weeks come with it. Columns cover:
+
+- **Traffic:** hourly SCATS count for the site, daily total, whether the site-day is complete, and whether another closure was active near the site that day.
+- **Closure:** type, work hours, street, dates and the DTP text, parsed as in `mvm/01_closures_pairs.sql`.
+- **Site:** name, location, distance to the closure, and whether it is on the same street.
+- **Road:** AADT of the nearest road segment within 100 m. Many segments cover one direction only, so check `aadt_directions`.
+- **Calendar:** weekday, weekend and Victorian public holidays.
+
+```bash
+python model/build_parquet.py --root "C:/Users/T/Documents/Subjects/FEIT Smart City Hackathon"
+```
+
+It takes about 5 minutes and needs pandas, numpy, pyarrow and pyproj (`pip install pandas pyarrow pyproj`). The raw files are only read.
 
 ## Limits to state in the pitch
 
