@@ -53,5 +53,38 @@
     "Cars stuck for 5 minutes are moved on by SUMO (teleported). Up to 167 teleports in a closure run.",
     "Trams keep running in reality, but no tram services were simulated, so tram delays are not included."
   ],
+  "visual": {
+    "src": "/assets/sumo-swanston-5pm.gif",
+    "width": 648,
+    "height": 374,
+    "alt": "Animated map of the streets around the closed block at 5pm, normal street on the left and closure on the right, with cars as dots coloured by speed.",
+    "caption": "Five simulated minutes at 5pm on a weekday. Normal street on the left, the block closed on the right. Each dot is a car.",
+    "legend": [
+      {
+        "label": "Stopped car",
+        "colour": "#d73027"
+      },
+      {
+        "label": "Slow car",
+        "colour": "#fdae61"
+      },
+      {
+        "label": "Moving car",
+        "colour": "#1a9850"
+      },
+      {
+        "label": "Closed block",
+        "colour": "#000000"
+      },
+      {
+        "label": "Tram only",
+        "colour": "#9fc6e8"
+      },
+      {
+        "label": "Street",
+        "colour": "#d0d0d0"
+      }
+    ]
+  },
   "generated_at": "2026-09-29T20:58:01+00:00"
 }

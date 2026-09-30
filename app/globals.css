@@ -205,6 +205,11 @@ small.error-text { display: block; font-size: 12px; margin-top: 1px; }
 .site-image { position: relative; height: 124px; overflow: hidden; border-radius: 10px; border: 1px solid #cbd9cd; background: #e7ece7; }
 .site-image > .reference-asset { width: 100%; height: auto; aspect-ratio: 416 / 70 !important; transform: scaleY(2.38); transform-origin: top; }
 .site-image > .reference-asset > img { transform: none; }
+.method-visual { margin: 14px 0 0; }
+.method-visual img { display: block; width: 100%; height: auto; border: 1px solid #d9e0e4; border-radius: 8px; }
+.method-visual figcaption p { margin: 8px 0 0; font-size: 12px; color: #4a5a66; }
+.method-visual .map-legend { grid-template-columns: repeat(3, 1fr); }
+.method-visual .map-legend i { height: 9px; border-radius: 2px; }
 .map-legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px 16px; margin-top: 10px; font-size: 11px; color: #4a5a66; }
 .map-legend > span { display: flex; align-items: center; gap: 7px; }
 .map-legend i { display: inline-block; width: 19px; }

@@ -101,6 +101,7 @@ export function buildReport(impact: ImpactResult) {
       confidence: `${impact.confidence.charAt(0).toUpperCase()}${impact.confidence.slice(1)}. ${impact.confidence_note}`,
       window: window ? `${window.window}. ${window.reason}` : null,
       assumptions: impact.assumptions,
+      visual: impact.visual ?? null,
     },
   };
 }

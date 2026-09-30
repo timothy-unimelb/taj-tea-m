@@ -244,6 +244,14 @@ result = {
     ],
     "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
 }
+if os.path.exists(os.path.join(REPO, "public", "assets", "sumo-swanston-5pm.gif")):  # made by 09_clip.py
+    result["visual"] = {
+        "src": "/assets/sumo-swanston-5pm.gif", "width": 648, "height": 374,
+        "alt": "Animated map of the streets around the closed block at 5pm, normal street on the left and closure on the right, with cars as dots coloured by speed.",
+        "caption": "Five simulated minutes at 5pm on a weekday. Normal street on the left, the block closed on the right. Each dot is a car.",
+        "legend": [{"label": "Stopped car", "colour": "#d73027"}, {"label": "Slow car", "colour": "#fdae61"}, {"label": "Moving car", "colour": "#1a9850"},
+                   {"label": "Closed block", "colour": "#000000"}, {"label": "Tram only", "colour": "#9fc6e8"}, {"label": "Street", "colour": "#d0d0d0"}],
+    }
 os.makedirs(OUT, exist_ok=True)
 json.dump(result, open(os.path.join(OUT, "swanston.json"), "w"), indent=2, ensure_ascii=False)
 json.dump(dict(hours=hours, scale=args.scale, seeds=args.seeds, diversions=diverted, diversions_main=main,

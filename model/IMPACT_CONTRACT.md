@@ -79,6 +79,14 @@ Built from Claude's TGS analysis plus traffic data (`lib/impact/request.ts`).
     "trucks": { "status": "not modelled", "summary": "..." }
   },
   "assumptions": ["Short plain sentences. One assumption each."],
+  "visual": {
+    "src": "/assets/sumo-swanston-5pm.gif",
+    "width": 648,
+    "height": 374,
+    "alt": "What a screen reader says instead of the picture.",
+    "caption": "One or two sentences on what the picture shows.",
+    "legend": [{ "label": "Stopped car", "colour": "#d73027" }]
+  },
   "generated_at": "2026-09-30T04:00:00Z"
 }
 ```

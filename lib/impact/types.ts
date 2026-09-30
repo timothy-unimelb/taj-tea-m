@@ -62,6 +62,14 @@ export type ImpactResult = {
   recommended_window: { window: string; reason: string } | null;
   modes: Record<ModeId, ModeImpact>;
   assumptions: string[];
+  visual?: {                 // optional picture or animation of the model at work, shown under "How this was estimated"
+    src: string;             // path under public/, e.g. "/assets/sumo-swanston-5pm.gif"
+    width: number;           // pixel size of the file
+    height: number;
+    alt: string;
+    caption: string;
+    legend: { label: string; colour: string }[];
+  };
   overall?: { severity: Severity; reason: string }; // filled in by the severity rule
   generated_at?: string;     // ISO time the result was made
 };
