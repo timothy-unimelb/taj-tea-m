@@ -44,6 +44,7 @@ Done:
 
 ## Tamara
 Now:
+- [10:00] Rebuilding the closure-impact model (lookup + validation) from the new parquet instead of the local warehouse. model/mvm/.
 Done:
 - [09:30] Added model/build_parquet.py. Joins the raw closure, SCATS, site, AADT and holiday files into one parquet (closure x site x day x hour, 4.8M rows, 7 MB). Output is local only, in parquet/ of the data folder. Counts match the warehouse exactly.
 - [23:15] Added the closure-impact model in model/: code, notes and output CSVs (not the 5 GB warehouse). `python model/mvm/mvm_predict.py` runs it. Not connected to the app yet. THIRD_PARTY.md and BRIEF.md updated.
