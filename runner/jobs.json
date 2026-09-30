@@ -1,0 +1,36 @@
+{
+  "image": {
+    "include": [
+      "model/data/closure_site_hour.parquet",
+      "model/mvm/build_mvm.py",
+      "model/mvm/mvm_predict.py",
+      "model/mvm/output",
+      "model/headline_stats/output",
+      "model/export_app_tables.py",
+      "data/impact/mvm-tables.json"
+    ]
+  },
+  "jobs": {
+    "mvm-build": {
+      "description": "Retrain Tamara's lookup model from the parquet and export the app tables.",
+      "inputs": [
+        { "r2": "inputs/closure_site_hour.parquet", "to": "model/data/closure_site_hour.parquet", "optional": true }
+      ],
+      "steps": [
+        ["python", "model/mvm/build_mvm.py"],
+        ["python", "model/export_app_tables.py"]
+      ],
+      "outputs": ["model/mvm/output/*.csv", "data/impact/mvm-tables.json"],
+      "timeout_s": 600,
+      "cache": true
+    },
+    "mvm-sample": {
+      "description": "Run mvm_predict.py's built-in sample (night vs day vs 24 h for a lane closure). Output is in log.txt.",
+      "inputs": [],
+      "steps": [["python", "model/mvm/mvm_predict.py"]],
+      "outputs": [],
+      "timeout_s": 120,
+      "cache": true
+    }
+  }
+}

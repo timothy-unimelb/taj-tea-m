@@ -1,0 +1,23 @@
+{
+  "name": "barrier-brain-runner",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "stage": "node stage.mjs",
+    "image": "npm run stage && docker build -t barrier-brain-runner build",
+    "local": "npm run image && docker run --rm -p 8080:8080 -v \"$PWD/.local-r2:/data\" -e LOCAL_R2_DIR=/data barrier-brain-runner",
+    "types": "wrangler types",
+    "check": "tsc --noEmit",
+    "bucket": "wrangler r2 bucket create barrier-brain-runs && wrangler r2 bucket lifecycle add barrier-brain-runs expire-runs runs/ --expire-days 90 --force",
+    "secrets": "wrangler secret put RUNNER_TOKEN && wrangler secret put AWS_ACCESS_KEY_ID && wrangler secret put AWS_SECRET_ACCESS_KEY",
+    "deploy": "npm run stage && wrangler deploy --var CODE_VERSION:$(git rev-parse --short HEAD)"
+  },
+  "dependencies": {
+    "@cloudflare/containers": "^0.3.7"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260930.1",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.144.0"
+  }
+}

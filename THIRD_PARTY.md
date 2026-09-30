@@ -31,3 +31,8 @@ The competition requires a list of all third-party material and APIs, including 
 | jiti | Tool | Runs the check that the TypeScript port of the impact model matches the Python. `model/check_ts_port.ts` | MIT | No |
 | Sample TGS (Swanston St closure) | Image | Mock TGS upload and shape of mock data. `data/mock/tgs/` | Invarion sample drawing. Licence not confirmed, check before submission | No |
 | OpenStreetMap | Dataset | Street layout for the test TGS in `data/test/` (Swanston St, Grattan St to Faraday St) | ODbL, attribution on the drawing | No |
+| Cloudflare Workers, Containers and R2 | Hosting | Runs the team's Python on demand and stores its inputs and results. `runner/` (not deployed yet) | Cloudflare terms | Workers Paid plan ($5 a month, already held) plus usage |
+| @cloudflare/containers | Library | Starts and stops the runner's containers from the Worker. `runner/` | Apache-2.0 | No |
+| Wrangler | Tool | Builds and deploys the runner Worker and its container image. `runner/` | MIT OR Apache-2.0 | No |
+| boto3 | Library | The runner container reads and writes R2 through its S3-compatible API. `runner/` | Apache 2.0 | No |
+| Python (Docker image python:3.12-slim) | Tool | Base image of the runner container. `runner/Dockerfile` | PSF licence | No |

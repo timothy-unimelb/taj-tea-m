@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Python virtual environments for the models (SUMO ships its own JavaScript).
     "**/.venv/**",
+    // Cloudflare Python runner: its own package, config and type check.
+    "runner/**",
   ]),
 ]);
 

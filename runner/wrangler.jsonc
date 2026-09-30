@@ -1,0 +1,31 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "barrier-brain-runner",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+
+  // Built from runner/build/, which `npm run stage` fills with only the files jobs.json lists.
+  // standard-4 = 4 vCPU, 12 GiB memory, 20 GB disk: build_mvm.py peaks at 9.6 GB (3.7 GB if it read
+  // only the columns it uses). The memory limit is a hard cap, so a runaway job (like the SUMO run
+  // that hit 300 GB on the laptop) is killed, not the host.
+  "containers": [
+    { "class_name": "JobContainer", "image": "./build/Dockerfile", "instance_type": "standard-4", "max_instances": 3 }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "JOB_CONTAINER", "class_name": "JobContainer" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["JobContainer"] }],
+
+  "r2_buckets": [{ "binding": "RUNS", "bucket_name": "barrier-brain-runs" }],
+
+  // Secrets (npm run secrets): RUNNER_TOKEN, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY (an R2 API token
+  // scoped to barrier-brain-runs). CODE_VERSION is set on deploy from the git commit.
+  "vars": {
+    "R2_ACCOUNT_ID": "ef9582a911de0e2ccf90a2a440e317fb",
+    "R2_BUCKET_NAME": "barrier-brain-runs"
+  }
+}
