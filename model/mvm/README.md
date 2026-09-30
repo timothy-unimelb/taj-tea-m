@@ -3,7 +3,7 @@
 **How it works:** a lookup table learned from past Melbourne closures, followed by an hour-by-hour queue calculation.
 - **Closures:** RADAR (national roadworks feed), Greater Melbourne, 2024–26, ≤7 days: 6,514 closures, 3,075 of them within 200 m of a signalised intersection.
 - **Traffic:** SCATS signal volumes.
-- **Build:** `python analysis/mvm/run_mvm.py` (about 1 minute; the warehouse is opened read-only).
+- **Build:** `python model/mvm/build_mvm.py` (about 15 seconds). It reads the flat parquet made by `model/build_parquet.py`. The original warehouse build, `run_mvm.py` with the SQL files, gives the same results and is kept for reference.
 
 | File | What it does |
 |---|---|
