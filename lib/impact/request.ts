@@ -76,7 +76,8 @@ export function buildImpactRequest(analysis: TgsAnalysis): ImpactRequest {
     closure_type: analysis.closure_type,
     work_hours: parseWorkHours(analysis),
     lanes_per_direction: analysis.lanes_per_direction,
-    lanes_open: closed ? 0 : analysis.lanes_open,
+    lanes_open: closed || analysis.direction_closed ? 0 : analysis.lanes_open,
+    direction_closed: closed || analysis.direction_closed === true,
     detour: analysis.detour,
     pedestrian_management: analysis.pedestrian_management,
   };

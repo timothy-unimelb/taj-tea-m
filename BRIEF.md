@@ -116,7 +116,7 @@ Figures on the sketches, such as "96%", are placeholders.
 
 Real for Wednesday: Claude reads the uploaded TGS and lists the scan points.
 
-Real for Wednesday: impact estimates. The Swanston sample shows a SUMO simulation (precomputed, labelled early result). Any other TGS gets Tamara's model, run live.
+Real for Wednesday: impact estimates. Every TGS gets Tamara's model, run live. A SUMO simulation of the Swanston sample (precomputed, labelled early result) can be switched on with `IMPACT_MODEL=sumo`.
 
 Mocked for Wednesday: scan measurement, and the safety findings that depend on it. The approach for each must still be clear and buildable, because technical feasibility is 30% of the mark.
 
@@ -156,6 +156,7 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - [30 Sep] Tim: the TGS analysis runs on Claude Sonnet 5.5, not Opus, to fit a student budget. Claude models need paid AI Gateway credit; the free monthly credit doesn't cover them.
 - [30 Sep] Tim: impact models are swappable behind one result shape, so we are not locked into one approach. Tamara's model runs live as the default; SUMO is being tested. The report shows which method produced its numbers, and severity comes from one written rule.
 - [30 Sep] Tim: SUMO is the default impact model where it has a result (the Swanston sample), with Tamara's model everywhere else. A review showed the lookup overstates Swanston: it assumes half the intersection's traffic uses the closed block, which is mostly tram only.
+- [30 Sep] Tim: Tamara's model is the default again for every TGS, including the Swanston sample. A lane closure that closes every lane in one direction counts as 0 lanes open, so the whole direction detours.
 - [30 Sep] Advait: site scans use photogrammetry instead of LiDAR.
 - [30 Sep] Joel: scan points come from the TGS analysis on every scan screen (it was 8 points, then 5 fixed areas). One site scan covers every scan point (Joel, later on 30 Sep: reverted from one scan per point). The scan is measured in the browser in TypeScript, not in Python, so no upload limit applies. Claude compares plan and measurements (`/api/site-check`) and writes the safety finding and actions; rules on the measurements are the fallback. The demo scan keeps the fixed Swanston findings.
 - [30 Sep] Joel: real Scaniverse LAS scans (iPhone 16, no LiDAR, so photogrammetry; georeferenced) find the kerb, but footpath widths are not yet reliable on them. The app says "not measured reliably, check on site" instead of reporting a width.

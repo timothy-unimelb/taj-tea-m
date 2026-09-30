@@ -48,22 +48,27 @@ export async function estimate(req: ImpactRequest): Promise<ImpactResult> {
   const assumptions: string[] = [];
   const daily = req.site.daily_volume;
   const aadt = (daily ?? DEFAULT_DAILY) * (daily ? CLOSED_STREET_SHARE : 1);
-  if (daily) assumptions.push(`Traffic from signal site ${req.site.scats_site_no} ${req.site.scats_site_name}: ${fmt(daily)} vehicles on an average weekday across all approaches. Assumed half of them use ${req.site.street}, split evenly by direction.`);
-  if (daily && req.site.tram_route) assumptions.push(`${req.site.street} carries trams. Where cars are limited on a tram street (tram-only or permit-only sections), far less than half the site's traffic uses it, so diversions may be greatly overstated.`);
-  else assumptions.push(`No traffic signal site matched ${req.site.street}. Assumed ${fmt(DEFAULT_DAILY)} vehicles a day, split evenly by direction.`);
+  if (daily) {
+    assumptions.push(`Traffic from signal site ${req.site.scats_site_no} ${req.site.scats_site_name}: ${fmt(daily)} vehicles on an average weekday across all approaches. Assumed half of them use ${req.site.street}, split evenly by direction.`);
+    if (req.site.tram_route) assumptions.push(`${req.site.street} carries trams. Where cars are limited on a tram street (tram-only or permit-only sections), far less than half the site's traffic uses it, so diversions may be greatly overstated.`);
+  } else assumptions.push(`No traffic signal site matched ${req.site.street}. Assumed ${fmt(DEFAULT_DAILY)} vehicles a day, split evenly by direction.`);
   const roadClass = roadClassFromVolume(daily ?? DEFAULT_DAILY);
   assumptions.push(`Road size group for past closures: ${roadClass}, from the signal site's daily count.`);
 
-  // A lane closure needs a lane left open. If the plan doesn't show lanes, assume 2 each way with 1 open.
+  // A lane closure keeps a lane open unless the plan closes the whole direction.
+  // If the plan doesn't show lanes, assume 2 each way with 1 open.
+  const roadClosed = req.closure_type === "road closed";
+  const directionClosed = !roadClosed && req.closure_type !== "footpath only" && req.direction_closed;
   const lanesUnknown = req.lanes_per_direction < 1;
-  const partial = req.closure_type !== "road closed" && req.closure_type !== "footpath only";
+  const partial = !roadClosed && !directionClosed && req.closure_type !== "footpath only";
   const lanesPerDirection = lanesUnknown ? (partial ? 2 : 1) : req.lanes_per_direction;
-  let lanesOpen = req.closure_type === "road closed" ? 0 : req.closure_type === "footpath only" ? lanesPerDirection : Math.min(req.lanes_open, lanesPerDirection);
+  let lanesOpen = roadClosed || directionClosed ? 0 : req.closure_type === "footpath only" ? lanesPerDirection : Math.min(req.lanes_open, lanesPerDirection);
   if (partial && lanesOpen < 1) lanesOpen = Math.max(1, lanesPerDirection - 1);
   if (lanesUnknown) assumptions.push(partial ? "The plan does not show the number of lanes. Assumed 2 lanes each way with 1 left open." : "The plan does not show the number of lanes. Assumed 1 lane each way.");
   else if (partial && req.lanes_open < 1) assumptions.push(`The plan does not show how many lanes stay open. Assumed ${lanesOpen}.`);
-  if (req.closure_type === "road closed") {
-    assumptions.push("The road is fully closed, so it is modelled as 0 lanes open. The past-closure lookup has no full-closure group, so it uses its all-closures fallback.");
+  if (directionClosed) assumptions.push("The plan closes every lane in the affected direction, so that direction is modelled as 0 lanes open. Past closures are matched on the plan's closure type.");
+  if (roadClosed) assumptions.push("The road is fully closed, so it is modelled as 0 lanes open. The past-closure lookup has no full-closure group, so it uses its all-closures fallback.");
+  if (lanesOpen === 0) {
     assumptions.push("With no lanes open, the queue model holds a 500 m queue and sends everyone else on the detour. Drivers usually divert earlier at the VMS boards, so queue and delay are likely overstated. Diversions are the key number.");
   }
 
@@ -113,7 +118,7 @@ export async function estimate(req: ImpactRequest): Promise<ImpactResult> {
     method: "Lookup of 2,700 past Melbourne closures, then an hourly queue",
     label: null,
     provenance: "live",
-    confidence: lk.lookup_level === 1 && req.closure_type !== "road closed" ? "medium" : "low",
+    confidence: lk.lookup_level === 1 && lanesOpen > 0 ? "medium" : "low",
     confidence_note: "Its typical estimate does not beat assuming no change, so read the ranges and the risk, not a single number.",
     period,
     recommended_window,

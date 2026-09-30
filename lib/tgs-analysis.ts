@@ -22,6 +22,7 @@ export const tgsAnalysisSchema = {
     work_end: { type: "string", description: "End time in 24-hour HH:MM, e.g. '22:00'. Empty string if not shown" },
     lanes_per_direction: { type: "integer", description: "Normal lanes in the affected direction. 0 if not shown" },
     lanes_open: { type: "integer", description: "Lanes left open in that direction while works are active. 0 if fully closed or not shown" },
+    direction_closed: { type: "boolean", description: "True if every car lane in the affected direction is closed while works are active, so all traffic in that direction must detour, e.g. 'Southbound closed'. False if a lane stays open or it is not clear" },
     detour: { type: "string", description: "Vehicle detour route, or 'none shown'" },
     plan_elements: {
       type: "array",
@@ -60,7 +61,7 @@ export const tgsAnalysisSchema = {
     uncertainties: { type: "array", description: "Anything unclear or missing on the plan", items: { type: "string" } },
   },
   required: [
-    "site", "closure_type", "work_hours", "work_days", "work_start", "work_end", "lanes_per_direction", "lanes_open", "detour",
+    "site", "closure_type", "work_hours", "work_days", "work_start", "work_end", "lanes_per_direction", "lanes_open", "direction_closed", "detour",
     "plan_elements", "equipment", "pedestrian_management", "scan_points", "uncertainties",
   ],
 } as const;
@@ -74,6 +75,7 @@ export type TgsAnalysis = {
   work_end: string;
   lanes_per_direction: number;
   lanes_open: number;
+  direction_closed?: boolean; // missing in analyses saved before 30 Sep
   detour: string;
   plan_elements: string[];
   equipment: { item: string; count: number; detail: string }[];

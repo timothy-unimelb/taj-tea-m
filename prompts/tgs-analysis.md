@@ -22,6 +22,7 @@ Give 4 to 8 scan points, most important first. Merge positions that one scan wou
 Work hours drive the traffic impact, so look for them everywhere: the title block, notes, the legend, and every inset or locality map, including small text inside them.
 Report them as written in work_hours, and also as work_days, work_start and work_end (24-hour HH:MM). If only part is shown, fill in that part and leave the rest empty.
 For lanes, count the lanes a car could normally use in the affected direction, not tram-only or bicycle lanes.
+Set direction_closed when no car lane stays open in the affected direction, for example a sign or VMS saying "Southbound closed" with a detour, even if the lanes are not drawn.
 
 Only report what the drawing shows. If something is not shown or can't be read, say so in uncertainties rather than guessing.
 Write in plain Australian English. Keep each item short enough to read on a phone.

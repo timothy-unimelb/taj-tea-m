@@ -13,8 +13,8 @@ Done:
 
 ## Tim
 Now:
-- [16:32] Impact model: a TGS that closes a whole direction is modelled with no lanes open (new `direction_closed` field), and the wrong "No traffic signal site matched" note fixed.
 Done:
+- [16:34] A TGS that closes a whole direction is now modelled with no lanes open: Claude reports `direction_closed` (lib/tgs-analysis.ts, prompts/tgs-analysis.md), and the lookup model uses it. The test TGS now shows about 1,500 diversions (1,200 to 1,900), cars High, night works recommended. Also fixed the "No traffic signal site matched" note showing on non-tram streets that did match.
 - [16:32] Default impact model is `mvm` again (lib/impact/index.ts), live on Vercel. The TypeScript port matches Tamara's Python on 9 test cases. Test TGS on Vercel: runs `mvm` live in 0.8 s. Cars show Low (0 delay) because Claude reads 0 lanes, so the model assumes 2 each way with 1 open, but the plan closes the whole southbound side. With 0 lanes open it would be about 1,500 to 1,900 diversions.
 - [10:30] SUMO clip on the Swanston report under "How this was estimated": five simulated minutes at 5pm, normal street beside the closure, with a legend. Optional `visual` field in the impact result (model/IMPACT_CONTRACT.md). Report numbers unchanged.
 - [10:45] Clip redone so the difference shows: cars that use the block are purple with a trail, the closed block is drawn only on the closure panel, and the clip is from the right-turn-allowed case (the main case moves a car or two a minute and the panels looked identical). Caption says which case it is. Numbers unchanged.

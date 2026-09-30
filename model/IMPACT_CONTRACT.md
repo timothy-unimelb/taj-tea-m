@@ -42,6 +42,7 @@ Built from Claude's TGS analysis plus traffic data (`lib/impact/request.ts`).
   "work_hours": { "text": "Mon 7am-10pm", "days": "Monday", "start_hour": 7, "end_hour": 22 },
   "lanes_per_direction": 0,
   "lanes_open": 0,
+  "direction_closed": true,
   "detour": "Via Elizabeth St and Little La Trobe St",
   "pedestrian_management": ["Southbound pedestrians walk on road while traffic controllers hold traffic"]
 }
@@ -51,6 +52,7 @@ Built from Claude's TGS analysis plus traffic data (`lib/impact/request.ts`).
 - `daily_volume` is the average weekday count at the nearest SCATS signal site, all approaches together. It is found by matching the street and a cross street to the site name. `null` if nothing matched.
 - `end_hour` below `start_hour` means overnight works. Either can be `null` if the plan doesn't show hours.
 - `lanes_per_direction` is 0 when the plan doesn't show it.
+- `direction_closed` is true when no car lane stays open in the affected direction, including every `road closed`. Then `lanes_open` is 0. When it is false, `lanes_open` 0 means the plan doesn't show it.
 - `tram_route` comes from a short hand-entered list of tram streets. It should come from PTV GTFS later.
 
 ## ImpactResult (output)

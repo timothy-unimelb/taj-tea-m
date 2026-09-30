@@ -26,6 +26,7 @@ export type ImpactRequest = {
   };
   lanes_per_direction: number;
   lanes_open: number;          // 0 when the road is closed
+  direction_closed: boolean;   // every car lane in the affected direction is closed, so that direction detours
   detour: string;
   pedestrian_management: string[];
 };
