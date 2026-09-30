@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { ArrowLeftIcon, CaretRightIcon, CheckIcon, FilePdfIcon, MagnifyingGlassIcon, PlusIcon, ShareNetworkIcon, WarningCircleIcon, XIcon } from "@phosphor-icons/react";
 import { analyseTgs, buildReport, checkSite, demoAnalysis, estimateImpact, sampleTgsUrl, type AssessmentData } from "@/lib/data";
 import { describeMeasurement, measureScan, scanPreview, scanProblem, type ScanMeasurement } from "@/lib/scan/measure";
+import { stitchScans } from "@/lib/scan/stitch";
 import { ruleCheck, type SiteCheck } from "@/lib/site-check";
 import type { ImpactResult } from "@/lib/impact/types";
 import type { TgsAnalysis } from "@/lib/tgs-analysis";
@@ -27,7 +28,9 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   const [search, setSearch] = useState("");
   const [tgsFile, setTgsFile] = useState<UploadFile | null>(null);
   // One site scan covers every scan point. Without `file` it is the demo scan.
-  const [scanFile, setScanFile] = useState<UploadFile | null>(null);
+  // Every scan the planner uploads. Entries without `file` are the demo scan.
+  const [scanFiles, setScanFiles] = useState<UploadFile[]>([]);
+  const extraScanInput = useRef<HTMLInputElement>(null);
   const [demoScanComplete, setDemoScanComplete] = useState(false);
   const [measured, setMeasured] = useState<ScanMeasurement | string | null>(null);
   const [siteCheck, setSiteCheck] = useState<SiteCheck | null>(null);
@@ -74,30 +77,44 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   }, [needsImpact, tgsAnalysis, impactAttempt]);
   // Scan points come from the TGS analysis, so every scan screen shows the same list.
   const points = (tgsAnalysis ?? demoAnalysis).scan_points;
-  const realScan = scanFile?.file && measured && typeof measured !== "string" ? measured : null;
-  const scanError = scanFile?.file ? (typeof measured === "string" ? measured : realScan ? scanProblem(realScan) : measured === null ? "Not checked yet" : null) : null;
-  // The demo scan misses the last area until the additional scan. A real scan covers every area or none.
+  const realFiles = scanFiles.flatMap(f => f.file ? [f.file] : []);
+  const demoScan = scanFiles.length > 0 && realFiles.length === 0;
+  const scanLabel = realFiles.length === 1 ? realFiles[0].name : `${realFiles.length} scans, stitched into one`;
+  const realScan = realFiles.length && measured && typeof measured !== "string" ? measured : null;
+  const scanError = realFiles.length ? (typeof measured === "string" ? measured : realScan ? scanProblem(realScan) : measured === null ? "Not checked yet" : null) : null;
+  // The demo scan misses the last area until the additional scan. Real scans, stitched into one, cover every area or none.
   const pointStatus = points.map((_, i) => {
-    if (!scanFile) return { ok: false, problem: "Not scanned yet", note: undefined as string | undefined };
-    if (!scanFile.file) return demoScanComplete || i < points.length - 1 ? { ok: true, problem: null, note: "Demo scan" } : { ok: false, problem: "Not fully captured", note: "Demo scan" };
-    return scanError ? { ok: false, problem: scanError, note: scanFile.name } : { ok: true, problem: null, note: `In ${scanFile.name}` };
+    if (!scanFiles.length) return { ok: false, problem: "Not scanned yet", note: undefined as string | undefined };
+    if (demoScan) return demoScanComplete || i < points.length - 1 ? { ok: true, problem: null, note: "Demo scan" } : { ok: false, problem: "Not fully captured", note: "Demo scan" };
+    return scanError ? { ok: false, problem: scanError, note: scanLabel } : { ok: true, problem: null, note: `In ${scanLabel}` };
   });
   const capturedCount = pointStatus.filter(p => p.ok).length;
-  // The browser measures the scan while the check steps play. The file never leaves the phone.
+  // The browser stitches and measures the scans while the check steps play. Files never leave the phone.
   useEffect(() => {
-    if (screen !== "scan-checking" || !scanFile?.file || measured !== null) return;
+    if (screen !== "scan-checking" || !realFiles.length || measured !== null) return;
     let cancelled = false;
-    const file = scanFile.file;
-    measureScan(file).catch((error: Error) => error.message).then(result => { if (!cancelled) setMeasured(result); });
-    scanPreview(file).catch(() => null).then(image => { if (!cancelled) setScanImage(image); });
+    stitchScans(realFiles).then(file => Promise.all([
+      measureScan(file),
+      scanPreview(file).catch(() => null).then(image => { if (!cancelled) setScanImage(image); }),
+    ])).then(([result]) => { if (!cancelled) setMeasured(result); }).catch((error: Error) => { if (!cancelled) setMeasured(error.message); });
     return () => { cancelled = true; };
-  }, [screen, scanFile, measured]);
-  function chooseScan(file: UploadFile | null) { setScanFile(file); setMeasured(null); setSiteCheck(null); setScanImage(null); setDemoScanComplete(false); }
-  // The demo adds the missing area. A real scan goes back to upload for a new file.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen, scanFiles, measured]);
+  function resetScanResults() { setMeasured(null); setSiteCheck(null); setScanImage(null); }
+  function addScans(files: UploadFile[]) { setScanFiles(current => [...current.filter(f => f.file), ...files]); resetScanResults(); setDemoScanComplete(false); }
+  function removeScan(i: number) { setScanFiles(current => current.filter((_, j) => j !== i)); resetScanResults(); }
+  function chooseDemoScan() { setScanFiles([{ name: data.scan.demoFileName, size: data.scan.demoFileSize }]); resetScanResults(); setDemoScanComplete(false); }
+  function clearScans() { setScanFiles([]); resetScanResults(); setDemoScanComplete(false); }
+  // Adds a scan without going back to the upload screen. The demo fills its missing area straight away.
   function uploadAdditional() {
-    if (scanFile && !scanFile.file) { setDemoScanComplete(true); navigate("scan-additional"); return; }
-    chooseScan(null);
-    navigate("scan");
+    if (demoScan) { setDemoScanComplete(true); navigate("scan-additional"); return; }
+    extraScanInput.current?.click();
+  }
+  function onExtraScans(list: FileList | null) {
+    const files = Array.from(list ?? []).filter(f => /\.(ply|las)$/i.test(f.name));
+    if (!files.length) return;
+    addScans(files.map(f => ({ name: f.name, size: `${Math.max(0.1, f.size / 1024 / 1024).toFixed(1)} MB`, file: f })));
+    navigate("scan-checking");
   }
   // Claude compares the plan with the measured scan while the report steps play.
   const needsCheck = realScan !== null && siteCheck === null && screen === "generating";
@@ -144,7 +161,7 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
     if (status === "Draft") setTgsFile({ name: data.tgs.fileName, size: data.tgs.size });
     navigate(saved ?? (status === "Report ready" ? "report" : status === "Analysing" ? "generating" : "tgs"), id);
   }
-  function startAssessment() { setTgsFile(null); chooseScan(null); setTgsAnalysis(null); setImpact(null); navigate("tgs", data.projects[0].id); }
+  function startAssessment() { setTgsFile(null); clearScans(); setTgsAnalysis(null); setImpact(null); navigate("tgs", data.projects[0].id); }
   const isReport = screen === "report";
   const isPdf = screen === "pdf";
   const step = ["tgs", "tgs-processing", "tgs-complete"].includes(screen) ? 0 : screen === "generating" ? 2 : 1;
@@ -153,7 +170,7 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   return <div className={`mobile-app ${isPdf ? "pdf-mode" : ""}`}>
     <a href="#main-content" className="skip-link" onClick={event => { event.preventDefault(); main.current?.querySelector<HTMLElement>("h1")?.focus(); }}>Skip to content</a>
     <header className={`app-header ${isReport || isPdf ? "report-toolbar" : ""}`}>
-      {screen === "projects" ? <Brand /> : <button className="back-button" onClick={() => navigate(backScreens[screen])}><ArrowLeftIcon size={18} aria-hidden="true" /><span>Back</span></button>}
+      {screen === "projects" ? <Brand /> : isReport ? <button className="back-button" onClick={() => navigate("projects")}><XIcon size={18} aria-hidden="true" /><span>Close</span></button> : <button className="back-button" onClick={() => navigate(backScreens[screen])}><ArrowLeftIcon size={18} aria-hidden="true" /><span>Back</span></button>}
       {isPdf && <span className="document-filename">{project.name.replaceAll(" ", "_")}_Report.pdf</span>}
       {(isReport || isPdf) && <div className="toolbar-actions"><button className="toolbar-button" onClick={share} aria-label="Share report"><ShareNetworkIcon size={20} aria-hidden="true" />{!isPdf && <span>Share</span>}</button>{isReport && <button className="toolbar-button" onClick={() => navigate("pdf")}><FilePdfIcon size={20} aria-hidden="true" /><span>Export PDF</span></button>}</div>}
     </header>
@@ -175,14 +192,15 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
         {screen === "tgs" && <><div className="page-heading"><h1 tabIndex={-1}>Upload Traffic Guidance Scheme</h1><p>Upload the TGS for this work zone. Barrier Brain will identify the planned work zone, traffic controls and areas that need site verification.</p></div><UploadPanel kind="tgs" file={tgsFile} onFile={setTgsFile} />{!tgsFile && <button className="demo-file-button" onClick={() => setTgsFile({ name: data.tgs.fileName, size: data.tgs.size })}>Use demo TGS</button>}<div className="bottom-actions"><PrimaryButton onClick={() => { startTgsAnalysis(); navigate("tgs-processing"); }} disabled={!tgsFile}>Analyse TGS</PrimaryButton></div></>}
         {screen === "tgs-processing" && <><div className="page-heading"><h1 tabIndex={-1}>Analysing TGS</h1><p>{usingDemoTgs ? "Loading the saved analysis of the demo TGS." : "Identifying the planned work zone, traffic controls and areas that need site verification."}</p></div>{tgsError ? <><div className="scan-warning" role="alert"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>{tgsError}</p></div><div className="bottom-actions"><PrimaryButton onClick={startTgsAnalysis} arrow={false}>Try again</PrimaryButton><button className="secondary-button" onClick={() => navigate("tgs")}>Choose a different file</button></div></> : <ProgressState key={tgsAttempt} steps={tgsSteps} ready={tgsAnalysis !== null} onComplete={() => navigate("tgs-complete", project.id, true)} />}<TgsPreview url={tgsPreviewUrl} alt="The uploaded traffic guidance scheme" /></>}
         {screen === "tgs-complete" && <><div className="page-heading"><h1 tabIndex={-1}>TGS analysis complete</h1><p>We found the planned work zone and the areas that should be verified on site.</p>{usingDemoTgs && <p>This is a saved analysis of the demo TGS. Upload your own TGS to analyse it now.</p>}</div><section className="flow-section"><h2>Plan elements</h2><Checklist items={tgsAnalysis?.plan_elements ?? data.tgs.findings} statusLabel="identified" /></section><TgsPreview url={tgsPreviewUrl} alt="The analysed traffic guidance scheme" /><section className="flow-section"><h2>Areas requiring site verification</h2><Checklist items={tgsAnalysis?.scan_points.map(point => point.name) ?? data.tgs.requiredVerification} details={tgsAnalysis?.scan_points.map(point => point.location)} statusLabel="identified for verification" /></section>{tgsAnalysis && tgsAnalysis.uncertainties.length > 0 && <section className="flow-section"><h2>Not clear on the plan</h2><Checklist items={tgsAnalysis.uncertainties} captured={0} pending /></section>}<div className="bottom-actions"><PrimaryButton onClick={() => navigate("scan")}>Continue to site scan</PrimaryButton></div></>}
-        {screen === "scan" && <><div className="page-heading"><h1 tabIndex={-1}>Upload site scan</h1><p>Scan every required area in your photogrammetry scanning app, then upload the exported site scan here.</p></div><ExternalScanEvidence /><UploadPanel kind="scan" file={scanFile} onFile={chooseScan} />{!scanFile && <button className="demo-file-button" onClick={() => chooseScan({ name: data.scan.demoFileName, size: data.scan.demoFileSize })}>Use demo site scan</button>}<section className="flow-section"><h2>Required areas to verify</h2><Checklist items={points.map(point => point.name)} details={points.map(point => point.capture)} captured={0} pending /></section><div className="bottom-actions"><PrimaryButton onClick={() => navigate("scan-checking")} disabled={!scanFile}>Check scan completeness</PrimaryButton></div></>}
-        {(screen === "scan-checking" || screen === "scan-additional") && <><div className="page-heading"><h1 tabIndex={-1}>{screen === "scan-additional" ? "Checking additional scan" : "Checking scan completeness"}</h1><p>Checking the scan covers the site: enough street, and the kerb.</p></div><ProgressState steps={scanSteps} ready={screen === "scan-additional" || !scanFile?.file || measured !== null} onComplete={() => navigate(screen === "scan-additional" || pointStatus.every(p => p.ok) ? "scan-complete" : "scan-incomplete", project.id, true)} /><ReferenceAsset kind="lidar" className="lidar-preview" alt="External LiDAR point-cloud scan" /></>}
+        {screen === "scan" && <><div className="page-heading"><h1 tabIndex={-1}>Upload site scans</h1><p>Scan every required area in your photogrammetry scanning app, then upload the exported scans here. Several scans are stitched into one.</p></div>{scanFiles.length > 0 && <ExternalScanEvidence />}<UploadPanel kind="scan" files={scanFiles} onFile={file => { if (file) addScans([file]); }} onRemove={removeScan} />{!scanFiles.length && <button className="demo-file-button" onClick={chooseDemoScan}>Use demo site scan</button>}<section className="flow-section"><h2>Required areas to verify</h2><Checklist items={points.map(point => point.name)} details={points.map(point => point.capture)} captured={0} pending /></section><div className="bottom-actions"><PrimaryButton onClick={() => navigate("scan-checking")} disabled={!scanFiles.length}>Check scan completeness</PrimaryButton></div></>}
+        {(screen === "scan-checking" || screen === "scan-additional") && <><div className="page-heading"><h1 tabIndex={-1}>{screen === "scan-additional" ? "Checking additional scan" : "Checking scan completeness"}</h1><p>{realFiles.length > 1 ? "Stitching the scans into one, then checking it covers" : "Checking the scan covers"} the site: enough street, and the kerb.</p></div><ProgressState steps={scanSteps} ready={screen === "scan-additional" || !realFiles.length || measured !== null} onComplete={() => navigate(screen === "scan-additional" || pointStatus.every(p => p.ok) ? "scan-complete" : "scan-incomplete", project.id, true)} /><ReferenceAsset kind="lidar" className="lidar-preview" alt="External LiDAR point-cloud scan" /></>}
         {screen === "scan-incomplete" && <><div className="page-heading"><h1 tabIndex={-1}>Site scan incomplete</h1><p>{capturedCount} of {points.length} required areas captured.</p></div><Checklist items={points.map(point => point.name)} details={pointStatus.map(p => p.note ?? "")} done={pointStatus.map(p => p.ok)} problems={pointStatus.map(p => p.problem)} /><div className="scan-warning"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>Scan {pointStatus.filter(p => !p.ok).length === 1 ? "this area" : "these areas"} again before continuing.</p></div><div className="bottom-actions"><PrimaryButton onClick={uploadAdditional} arrow={false}>Upload additional scan</PrimaryButton><button className="secondary-button" onClick={() => missingDialog.current?.showModal()}>View missing area</button></div></>}
         {screen === "scan-complete" && <><div className="page-heading"><h1 tabIndex={-1}>Site scan complete</h1><p>All required areas are captured and ready for impact analysis.</p></div><div className="completion-card"><span className="large-check"><CheckIcon size={32} aria-hidden="true" /></span><div><strong>{capturedCount} of {points.length}</strong><p>required areas captured</p></div></div>{realScan && <p className="source-note">Measured: {describeMeasurement(realScan)}. {realScan.notes.join(" ")}</p>}<Checklist items={points.map(point => point.name)} details={pointStatus.map(p => p.note ?? "")} done={pointStatus.map(p => p.ok)} /><div className="bottom-actions"><PrimaryButton onClick={() => { setImpact(null); setSiteCheck(null); setImpactError(""); navigate("generating"); }}>Generate impact report</PrimaryButton></div></>}
         {screen === "generating" && <><div className="page-heading"><h1 tabIndex={-1}>Generating site impact report</h1><p>Combining the TGS, verified site geometry and reference data to identify knock-on effects.</p></div>{impactError ? <><div className="scan-warning" role="alert"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>{impactError}</p></div><div className="bottom-actions"><PrimaryButton onClick={retryImpact} arrow={false}>Try again</PrimaryButton></div></> : <ProgressState key={impactAttempt} steps={data.analysis.steps} ready={reportReady} onComplete={() => navigate("report", project.id, true)} illustration />}</>}
       </>}
     </main>
     <div className={`toast ${notification ? "toast-visible" : ""}`} role="status" aria-live="polite">{notification && <><CheckIcon size={18} aria-hidden="true" />{notification}</>}</div>
+    <input ref={extraScanInput} className="sr-only" type="file" multiple tabIndex={-1} accept=".ply,.las" aria-label="Choose additional scan files" onChange={e => { onExtraScans(e.target.files); e.target.value = ""; }} />
     <dialog ref={missingDialog} className="app-dialog" aria-labelledby="missing-title"><div className="dialog-heading"><h2 id="missing-title">{points[firstMissing]?.name ?? "Missing area"}</h2><button className="icon-button" onClick={() => missingDialog.current?.close()} aria-label="Close missing area"><XIcon size={20} /></button></div><p className="error-text">{pointStatus[firstMissing]?.problem ?? "Not fully captured"}</p><p>{points[firstMissing]?.location}</p><p>The scan must include: {points[firstMissing]?.capture}</p><PrimaryButton onClick={() => { missingDialog.current?.close(); uploadAdditional(); }} arrow={false}>Upload additional scan</PrimaryButton></dialog>
     <dialog ref={shareDialog} className="app-dialog" aria-labelledby="share-title"><div className="dialog-heading"><h2 id="share-title">Share report</h2><button className="icon-button" onClick={() => shareDialog.current?.close()} aria-label="Close share"><XIcon size={20} /></button></div><p>Copy this link to share the demo report.</p><input className="share-input" aria-label="Report link" readOnly value={shareUrl} onFocus={e => e.target.select()} /></dialog>
   </div>;

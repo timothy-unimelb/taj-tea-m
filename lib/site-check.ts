@@ -41,7 +41,7 @@ export const siteCheckSchema = {
         required: ["scan_point", "measured", "needed", "finding"],
       },
     },
-    actions: { type: "array", description: "2 to 4 actions, most important first", items: action },
+    actions: { type: "array", description: "2 to 4 actions, most important first. Each fixes a point the report raises, and its category is that point: traffic, pedestrians (pedestrian access), transport (public transport) or safety (site safety)", items: action },
   },
   required: ["decision", "safety_severity", "safety_summary", "conflicts", "actions"],
 } as const;

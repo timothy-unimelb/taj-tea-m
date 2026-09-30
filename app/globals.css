@@ -202,9 +202,9 @@ small.error-text { display: block; font-size: 12px; margin-top: 1px; }
 .severity-review-required { color: #875004; }
 .severity-not-modelled { color: var(--muted); }
 .metric-card .key-findings { margin-top: 6px; }
-.site-image { position: relative; height: 124px; overflow: hidden; border-radius: 10px; border: 1px solid #cbd9cd; background: #e7ece7; }
-.site-image > .reference-asset { width: 100%; height: auto; aspect-ratio: 416 / 70 !important; transform: scaleY(2.38); transform-origin: top; }
-.site-image > .reference-asset > img { transform: none; }
+/* The design board's aerial strip at its own shape (416 x 70). Stretching it to a taller box distorted it. */
+.site-image { position: relative; overflow: hidden; border-radius: 10px; border: 1px solid #cbd9cd; background: #e7ece7; }
+.site-image > .reference-asset { width: 100%; height: auto; }
 .method-visual { margin: 14px 0 0; }
 .method-visual img { display: block; width: 100%; height: auto; border: 1px solid #d9e0e4; border-radius: 8px; }
 .method-visual figcaption p { margin: 8px 0 0; font-size: 12px; color: #4a5a66; }

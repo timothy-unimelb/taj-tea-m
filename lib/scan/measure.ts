@@ -23,10 +23,46 @@ export type ScanMeasurement = {
   road_from_kerb_m: number | null;       // flat road next to the kerb, up to the first raised edge or the scan's reach
   obstacles: Obstacle[];
   notes: string[];
+  location?: { lat: number; lon: number }; // the scan's centre, when the file says where it is (georeferenced LAS)
 };
 
 // `zUp` is set for formats whose third axis is always up (LAS).
-type Cloud = { xyz: Float32Array; count: number; zUp?: boolean };
+// `location` is the scan's centre when the file is georeferenced.
+type Cloud = { xyz: Float32Array; count: number; zUp?: boolean; location?: { lat: number; lon: number } };
+
+// UTM easting/northing to latitude/longitude (WGS 84).
+function utmToLatLon(E: number, N: number, zone: number, south: boolean) {
+  const a = 6378137, f = 1 / 298.257223563, k0 = 0.9996, e2 = f * (2 - f), ep2 = e2 / (1 - e2);
+  const x = E - 500000, y = south ? N - 10000000 : N;
+  const mu = y / k0 / (a * (1 - e2 / 4 - 3 * e2 * e2 / 64 - 5 * e2 ** 3 / 256));
+  const e1 = (1 - Math.sqrt(1 - e2)) / (1 + Math.sqrt(1 - e2));
+  const p = mu + (3 * e1 / 2 - 27 * e1 ** 3 / 32) * Math.sin(2 * mu) + (21 * e1 * e1 / 16 - 55 * e1 ** 4 / 32) * Math.sin(4 * mu) + (151 * e1 ** 3 / 96) * Math.sin(6 * mu);
+  const C1 = ep2 * Math.cos(p) ** 2, T1 = Math.tan(p) ** 2, N1 = a / Math.sqrt(1 - e2 * Math.sin(p) ** 2), R1 = a * (1 - e2) / (1 - e2 * Math.sin(p) ** 2) ** 1.5, D = x / (N1 * k0);
+  const lat = p - (N1 * Math.tan(p) / R1) * (D * D / 2 - (5 + 3 * T1 + 10 * C1 - 4 * C1 * C1 - 9 * ep2) * D ** 4 / 24);
+  const lon = (D - (1 + 2 * T1 + C1) * D ** 3 / 6) / Math.cos(p);
+  return { lat: lat * 180 / Math.PI, lon: zone * 6 - 183 + lon * 180 / Math.PI };
+}
+
+// The UTM zone from the LAS projection record (GeoTIFF key 3072, EPSG 326xx north or 327xx south).
+function lasUtmZone(v: DataView): { zone: number; south: boolean } | null {
+  const headerSize = v.getUint16(94, true), records = v.getUint32(100, true);
+  let o = headerSize;
+  for (let r = 0; r < records && o + 54 <= v.byteLength; r++) {
+    const id = v.getUint16(o + 18, true), len = v.getUint16(o + 20, true);
+    if (id === 34735) {
+      const keys = v.getUint16(o + 54 + 6, true);
+      for (let k = 0; k < keys; k++) {
+        const at = o + 54 + 8 + k * 8;
+        if (v.getUint16(at, true) !== 3072) continue;
+        const epsg = v.getUint16(at + 6, true);
+        if (epsg > 32600 && epsg <= 32660) return { zone: epsg - 32600, south: false };
+        if (epsg > 32700 && epsg <= 32760) return { zone: epsg - 32700, south: true };
+      }
+    }
+    o += 54 + len;
+  }
+  return null;
+}
 
 const MAX_POINTS = 600_000;
 const SLICE = 0.5, BIN = 0.1;
@@ -116,7 +152,19 @@ function readLas(buffer: ArrayBuffer): Cloud | null {
     xyz[n * 3 + 2] = v.getInt32(o + 8, true) * sz + oz;
     n++;
   }
-  return { xyz, count: n, zUp: true };
+  // Centre of the scan: the median point, so sparse spray at the edges doesn't pull it.
+  const utm = lasUtmZone(v);
+  let location: Cloud["location"];
+  if (utm && n) {
+    const xs: number[] = [], ys: number[] = [];
+    for (let i = 0; i < n; i += Math.max(1, Math.floor(n / 5000))) { xs.push(xyz[i * 3]); ys.push(xyz[i * 3 + 1]); }
+    xs.sort((a, b) => a - b); ys.sort((a, b) => a - b);
+    const ox = v.getFloat64(155, true), oy = v.getFloat64(163, true);
+    const E = xs[xs.length >> 1] + bx + ox, N = ys[ys.length >> 1] + by + oy;
+    const ll = utmToLatLon(E, N, utm.zone, utm.south);
+    location = { lat: Math.round(ll.lat * 1e6) / 1e6, lon: Math.round(ll.lon * 1e6) / 1e6 };
+  }
+  return { xyz, count: n, zUp: true, location };
 }
 
 // ---------- Measurement ----------
@@ -359,6 +407,7 @@ function measure(c: Cloud, file: string): ScanMeasurement {
     file, points: c.count, length_m: round(length, 1), kerb_found: kerbFound,
     kerb_height_m: kerbFound ? round(Math.abs(footLevel - roadLevel), 2) : null,
     footpath, road_from_kerb_m: roadFromKerb, obstacles: obstacles.slice(0, 12).sort((a, b) => a.along_m - b.along_m), notes,
+    ...(c.location ? { location: c.location } : {}),
   };
 }
 
@@ -413,4 +462,10 @@ export async function scanPreview(file: File, maxSize = 640): Promise<string | n
   }
   ctx.putImageData(img, 0, 0);
   return canvas.toDataURL("image/png");
+}
+
+// The x, y, z of a PLY scan's points (thinned to at most 600,000), for joining scans.
+export function readPlyPoints(buffer: ArrayBuffer): Float32Array | null {
+  const c = readPly(buffer);
+  return c ? c.xyz.subarray(0, c.count * 3) : null;
 }
