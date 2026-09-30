@@ -1,7 +1,7 @@
 // Measures a LiDAR scan of a street in the browser, so large files never
 // leave the phone. Reads PLY (ASCII or binary) and LAS point clouds.
 // Steps follow BRIEF.md "Scan measurement": find the ground, find the kerb
-// (a step of about 60 to 300 mm), find obstacles 5 cm to 2.2 m above the
+// (a step of about 60 to 300 mm), find obstacles 10 cm to 2.2 m above the
 // ground, slice across the street every 0.5 m and measure clear widths.
 // Code makes every number. Claude only reads them (app/api/site-check).
 
@@ -25,7 +25,8 @@ export type ScanMeasurement = {
   notes: string[];
 };
 
-type Cloud = { xyz: Float32Array; count: number };
+// `zUp` is set for formats whose third axis is always up (LAS).
+type Cloud = { xyz: Float32Array; count: number; zUp?: boolean };
 
 const MAX_POINTS = 600_000;
 const SLICE = 0.5, BIN = 0.1;
@@ -93,7 +94,7 @@ function readPly(buffer: ArrayBuffer): Cloud | null {
   return { xyz, count: n };
 }
 
-// LAS 1.0 to 1.4: X, Y, Z are the first three int32 of every point record.
+// LAS 1.0 to 1.4: X, Y, Z are the first three int32 of every point record. Z is up.
 function readLas(buffer: ArrayBuffer): Cloud | null {
   const v = new DataView(buffer);
   if (String.fromCharCode(v.getUint8(0), v.getUint8(1), v.getUint8(2), v.getUint8(3)) !== "LASF") return null;
@@ -115,17 +116,18 @@ function readLas(buffer: ArrayBuffer): Cloud | null {
     xyz[n * 3 + 2] = v.getInt32(o + 8, true) * sz + oz;
     n++;
   }
-  return { xyz, count: n };
+  return { xyz, count: n, zUp: true };
 }
 
 // ---------- Measurement ----------
 
 const median = (a: number[]) => { if (!a.length) return NaN; const s = [...a].sort((p, q) => p - q); return s[Math.floor(s.length / 2)]; };
 const round = (n: number, d = 2) => Math.round(n * 10 ** d) / 10 ** d;
+const midMean = (a: number[]) => { const s = [...a].sort((p, q) => p - q), m = s.slice(Math.floor(s.length / 4), Math.ceil(s.length * 3 / 4)); return m.reduce((x, y) => x + y, 0) / m.length; };
 
-// The ground is the densest flat level. The up axis is the one where most
-// points share one 5 cm height band.
+// The up axis is the one where most points share one 5 cm height band (the ground).
 function findUp(c: Cloud) {
+  if (c.zUp) return { axis: 2, sign: 1 };
   let best = { axis: 1, peak: 0, share: 0 };
   for (let axis = 0; axis < 3; axis++) {
     const hist = new Map<number, number>();
@@ -137,58 +139,124 @@ function findUp(c: Cloud) {
   // Up points away from the ground, towards where the obstacles are.
   let above = 0, below = 0;
   for (let i = 0; i < c.count; i++) { const h = c.xyz[i * 3 + best.axis] - best.peak; if (h > 0.3) above++; else if (h < -0.3) below++; }
-  return { axis: best.axis, sign: above >= below ? 1 : -1, ground: best.peak };
+  return { axis: best.axis, sign: above >= below ? 1 : -1 };
+}
+
+// Least squares line z = a + b*u through the given cells: the street's grade.
+// Only along the street, so the kerb step across it survives.
+function fitGrade(cells: { u: number; z: number }[]) {
+  let n = 0, su = 0, sz = 0, suu = 0, suz = 0;
+  for (const { u, z } of cells) { n++; su += u; sz += z; suu += u * u; suz += u * z; }
+  const b = (n * suz - su * sz) / (n * suu - su * su);
+  return { a: (sz - b * su) / n, b };
 }
 
 function measure(c: Cloud, file: string): ScanMeasurement {
   const notes: string[] = [];
   const up = findUp(c);
   const [a1, a2] = [0, 1, 2].filter(a => a !== up.axis);
-  const h = new Float32Array(c.count), p = new Float32Array(c.count), q = new Float32Array(c.count);
-  for (let i = 0; i < c.count; i++) {
-    h[i] = (c.xyz[i * 3 + up.axis] - up.ground) * up.sign;
-    p[i] = c.xyz[i * 3 + a1]; q[i] = c.xyz[i * 3 + a2];
-  }
-  // Direction along the street: the long axis of the ground points (PCA).
+  const z = new Float32Array(c.count), p = new Float32Array(c.count), q = new Float32Array(c.count);
+  for (let i = 0; i < c.count; i++) { z[i] = c.xyz[i * 3 + up.axis] * up.sign; p[i] = c.xyz[i * 3 + a1]; q[i] = c.xyz[i * 3 + a2]; }
+
+  // A phone scan is dense where the person walked and sparse spray further out.
+  // Keep 10 cm cells with at least a quarter of the typical point count.
+  let p0 = Infinity, q0 = Infinity, p1 = -Infinity, q1 = -Infinity;
+  for (let i = 0; i < c.count; i++) { p0 = Math.min(p0, p[i]); q0 = Math.min(q0, q[i]); p1 = Math.max(p1, p[i]); q1 = Math.max(q1, q[i]); }
+  const gw = Math.ceil((p1 - p0) / 0.1) + 1;
+  const density = new Map<number, number>();
+  const cellOf = (i: number) => Math.floor((q[i] - q0) / 0.1) * gw + Math.floor((p[i] - p0) / 0.1);
+  for (let i = 0; i < c.count; i++) { const k = cellOf(i); density.set(k, (density.get(k) ?? 0) + 1); }
+  const minDensity = Math.max(2, median([...density.values()]) / 4);
+  const keep = new Uint8Array(c.count);
+  for (let i = 0; i < c.count; i++) keep[i] = density.get(cellOf(i))! >= minDensity ? 1 : 0;
+
+  // Direction along the street: the angle where the kerb step across it is sharpest.
+  // (A phone scan is rarely walked in a straight line, so its shape can't be trusted.)
   let mp = 0, mq = 0, n = 0;
-  for (let i = 0; i < c.count; i++) if (Math.abs(h[i]) < 0.35) { mp += p[i]; mq += q[i]; n++; }
+  for (let i = 0; i < c.count; i++) if (keep[i]) { mp += p[i]; mq += q[i]; n++; }
   mp /= n; mq /= n;
-  let spp = 0, sqq = 0, spq = 0;
-  for (let i = 0; i < c.count; i++) if (Math.abs(h[i]) < 0.35) { const dp = p[i] - mp, dq = q[i] - mq; spp += dp * dp; sqq += dq * dq; spq += dp * dq; }
-  const theta = 0.5 * Math.atan2(2 * spq, spp - sqq);
+  const ground = new Map<string, { p: number; q: number; z: number }>();
+  for (let i = 0; i < c.count; i++) {
+    if (!keep[i]) continue;
+    const key = `${Math.floor(p[i] / 0.2)},${Math.floor(q[i] / 0.2)}`;
+    const cell = ground.get(key);
+    if (!cell || z[i] < cell.z) ground.set(key, { p: p[i] - mp, q: q[i] - mq, z: z[i] });
+  }
+  const groundCells = [...ground.values()];
+  let theta = 0, bestScore = -1;
+  for (let deg = 0; deg < 180; deg += 3) {
+    const t = deg * Math.PI / 180, ct = Math.cos(t), st = Math.sin(t);
+    const bins = new Map<number, number[]>();
+    for (const g of groundCells) { const k = Math.floor((-g.p * st + g.q * ct) / 0.1); (bins.get(k) ?? bins.set(k, []).get(k)!).push(g.z); }
+    const keys = [...bins.keys()].sort((x, y) => x - y);
+    // Middle-half mean, not median: at a wrong angle a strip mixes footpath and road,
+    // and a median of that mix jumps like a kerb while the mean blends smoothly.
+    const med = new Map(keys.filter(k => bins.get(k)!.length >= 4).map(k => [k, midMean(bins.get(k)!)]));
+    for (const k of keys) {
+      // A kerb: flat ground on both sides of a sharp step. A slope seen at the wrong angle isn't flat.
+      const b = [med.get(k - 4), med.get(k - 3), med.get(k - 2)], a = [med.get(k + 2), med.get(k + 3), med.get(k + 4)];
+      if (b.some(x => x === undefined) || a.some(x => x === undefined)) continue;
+      const [b0, b1, b2] = b as number[], [a0, a1, a2] = a as number[];
+      if (Math.abs(b0 - b2) > 0.03 || Math.abs(a0 - a2) > 0.03) continue;
+      const step = Math.abs(a1 - b1);
+      if (step >= 0.06 && step <= 0.3 && step > bestScore) { bestScore = step; theta = t; }
+    }
+  }
   const [cu, su] = [Math.cos(theta), Math.sin(theta)];
   const u = new Float32Array(c.count), v = new Float32Array(c.count);
-  let umin = Infinity, umax = -Infinity, vmin = Infinity, vmax = -Infinity;
+  for (let i = 0; i < c.count; i++) { const dp = p[i] - mp, dq = q[i] - mq; u[i] = dp * cu + dq * su; v[i] = -dp * su + dq * cu; }
+
+  // Streets slope. Fit the grade to the lowest point of each 25 cm cell and
+  // measure every height from it, dropping cells well off the fit (obstacles, spray).
+  const lowCells = new Map<string, { u: number; v: number; z: number }>();
   for (let i = 0; i < c.count; i++) {
-    const dp = p[i] - mp, dq = q[i] - mq;
-    u[i] = dp * cu + dq * su; v[i] = -dp * su + dq * cu;
-    if (Math.abs(h[i]) < 0.35) { umin = Math.min(umin, u[i]); umax = Math.max(umax, u[i]); vmin = Math.min(vmin, v[i]); vmax = Math.max(vmax, v[i]); }
+    if (!keep[i]) continue;
+    const key = `${Math.floor(u[i] / 0.25)},${Math.floor(v[i] / 0.25)}`;
+    const cell = lowCells.get(key);
+    if (!cell || z[i] < cell.z) lowCells.set(key, { u: u[i], v: v[i], z: z[i] });
   }
+  let cells = [...lowCells.values()];
+  let grade = fitGrade(cells);
+  for (let pass = 0; pass < 3; pass++) {
+    const within = cells.filter(k => Math.abs(k.z - (grade.a + grade.b * k.u)) < 0.3);
+    if (within.length < 20) break;
+    grade = fitGrade(within); cells = within;
+  }
+  const h = new Float32Array(c.count);
+  for (let i = 0; i < c.count; i++) h[i] = z[i] - (grade.a + grade.b * u[i]);
+
+  let umin = Infinity, umax = -Infinity, vmin = Infinity, vmax = -Infinity;
+  for (let i = 0; i < c.count; i++) if (keep[i] && Math.abs(h[i]) < 0.3) { umin = Math.min(umin, u[i]); umax = Math.max(umax, u[i]); vmin = Math.min(vmin, v[i]); vmax = Math.max(vmax, v[i]); }
   const length = umax - umin;
   const nu = Math.max(1, Math.ceil(length / SLICE)), nv = Math.max(1, Math.ceil((vmax - vmin) / BIN));
-  // Per cell: lowest point (the ground there) and whether anything stands on it.
-  const low = new Float32Array(nu * nv).fill(Infinity);
-  for (let i = 0; i < c.count; i++) {
+  const cellIndex = (i: number) => {
     const iu = Math.floor((u[i] - umin) / SLICE), iv = Math.floor((v[i] - vmin) / BIN);
-    if (iu < 0 || iu >= nu || iv < 0 || iv >= nv) continue;
-    const k = iu * nv + iv;
-    if (h[i] < low[k]) low[k] = h[i];
+    return iu < 0 || iu >= nu || iv < 0 || iv >= nv ? -1 : iu * nv + iv;
+  };
+  // Per cell: lowest point (the ground there) and whether something stands on it.
+  const low = new Float32Array(nu * nv).fill(Infinity);
+  for (let i = 0; i < c.count; i++) { if (!keep[i]) continue; const k = cellIndex(i); if (k >= 0 && h[i] < low[k]) low[k] = h[i]; }
+  const risers = new Uint16Array(nu * nv);
+  for (let i = 0; i < c.count; i++) {
+    if (!keep[i]) continue;
+    const k = cellIndex(i); if (k < 0) continue;
+    const rise = h[i] - low[k];
+    if (rise > 0.1 && rise < 2.2 && low[k] < 0.4) risers[k]++;
   }
   const blocked = new Uint8Array(nu * nv);
-  for (let i = 0; i < c.count; i++) {
-    const iu = Math.floor((u[i] - umin) / SLICE), iv = Math.floor((v[i] - vmin) / BIN);
-    if (iu < 0 || iu >= nu || iv < 0 || iv >= nv) continue;
-    const k = iu * nv + iv, rise = h[i] - low[k];
-    if (rise > 0.05 && rise < 2.2 && low[k] < 0.4) blocked[k] = 1;
-  }
+  for (let k = 0; k < nu * nv; k++) blocked[k] = risers[k] >= 3 ? 1 : 0;
 
   // Ground profile across the street, then the kerb: the biggest step of 6 to 30 cm.
   const profile: number[] = [];
-  for (let iv = 0; iv < nv; iv++) { const col: number[] = []; for (let iu = 0; iu < nu; iu++) { const g = low[iu * nv + iv]; if (g < 0.4 && !blocked[iu * nv + iv]) col.push(g); } profile.push(col.length ? median(col) : NaN); }
+  for (let iv = 0; iv < nv; iv++) {
+    const col: number[] = [];
+    for (let iu = 0; iu < nu; iu++) { const g = low[iu * nv + iv]; if (g < 0.4 && !blocked[iu * nv + iv]) col.push(g); }
+    profile.push(col.length >= 3 ? median(col) : NaN);
+  }
   let kerb = -1, kerbStep = 0;
-  for (let iv = 2; iv < nv - 2; iv++) {
-    const before = median([profile[iv - 2], profile[iv - 1]].filter(Number.isFinite));
-    const after = median([profile[iv + 1], profile[iv + 2]].filter(Number.isFinite));
+  for (let iv = 3; iv < nv - 3; iv++) {
+    const before = median([profile[iv - 3], profile[iv - 2], profile[iv - 1]].filter(Number.isFinite));
+    const after = median([profile[iv + 1], profile[iv + 2], profile[iv + 3]].filter(Number.isFinite));
     const step = after - before;
     if (Math.abs(step) >= 0.06 && Math.abs(step) <= 0.3 && Math.abs(step) > Math.abs(kerbStep)) { kerb = iv; kerbStep = step; }
   }
@@ -196,8 +264,9 @@ function measure(c: Cloud, file: string): ScanMeasurement {
   if (!kerbFound) notes.push("No kerb step found. The scan may not reach from the footpath to the road.");
   // Footpath is the higher side of the kerb.
   const footDir = kerbStep > 0 ? 1 : -1;
-  const footLevel = kerbFound ? median(profile.filter((g, iv) => Number.isFinite(g) && (iv - kerb) * footDir > 1)) : NaN;
-  const roadLevel = kerbFound ? median(profile.filter((g, iv) => Number.isFinite(g) && (iv - kerb) * footDir < -1)) : NaN;
+  const side = (iv: number) => (iv - kerb) * footDir;
+  const footLevel = kerbFound ? median(profile.filter((g, iv) => Number.isFinite(g) && side(iv) > 2 && side(iv) < 20)) : NaN;
+  const roadLevel = kerbFound ? median(profile.filter((g, iv) => Number.isFinite(g) && side(iv) < -2 && side(iv) > -20)) : NaN;
 
   let footpath: ScanMeasurement["footpath"] = null;
   let roadFromKerb: number | null = null;
@@ -206,26 +275,30 @@ function measure(c: Cloud, file: string): ScanMeasurement {
     const widths: number[] = []; const roads: number[] = [];
     let narrowest = { w: Infinity, at: 0 };
     for (let iu = 0; iu < nu; iu++) {
-      // Longest run of free footpath cells in this slice.
-      let run = 0, bestRun = 0, seen = 0;
-      for (let iv = kerb + footDir; iv >= 0 && iv < nv; iv += footDir) {
+      // Longest run of free footpath in this slice. One empty 10 cm bin (a scan gap) doesn't break a run.
+      let run = 0, gap = 0, bestRun = 0, seen = 0;
+      for (let iv = kerb + 2 * footDir; iv >= 0 && iv < nv; iv += footDir) {
         const k = iu * nv + iv, g = low[k];
-        if (g < 0.4) seen++;
-        const free = g < 0.4 && !blocked[k] && Math.abs(g - footLevel) < 0.06;
-        run = free ? run + 1 : 0; bestRun = Math.max(bestRun, run);
+        if (!(g < 0.4)) { if (run > 0 && gap === 0) { gap = 1; continue; } run = 0; gap = 0; continue; }
+        seen++;
+        // On the raised side of the kerb and not stepped up onto something. Allows crossfall.
+        const free = !blocked[k] && g > (footLevel + roadLevel) / 2 && g < footLevel + 0.2;
+        if (free) { run += 1 + gap; gap = 0; } else { run = 0; gap = 0; }
+        bestRun = Math.max(bestRun, run);
       }
-      if (seen >= 5) { const w = bestRun * BIN; widths.push(w); if (w < narrowest.w) narrowest = { w, at: iu * SLICE }; }
+      // Only slices where the footpath was actually scanned count.
+      if (seen >= 10) { const w = (bestRun + 1) * BIN; widths.push(w); if (w < narrowest.w) narrowest = { w, at: iu * SLICE }; }
       // Flat road from the kerb outward, until a raised edge, an obstacle or the scan's reach.
-      // Starts two bins out, past the kerb face.
       let r = 2;
       for (let iv = kerb - 2 * footDir; iv >= 0 && iv < nv; iv -= footDir) {
         const k = iu * nv + iv, g = low[k];
-        if (!(g < 0.4) || blocked[k] || Math.abs(g - roadLevel) > 0.05) break;
+        if (!(g < 0.4) || blocked[k] || g > (footLevel + roadLevel) / 2 || g < roadLevel - 0.2) break;
         r++;
       }
       if (r > 2) roads.push(r * BIN);
     }
     if (widths.length) footpath = { min_clear_m: round(narrowest.w, 1), median_clear_m: round(median(widths), 1), narrowest_at_m: round(narrowest.at, 1) };
+    else notes.push("The footpath side of the kerb has too few points to measure a width.");
     if (roads.length) roadFromKerb = round(median(roads), 1);
 
     // Obstacles on the footpath: joined blocked cells. Columns blocked along
@@ -236,39 +309,45 @@ function measure(c: Cloud, file: string): ScanMeasurement {
       for (let iu = 0; iu < nu; iu++) count += blocked[iu * nv + iv];
       if (count > 0.7 * nu || Math.abs(iv - kerb) <= 1) for (let iu = 0; iu < nu; iu++) seenCell[iu * nv + iv] = 1;
     }
+    const tops = new Float32Array(nu * nv).fill(-Infinity);
+    for (let i = 0; i < c.count; i++) { if (!keep[i]) continue; const k = cellIndex(i); if (k >= 0 && h[i] - low[k] < 2.2) tops[k] = Math.max(tops[k], h[i]); }
     for (let s = 0; s < nu * nv; s++) {
-      const iv0 = s % nv;
-      if (!blocked[s] || seenCell[s] || (iv0 - kerb) * footDir <= 0) continue;
+      if (!blocked[s] || seenCell[s] || side(s % nv) <= 0) continue;
       const stack = [s]; seenCell[s] = 1;
       let u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity, top = 0;
       while (stack.length) {
         const k = stack.pop()!, iu = Math.floor(k / nv), iv = k % nv;
         u0 = Math.min(u0, iu); u1 = Math.max(u1, iu); v0 = Math.min(v0, iv); v1 = Math.max(v1, iv);
+        top = Math.max(top, tops[k] - footLevel);
         for (const [du, dv] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
           const ju = iu + du, jv = iv + dv, j = ju * nv + jv;
-          if (ju >= 0 && ju < nu && jv >= 0 && jv < nv && blocked[j] && !seenCell[j] && (jv - kerb) * footDir > 0) { seenCell[j] = 1; stack.push(j); }
+          if (ju >= 0 && ju < nu && jv >= 0 && jv < nv && blocked[j] && !seenCell[j] && side(jv) > 0) { seenCell[j] = 1; stack.push(j); }
         }
       }
       const along = (u1 - u0 + 1) * SLICE, across = (v1 - v0 + 1) * BIN;
-      if (along > 0.7 * length) continue; // building line or fence along the whole scan
-      for (let i = 0; i < c.count; i++) {
-        const iu = Math.floor((u[i] - umin) / SLICE), iv = Math.floor((v[i] - vmin) / BIN);
-        if (iu >= u0 && iu <= u1 && iv >= v0 && iv <= v1) top = Math.max(top, h[i] - footLevel);
-      }
+      if (along > 0.7 * length || top < 0.15) continue; // building line, or noise
       const nearEdge = footDir > 0 ? v0 : v1;
       obstacles.push({ along_m: round(u0 * SLICE, 1), from_kerb_m: round(Math.abs(nearEdge - kerb) * BIN, 1), width_m: round(across, 1), length_m: round(along, 1), height_m: round(top, 1) });
     }
-    obstacles.sort((a, b) => a.along_m - b.along_m);
+    // Keep the biggest obstacles, listed along the street.
+    obstacles.sort((a, b) => b.height_m * b.width_m * b.length_m - a.height_m * a.width_m * a.length_m);
   }
   if (length < 2) notes.push("The scan covers less than 2 m of street.");
+  // Real phone scans are noisy. Report widths only when they look like a street:
+  // a kerb of 6 to 25 cm and a typical footpath of at least 1.5 m. Otherwise say so.
+  const kerbHeight = kerbFound ? Math.abs(footLevel - roadLevel) : NaN;
+  if (kerbFound && (!(kerbHeight >= 0.06 && kerbHeight <= 0.25) || !footpath || footpath.median_clear_m < 1.5)) {
+    notes.push("Footpath widths could not be measured reliably from this scan. Check them on site.");
+    footpath = null; roadFromKerb = null; obstacles.length = 0;
+  }
   return {
     file, points: c.count, length_m: round(length, 1), kerb_found: kerbFound,
     kerb_height_m: kerbFound ? round(Math.abs(footLevel - roadLevel), 2) : null,
-    footpath, road_from_kerb_m: roadFromKerb, obstacles: obstacles.slice(0, 12), notes,
+    footpath, road_from_kerb_m: roadFromKerb, obstacles: obstacles.slice(0, 12).sort((a, b) => a.along_m - b.along_m), notes,
   };
 }
 
-// A scan covers its scan point when it holds enough street to measure and shows the kerb.
+// A scan covers the site when it holds enough street to measure and shows the kerb.
 export function scanProblem(m: ScanMeasurement): string | null {
   if (m.points < 2000) return "Too few points to measure";
   if (m.length_m < 2) return "Covers less than 2 m of street";

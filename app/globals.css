@@ -278,5 +278,3 @@ small.error-text { display: block; font-size: 12px; margin-top: 1px; }
   .report-section, .report-heading, .document-brand { break-inside: avoid; }
   * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
 }
-.scan-file-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
-.scan-file-list li { display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--border, #e5e5e5); }

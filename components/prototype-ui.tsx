@@ -68,7 +68,7 @@ export function UploadPanel({ kind, file, onFile }: { kind: "tgs" | "scan"; file
     <button type="button" className={`upload-panel ${!isTgs ? "upload-compact" : ""} ${dragging ? "dragging" : ""}`} onClick={() => input.current?.click()} onDragOver={e => { e.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={e => { e.preventDefault(); setDragging(false); selectFile(e.dataTransfer.files[0]); }} aria-describedby={`${id}-help`}>
       {isTgs ? <FilePlusIcon size={40} weight="light" aria-hidden="true" /> : <CloudArrowUpIcon size={32} weight="light" aria-hidden="true" />}
       <strong>{isTgs ? "Drop your TGS here" : "Upload site scan"}</strong>
-      <span id={`${id}-help`}>{isTgs ? "PDF, PNG or JPG (max 20 MB)" : "One scan per area. Supported formats: .ply, .las"}</span>
+      <span id={`${id}-help`}>{isTgs ? "PDF, PNG or JPG (max 20 MB)" : "Supported formats: .ply, .las"}</span>
     </button>
     {file && <div className="file-row"><FilePdfIcon className="file-icon" size={32} aria-hidden="true" /><span><strong>{file.name}</strong><small>{file.size}</small></span><button className="icon-button" aria-label={`Remove ${file.name}`} onClick={() => onFile(null)}><XIcon size={18} aria-hidden="true" /></button></div>}
     {error && <p className="error-text" role="alert">{error}</p>}

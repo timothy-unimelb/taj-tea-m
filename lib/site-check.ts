@@ -81,6 +81,16 @@ export function ruleCheck(scans: ScanPointResult[]): SiteCheck {
     });
   }
   const worst = Math.min(...scans.map(s => s.measurement?.footpath?.min_clear_m ?? Infinity));
+  // Widths the scan couldn't measure are not a pass.
+  if (scans.every(s => !s.measurement?.footpath)) {
+    return {
+      decision: "The scan found the kerb but couldn't measure footpath widths reliably. Check the clear widths on site before deployment. Checked with measurement rules because the AI check was unavailable.",
+      safety_severity: "Moderate",
+      safety_summary: "Footpath and lane widths are not confirmed by the scan.",
+      conflicts: [],
+      actions: [{ category: "pedestrians", title: "Measure the footpath on site", summary: "The scan couldn't confirm the clear footpath width past the works.", impact: "A narrow spot may only show up after setup.", why: "Pedestrians are sent along this path while the works are in place.", recommendation: "Tape-measure the narrowest point before setup, and keep at least 1.5 m clear." }],
+    };
+  }
   const severity = worst < FOOTPATH_ABS_MIN ? "High" : conflicts.length ? "Moderate" : "Low";
   return {
     decision: conflicts.length ? `Fix the narrow footpath at ${conflicts.map(c => c.scan_point).join(", ")} before deployment. Checked with measurement rules because the AI check was unavailable.` : "The measured widths fit. Checked with measurement rules because the AI check was unavailable.",

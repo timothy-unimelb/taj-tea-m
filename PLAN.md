@@ -19,7 +19,7 @@ Read this first when picking up the work. All of it is on `main` (merged from `t
 
 **Still fixed demo data**
 - The demo scan ("Use demo site scan"): fills all but the last scan point, then the rest. Its safety finding and two actions are fixed Swanston copy (`data/mock/barrier-brain.json`).
-- Real scans (branch `joel`, 30 Sep): each PLY or LAS file is measured in the browser (`lib/scan/measure.ts`) and Claude compares it with the plan (`/api/site-check`, prompt `prompts/site-check.md`). Tested only on synthetic scans (`data/test/`). No real Scaniverse export tested yet. The Claude check has not run yet (no gateway login locally); the rule fallback in `lib/site-check.ts` ran.
+- Real scans (30 Sep): one PLY or LAS site scan is measured in the browser (`lib/scan/measure.ts`) and Claude compares it with the plan (`/api/site-check`, prompt `prompts/site-check.md`). Tested only on synthetic scans (`data/test/`). No real Scaniverse export tested yet. The Claude check has not run yet (no gateway login locally); the rule fallback in `lib/site-check.ts` ran.
 - Projects list: three fixed entries, and every project shows the Swanston report.
 - The aerial site image on the report is artwork from the design board.
 - Pedestrians, trams, buses and trucks: no model covers them. Tram streets come from a hand-made list in `lib/impact/request.ts`.
@@ -64,7 +64,7 @@ Read this first when picking up the work. All of it is on `main` (merged from `t
 
 ## 3. Scan upload and coverage check (in progress, branch `joel`)
 
-- **done** One scan per scan point, from the TGS analysis. Check: enough points, at least 2 m of street, kerb found.
+- **done** One site scan covers every scan point from the TGS analysis. Check: enough points, at least 2 m of street, kerb found.
 
 - Upload scans to Blob (step 1).
 - Check each scan covers its scan point: phone location at upload within about 15 m (BRIEF.md). Later, check the expected feature is in the scan, such as a kerb.
@@ -72,7 +72,7 @@ Read this first when picking up the work. All of it is on `main` (merged from `t
 
 ## 4. Scan measurement (in progress, branch `joel`)
 
-- **done** In TypeScript in the browser instead of Python: ground, kerb, obstacles, clear widths per 0.5 m slice (`lib/scan/measure.ts`). Works on synthetic scans. **next** Test on a real Scaniverse PLY export.
+- **done** In TypeScript in the browser instead of Python: ground, kerb, obstacles, clear widths per 0.5 m slice (`lib/scan/measure.ts`). Works on synthetic scans. On three real Scaniverse LAS scans (Swanston St near Grattan St, iPhone 16) it finds the kerb (80 to 190 mm) but not reliable footpath widths: the street direction is found from the sharpest kerb step, and tram rails and separators confuse it. Widths are withheld when implausible. **next** Use the LAS georeference and the street's bearing from OpenStreetMap for the direction.
 
 Plan in BRIEF.md "Scan measurement": Open3D, trimesh, laspy. Find ground, kerb and obstacles, slice every 0.5 m, output clear widths as JSON. Runs as a Vercel Python function or a small separate service.
 
