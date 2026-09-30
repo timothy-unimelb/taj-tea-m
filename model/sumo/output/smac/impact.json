@@ -119,8 +119,8 @@
     "src": "/assets/sumo-smac-clip.gif",
     "width": 648,
     "height": 410,
-    "alt": "Animation of 6 simulated minutes around the closed lane. Left, the normal street: purple dots are drivers using the lane, and a queue forms at the Faraday Street lights. Right, the lane closed: the same drivers go round by Faraday Street, Cardigan Street and Grattan Street.",
-    "caption": "6 simulated minutes from 11:30am on a weekday. Left: the normal street. Right: the lane closed, drivers following the signs. Purple dots are the drivers who normally use the closed lane.",
+    "alt": "Animation of 6 simulated minutes around the closed lane, with made-up heavier traffic. Left, the normal street: the side streets stay green. Right, the lane closed: Faraday Street, Cardigan Street and Grattan Street turn red as the diverted drivers queue.",
+    "caption": "An illustration, not the result for this plan. The closed lane's traffic is raised to five times the measured count, to show how a closure that causes queues is drawn. 6 simulated minutes from 12:10pm. Left: the normal street. Right: the lane closed, drivers following the signs. Streets are coloured by how fast cars are moving. Purple dots are the drivers who normally use the closed lane.",
     "legend": []
   }
 }

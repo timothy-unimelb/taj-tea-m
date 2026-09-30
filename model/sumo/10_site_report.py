@@ -540,8 +540,8 @@ if clip and os.path.exists(os.path.join(REPO, "public", clip["src"].lstrip("/"))
     width, height = struct.unpack("<HH", open(os.path.join(REPO, "public", clip["src"].lstrip("/")), "rb").read(10)[6:10])
     result["visual"] = {
         "src": clip["src"], "width": width, "height": height,
-        "alt": f"Animation of {clip['minutes']} simulated minutes around the closed lane. Left, the normal street: purple dots are drivers using the lane, and a queue forms at the Faraday Street lights. Right, the lane closed: the same drivers go round by {via}.",
-        "caption": f"{clip['minutes']} simulated minutes from {clock(clip['hour'])} on a weekday. Left: the normal street. Right: the lane closed, drivers following the signs. Purple dots are the drivers who normally use the closed lane.",
+        "alt": clip.get("alt") or f"Animation of {clip['minutes']} simulated minutes around the closed lane. Left, the normal street: purple dots are drivers using the lane, and a queue forms at the Faraday Street lights. Right, the lane closed: the same drivers go round by {via}.",
+        "caption": clip.get("caption") or f"{clip['minutes']} simulated minutes from {clock(clip['hour'])} on a weekday. Left: the normal street. Right: the lane closed, drivers following the signs. Purple dots are the drivers who normally use the closed lane.",
         "legend": [],   # the clip has its own legend
     }
 elif os.path.exists(picture):

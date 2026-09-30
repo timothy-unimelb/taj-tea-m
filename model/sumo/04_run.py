@@ -37,7 +37,7 @@ ap.add_argument("--max-minutes", type=float, default=20.0)
 ap.add_argument("--queue-radius", type=float, default=600.0)
 ap.add_argument("--warnings", action="store_true", help="keep SUMO warnings in log.txt (where teleports happen); off by default, the log gets big")
 ap.add_argument("--gui", action="store_true", help="watch the run in sumo-gui, zoomed on the closed block (same limits; outputs go to a _gui folder). Needs XQuartz on a Mac.")
-ap.add_argument("--fcd", type=float, default=0, help="save car positions every second from the start of the hour, within --fcd-radius of the block (fcd.xml, for 09_clip.py; about 150 MB a run, delete it after)")
+ap.add_argument("--fcd", type=float, default=0, help="save car positions every second from five minutes before the hour, within --fcd-radius of the block (fcd.xml, for 09_clip.py; about 150 MB a run, delete it after)")
 ap.add_argument("--fcd-radius", type=float, default=320.0)
 args = ap.parse_args()
 
@@ -80,7 +80,7 @@ if args.fcd:
         f.write("\n".join("edge:" + e.getID() for e in net.getEdges()
                           if math.hypot(e.getShape()[len(e.getShape()) // 2][0] - jx, e.getShape()[len(e.getShape()) // 2][1] - jy) <= args.fcd_radius))
     fcd_opts = ["--fcd-output", f"{run}/fcd.xml", "--fcd-output.filter-edges.input-file", f"{run}/fcd_edges.txt",
-                "--device.fcd.begin", str(t0), "--device.fcd.period", "1", "--fcd-output.attributes", "id,x,y,speed,angle"]
+                "--device.fcd.begin", str(t0 - 300), "--device.fcd.period", "1", "--fcd-output.attributes", "id,x,y,speed,angle,lane"]
 
 # Call the SUMO binary itself (not the pip wrapper) so the memory check sees the real process.
 sumo_bin = os.path.join(os.environ["SUMO_HOME"], "bin", "sumo-gui" if args.gui else "sumo")
