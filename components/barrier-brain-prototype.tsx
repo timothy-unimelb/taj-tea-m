@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowLeftIcon, CaretRightIcon, CheckIcon, FilePdfIcon, MagnifyingGlassIcon, PlusIcon, ShareNetworkIcon, WarningCircleIcon, XIcon } from "@phosphor-icons/react";
 import { analyseTgs, buildReport, checkSite, demoAnalysis, estimateImpact, sampleTgsUrl, type AssessmentData } from "@/lib/data";
-import { describeMeasurement, measureScan, scanProblem, type ScanMeasurement } from "@/lib/scan/measure";
+import { describeMeasurement, measureScan, scanPreview, scanProblem, type ScanMeasurement } from "@/lib/scan/measure";
 import { ruleCheck, type SiteCheck } from "@/lib/site-check";
 import type { ImpactResult } from "@/lib/impact/types";
 import type { TgsAnalysis } from "@/lib/tgs-analysis";
@@ -31,6 +31,7 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   const [demoScanComplete, setDemoScanComplete] = useState(false);
   const [measured, setMeasured] = useState<ScanMeasurement | string | null>(null);
   const [siteCheck, setSiteCheck] = useState<SiteCheck | null>(null);
+  const [scanImage, setScanImage] = useState<string | null>(null);
   const [tgsAnalysis, setTgsAnalysis] = useState<TgsAnalysis | null>(null);
   const [tgsError, setTgsError] = useState("");
   const [tgsAttempt, setTgsAttempt] = useState(0);
@@ -86,10 +87,12 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   useEffect(() => {
     if (screen !== "scan-checking" || !scanFile?.file || measured !== null) return;
     let cancelled = false;
-    measureScan(scanFile.file).catch((error: Error) => error.message).then(result => { if (!cancelled) setMeasured(result); });
+    const file = scanFile.file;
+    measureScan(file).catch((error: Error) => error.message).then(result => { if (!cancelled) setMeasured(result); });
+    scanPreview(file).catch(() => null).then(image => { if (!cancelled) setScanImage(image); });
     return () => { cancelled = true; };
   }, [screen, scanFile, measured]);
-  function chooseScan(file: UploadFile | null) { setScanFile(file); setMeasured(null); setSiteCheck(null); setDemoScanComplete(false); }
+  function chooseScan(file: UploadFile | null) { setScanFile(file); setMeasured(null); setSiteCheck(null); setScanImage(null); setDemoScanComplete(false); }
   // The demo adds the missing area. A real scan goes back to upload for a new file.
   function uploadAdditional() {
     if (scanFile && !scanFile.file) { setDemoScanComplete(true); navigate("scan-additional"); return; }
@@ -162,7 +165,10 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
         <label className="search-box"><MagnifyingGlassIcon size={20} aria-hidden="true" /><span className="sr-only">Search projects</span><input type="search" placeholder="Search projects…" value={search} onChange={e => setSearch(e.target.value)} /></label>
         <section className="projects-section"><h2>Recent projects</h2><div className="project-list">{filteredProjects.map(p => <button key={p.id} className="project-card" onClick={() => openProject(p.id, p.status)}><ReferenceAsset kind="road" alt="Street work zone" /><span className="project-info"><strong>{p.name}</strong><span className="project-meta"><time>{p.date}</time><span className={`project-status status-${p.status.toLowerCase().replaceAll(" ", "-")}`}>{p.status}</span></span></span><CaretRightIcon size={17} aria-hidden="true" /></button>)}</div>{filteredProjects.length === 0 && <p className="empty-state" role="status">No projects match “{search}”.</p>}</section>
       </> : isReport || isPdf ? <>
-        {report && reportReady ? <SiteReport report={report} project={reportProject} document={isPdf} /> : impactError ? <><div className="scan-warning" role="alert"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>{impactError}</p></div><div className="bottom-actions"><PrimaryButton onClick={retryImpact} arrow={false}>Try again</PrimaryButton></div></> : <p className="source-note" role="status">Loading the impact estimate.</p>}
+        {report && reportReady ? <SiteReport report={report} project={reportProject} document={isPdf} overview={[
+          ...(tgsPreviewUrl ? [{ src: tgsPreviewUrl, alt: "The traffic guidance scheme for this work zone", caption: "Traffic guidance scheme" }] : []),
+          ...(realScan && scanImage ? [{ src: scanImage, alt: "Top-down view of the site scan. Ground shaded by height, objects standing on it in red.", caption: `Site scan from above, north up: ground by height, objects in red (${realScan.length_m} m of street)` }] : []),
+        ]} /> : impactError ? <><div className="scan-warning" role="alert"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>{impactError}</p></div><div className="bottom-actions"><PrimaryButton onClick={retryImpact} arrow={false}>Try again</PrimaryButton></div></> : <p className="source-note" role="status">Loading the impact estimate.</p>}
         {isPdf && report && <div className="document-print"><PrimaryButton onClick={() => window.print()} arrow={false}><FilePdfIcon size={20} aria-hidden="true" />Print / Save PDF</PrimaryButton><p>Use your browser’s print options to save this report as a PDF.</p></div>}
       </> : <>
         <Stepper active={step} tgsComplete={screen === "tgs-complete"} />

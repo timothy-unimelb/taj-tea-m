@@ -377,3 +377,40 @@ export function describeMeasurement(m: ScanMeasurement) {
   if (m.obstacles.length) parts.push(`${m.obstacles.length} obstacle${m.obstacles.length > 1 ? "s" : ""}`);
   return parts.join(", ");
 }
+
+// A top-down picture of the scan for the report: ground shaded by height,
+// anything standing on it in red. Drawn in the browser as a PNG data URL.
+export async function scanPreview(file: File, maxSize = 640): Promise<string | null> {
+  if (typeof document === "undefined") return null;
+  const buffer = await file.arrayBuffer();
+  const name = file.name.toLowerCase();
+  const c = name.endsWith(".las") ? readLas(buffer) : name.endsWith(".ply") ? readPly(buffer) : null;
+  if (!c) return null;
+  const up = findUp(c);
+  const [a1, a2] = [0, 1, 2].filter(a => a !== up.axis);
+  let p0 = Infinity, p1 = -Infinity, q0 = Infinity, q1 = -Infinity;
+  for (let i = 0; i < c.count; i++) { const p = c.xyz[i * 3 + a1], q = c.xyz[i * 3 + a2]; p0 = Math.min(p0, p); p1 = Math.max(p1, p); q0 = Math.min(q0, q); q1 = Math.max(q1, q); }
+  const cell = Math.max(0.05, Math.max(p1 - p0, q1 - q0) / maxSize);
+  const w = Math.ceil((p1 - p0) / cell) + 1, h = Math.ceil((q1 - q0) / cell) + 1;
+  const low = new Float32Array(w * h).fill(Infinity), high = new Float32Array(w * h).fill(-Infinity), count = new Uint16Array(w * h);
+  for (let i = 0; i < c.count; i++) {
+    // LAS y is north, so flip it to draw north up.
+    const k = Math.floor((q1 - c.xyz[i * 3 + a2]) / cell) * w + Math.floor((c.xyz[i * 3 + a1] - p0) / cell);
+    const z = c.xyz[i * 3 + up.axis] * up.sign;
+    if (z < low[k]) low[k] = z; if (z > high[k]) high[k] = z; if (count[k] < 65535) count[k]++;
+  }
+  const zs = Array.from(low).filter(Number.isFinite).sort((x, y) => x - y);
+  const z0 = zs[Math.floor(zs.length * 0.05)], z1 = zs[Math.floor(zs.length * 0.95)];
+  const counts = Array.from(count).filter(n => n > 0).sort((x, y) => x - y), sparse = counts[Math.floor(counts.length / 2)] / 4;
+  const canvas = document.createElement("canvas"); canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext("2d"); if (!ctx) return null;
+  const img = ctx.createImageData(w, h);
+  for (let k = 0; k < w * h; k++) {
+    if (!count[k] || count[k] < sparse) continue;
+    const t = Math.max(0, Math.min(1, (low[k] - z0) / Math.max(0.3, z1 - z0)));
+    const tall = high[k] - low[k] > 0.3;
+    img.data.set(tall ? [200, 60, 50, 255] : [Math.round(70 + 150 * t), Math.round(90 + 130 * t), Math.round(110 + 100 * t), 255], k * 4);
+  }
+  ctx.putImageData(img, 0, 0);
+  return canvas.toDataURL("image/png");
+}

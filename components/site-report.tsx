@@ -18,6 +18,15 @@ export function MetricCard({ metric, detailed = false }: { metric: ImpactMetric;
   return <article className="metric-card"><Icon size={21} aria-hidden="true" /><div><div className="metric-heading"><h3>{metric.label}</h3><span className={`severity severity-${metric.severity.toLowerCase().replaceAll(" ", "-")}`}><SeverityIcon size={13} weight="fill" aria-hidden="true" />{metric.severity}</span></div><p>{metric.description}</p>{detailed && <ul className="key-findings">{metric.details.map(line => <li key={line}>{line}</li>)}<li>Rating: {metric.reason}</li></ul>}</div></article>;
 }
 
+export type OverviewImage = { src: string; alt: string; caption: string };
+
+// The real plan and scan when there are any. The design board's artwork otherwise.
+function SiteImages({ images }: { images: OverviewImage[] }) {
+  return <div className="site-images">{images.map(image => <figure key={image.caption}>
+    {/* eslint-disable-next-line @next/next/no-img-element -- local object and data URLs */}
+    <img src={image.src} alt={image.alt} /><figcaption>{image.caption}</figcaption></figure>)}</div>;
+}
+
 export function SiteOverview({ missing = false }: { missing?: boolean }) {
   return <figure className="site-overview"><div className={`site-image ${missing ? "show-missing" : ""}`}><ReferenceAsset kind="aerial" alt="Aerial site overview: orange work zone, blue traffic arrows, dashed yellow pedestrian route, green verified scan points, and numbered callouts 1 and 2" />{missing && <span className="missing-highlight"><span>Intersection approach</span></span>}</div><figcaption className="map-legend"><span><i className="legend-work" />Work zone</span><span><i className="legend-traffic" />Traffic flow</span><span><i className="legend-pedestrian" />Pedestrian route</span><span><i className="legend-verified" />Verified scan</span></figcaption></figure>;
 }
@@ -36,7 +45,7 @@ function MethodNote({ report, document }: { report: ReportView; document: boolea
   return <ReportSection title="How this was estimated"><div className="recommendations"><details className="recommendation"><summary><span className="action-number"><FileTextIcon size={15} aria-hidden="true" /></span><span><strong>{title}</strong><small>{method.provenance}. {method.assumptions.length} assumptions.</small></span><CaretDownIcon size={18} aria-hidden="true" /></summary><dl className="action-detail"><dt>Confidence</dt><dd>{method.confidence}</dd>{method.window && <><dt>Best work window</dt><dd>{method.window}</dd></>}<dt>Assumptions</dt><dd><ul>{method.assumptions.map(item => <li key={item}>{item}</li>)}</ul></dd></dl></details></div><MethodVisual visual={method.visual} /></ReportSection>;
 }
 
-export function SiteReport({ report, project, document = false }: { report: ReportView; project: Project; document?: boolean }) {
+export function SiteReport({ report, project, document = false, overview = [] }: { report: ReportView; project: Project; document?: boolean; overview?: OverviewImage[] }) {
   const [active, setActive] = useState("overview");
   const tabList = useRef<HTMLDivElement>(null);
   const visibleMetrics = document || active === "overview" ? report.impactSummary : report.impactSummary.filter(metric => metric.id === active);
@@ -49,7 +58,7 @@ export function SiteReport({ report, project, document = false }: { report: Repo
       {document ? <ReportSection title="Key findings"><ul className="key-findings">{report.keyFindings.map(item => <li key={item}>{item}</li>)}</ul></ReportSection> : <><div className="decision-card"><WarningIcon size={26} weight="fill" aria-hidden="true" /><div><h2>Review required before deployment</h2><p>{report.decision}</p></div></div><p className="source-note"><FileTextIcon size={15} aria-hidden="true" />{report.sourceNote}</p></>}
       <ReportSection title="Impact summary"><div className="metrics">{visibleMetrics.map(metric => <MetricCard metric={metric} detailed={!document && active !== "overview"} key={metric.id} />)}</div></ReportSection>
       {report.conflicts.length > 0 && (document || active === "overview" || active === "safety") && <ReportSection title="Plan vs street"><ul className="key-findings">{report.conflicts.map(c => <li key={`${c.scan_point}-${c.measured}`}><strong>{c.scan_point}.</strong> Measured {c.measured}. Needed {c.needed}. {c.finding}</li>)}</ul></ReportSection>}
-      <ReportSection title="Site overview"><SiteOverview /></ReportSection>
+      <ReportSection title="Site overview">{overview.length ? <SiteImages images={overview} /> : <SiteOverview />}</ReportSection>
       {actions.length > 0 && <ReportSection title={document ? "Recommended actions" : "Recommended before deployment"}><div className="recommendations">{actions.map(action => document ? <div className="document-action" key={action.id}><span className="action-number">{action.id}</span><div><h3>{action.title}</h3><p>{action.summary}</p></div></div> : <details className="recommendation" key={action.id}><summary><span className="action-number">{action.id}</span><span><strong>{action.title}</strong><small>{action.summary}</small></span><CaretDownIcon size={18} aria-hidden="true" /></summary><dl className="action-detail"><dt>Impact</dt><dd>{action.impact}</dd><dt>Why it matters</dt><dd>{action.why}</dd><dt>Evidence used</dt><dd><ul>{report.sources.map(source => <li key={source}>{source}</li>)}</ul></dd><dt>Recommended action</dt><dd>{action.recommendation}</dd></dl></details>)}</div></ReportSection>}
       {(document || active === "overview") && <MethodNote report={report} document={document} />}
     </div>
