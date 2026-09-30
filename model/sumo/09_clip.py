@@ -304,7 +304,29 @@ def draw(i):
 
 os.makedirs(OUT, exist_ok=True)
 out = os.path.join(OUT, (f"clip-{args.hour:g}" if SITE else f"swanston-clip-{args.hour:g}") + (f"-x{args.scale:g}" if args.scale != 1 else "") + ("-queues" if args.queues else "") + ("-aerial" if args.aerial else "") + ".gif")
-FuncAnimation(fig, draw, frames=len(times), blit=False).save(out, writer=PillowWriter(fps=args.fps), dpi=72)
+
+
+class OnePalette(PillowWriter):
+    """A GIF frame holds 256 colours. Over the aerial photo each frame would pick its own, and the legend and street
+    colours would shift from frame to frame. This writer gives every frame the same palette: the clip's own colours
+    first (also as they look at 80% over the photo's greys), then the photo's."""
+
+    def finish(self):
+        from PIL import Image
+        from matplotlib.colors import to_rgb
+        own = [tuple(round(255 * v) for v in to_rgb(c)) for c in [q[0] for q in QUEUE] + [PURPLE, GREY, "black", "white", "#555", "#222", "#777"]]
+        own += [tuple(round(0.8 * v + 0.2 * g) for v in own[k]) for k in range(len(QUEUE)) for g in (60, 100, 140)]
+        frames = [f.convert("RGB") for f in self._frames]
+        sample = Image.new("RGB", (frames[0].width, frames[0].height * 6))
+        for k in range(6):   # six frames spread over the clip
+            sample.paste(frames[k * (len(frames) - 1) // 5], (0, k * frames[0].height))
+        rest = sample.quantize(colors=256 - len(own), method=Image.Quantize.MEDIANCUT).getpalette()[:3 * (256 - len(own))]
+        palette = Image.new("P", (1, 1)); palette.putpalette([v for c in own for v in c] + rest)
+        self._frames = [f.quantize(palette=palette, dither=Image.Dither.NONE) for f in frames]
+        super().finish()
+
+
+FuncAnimation(fig, draw, frames=len(times), blit=False).save(out, writer=(OnePalette if args.aerial else PillowWriter)(fps=args.fps), dpi=72)
 print(out, os.path.getsize(out) // 1024, "KB")
 if args.copy_to:
     import shutil
