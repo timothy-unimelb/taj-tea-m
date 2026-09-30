@@ -92,7 +92,7 @@ The frontend layout is locked by the final Barrier Brain UI board supplied on 29
 - Overview, Traffic, Pedestrians, Public transport and Safety tabs.
 - Amber review-required decision, impact summary, aerial site overview and two expandable recommended actions.
 - Document-style PDF preview, explicit Share action, and planning disclaimer.
-- Traffic numbers, ratings and the method note come from the impact model's result. The safety finding and two recommended actions are still fixed demo copy for the Swanston sample, because scan measurement is not connected.
+- Traffic numbers, ratings and the method note come from the impact model's result. For the test TGS that is the saved SUMO result, which also brings two plan gaps into the report as findings and recommendations: Faraday St westbound becomes a dead end, and bus 546 uses the closed lane. The safety finding and the other recommended actions come from Claude's check of the measured scan. "Use demo site scan" loads the team's real scan of Swanston St near Grattan St, so the demo gets real findings too.
 
 For the Thursday pitch (decided 30 Sep) the report leads with time, safety and efficiency. Each mode gets its own detail:
 
@@ -155,8 +155,6 @@ When one is answered, delete it here, add a line to Decisions, and update the se
 
 - Is the impact based on the plan as drawn, or the plan fitted to the scanned street?
 - What radius do the traffic delay hours cover ("x km")? The SUMO run of the test TGS covers 1.1 km by 1.3 km around the site, so about 600 m.
-- For the test TGS, does the report show SUMO's car numbers (about 890 drivers diverted, Moderate) or the lookup's (about 1,500, High)? SUMO's are in `model/sumo/output/smac/`, not yet wired into the app.
-- SUMO and the route data found two things the test TGS does not cover: Faraday St westbound can only turn into the closed lane, and bus 546 drives that lane. Redraw the test TGS, or keep them as findings the report makes on stage?
 
 ## Decisions
 
@@ -188,6 +186,9 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - [30 Sep] Advait: pre-screening PDF submitted and kept in the repo. The team is now preparing the Thursday 1 Oct pitch. The product changes to make are the three "what's left" items in the PDF (see Demo plan).
 - [30 Sep] Advait: the Thursday demo is live on stage. Change list agreed and written in PITCH_CHECKLIST.md: several scans stitched into one, faster scan flow, report detail per mode led by time, safety and efficiency, pedestrian safety from council crowding rules, three site safety points, at most 5 recommendations, a fuller PDF with charts, Close button at the end. Tim and Joel are building it.
 - [30 Sep] Joel: the pedestrian crowding rule is London's Pedestrian Comfort Level, as recommended in the City of Melbourne's Walking Plan technical report (2012): clear width minus 0.2 m buffers at kerb and building, people per minute per metre at the busiest works hour, B+ (11 or fewer) the minimum, 13 the crowding capacity. Counts come from the nearest City of Melbourne pedestrian sensors to the scan's location.
+- [30 Sep] Tim: the test TGS (Swanston St, Faraday St to Grattan St) shows the SUMO result in the report: about 890 drivers diverted, cars Moderate. Every other TGS stays on Tamara's lookup. The lane has its own signal counter, so SUMO's count of diverted drivers is measured there.
+- [30 Sep] Tim: the two things SUMO's data found that the test TGS does not cover stay as findings in the report, rather than redrawing the TGS: Faraday St westbound can only turn into the closed lane, and bus 546 drives that lane. An impact model can now hand the report findings like these. They show under their report point and as recommendations, and do not change a rating.
+- [30 Sep] Tim: "Use demo site scan" loads the team's real scan of Swanston St just north of Grattan St (three Scaniverse scans from 30 Sep joined, 14.6 MB, in `public/scans/`), in place of the stand-in with fixed La Trobe St findings. It is measured and checked like any upload, so the demo report's safety findings are about this street. The scan file is now in the public repo.
 
 ## Terms
 

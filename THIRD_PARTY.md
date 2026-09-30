@@ -35,6 +35,7 @@ The competition requires a list of all third-party material and APIs, including 
 | NumPy | Library | Scan registration and the alignment tool. `scans/`, `tools/scan_register/` | BSD 3-Clause | No |
 | SciPy | Library | Scan registration (nearest-neighbour search, image filters). `scans/` | BSD 3-Clause | No |
 | OpenCV | Library | Scan registration (image matching). `scans/` | Apache 2.0 | No |
+| Scaniverse (Niantic) | Tool | Phone app the team used to scan Swanston St. The demo site scan `public/scans/swanston-st-site-scan.las` is our own scan, exported from it | Niantic terms of service. Free app | No |
 | Sample TGS (Swanston St closure) | Image | Mock TGS upload and shape of mock data. `data/mock/tgs/` | Invarion sample drawing. Licence not confirmed, check before submission | No |
 | OpenStreetMap | Dataset | Street layout for the test TGS in `data/test/` (Swanston St, Grattan St to Faraday St) | ODbL, attribution on the drawing | No |
 | Vicmap Basemap aerial (base.maps.vic.gov.au) | Imagery | Aerial background of the test TGS in `data/test/` | CC BY 4.0, State of Victoria, attribution on the drawing | No |

@@ -35,8 +35,10 @@
     ]
   },
   "scan": {
-    "demoFileName": "Swanston_Street_Site_Scan.las",
-    "demoFileSize": "18.6 MB",
+    "demoFileName": "Swanston_St_Site_Scan.las",
+    "demoFileSize": "14.6 MB",
+    "demoFileUrl": "/scans/swanston-st-site-scan.las",
+    "demoFileNote": "The team's own scan of Swanston St just north of Grattan St, east side, 30 Sep 2026: three Scaniverse scans joined. Made by data/test/make-demo-scan.ts.",
     "areas": [
       "Lane geometry",
       "Footpath width",
