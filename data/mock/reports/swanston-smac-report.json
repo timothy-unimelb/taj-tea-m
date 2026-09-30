@@ -1,8 +1,8 @@
 {
   "note": "Report points for the test TGS (Swanston St southbound closed, Faraday St to Grattan St), written in advance so the demo makes no Claude call. Used with the saved TGS analysis and the demo site scan. Every number comes from a source listed in `made_from`.",
-  "saved_at": "2026-09-30T20:30:00+10:00",
+  "saved_at": "2026-09-30T21:40:00+10:00",
   "made_from": [
-    "SUMO result for this closure: model/sumo/output/smac/facts.json and data/impact/sumo-smac.json",
+    "SUMO result for this closure, with the Swanston St / Faraday St lights run from their 2024 DTP signal sheet: model/sumo/output/smac/facts.json and data/impact/sumo-smac.json",
     "Test TGS drawing positions: data/test/make-smac-tgs.mjs (lane closure 2 to 86 m, work area 22 to 60 m north of Grattan St, TC 1 at 89 m, VMS 2 at 130 m, VMS 1 at 182 m, all on the east side). Faraday St is about 206 m north of Grattan St.",
     "OpenStreetMap (model/sumo/work/smac/area.osm): Melbourne University tram stop platform 100 to 158 m north of Grattan St; signalised crossing at its south end, 91 m; zebra crossings with no signals on every leg of Faraday St and Cardigan St; bus 546 terminus bays and bus 402 stops on Grattan St",
     "City of Melbourne pedestrian counts, typical weekday over 8 weeks to 30 Sep 2026: Grattan St-Swanston St (West) sensor, 38 m from the scan, busiest works hour 1pm to 2pm at 708 people an hour (690 from 12pm to 1pm)",
@@ -15,13 +15,13 @@
   "points": {
     "traffic": {
       "summary": "About 890 drivers take a short detour. The detour streets cope, but the detour signs need moving.",
-      "reason": "892 drivers diverted over the works hours. The Moderate limit is 100.",
+      "reason": "895 drivers diverted over the works hours at most. The Moderate limit is 100.",
       "checks": [
         {
           "label": "Hours of delay",
-          "answer": "16 vehicle-hours a day",
+          "answer": "8 vehicle-hours a day",
           "status": "watch",
-          "text": "All traffic within 600 m. About 22 s per diverted trip."
+          "text": "About 32 s for each diverted driver. For all traffic within 600 m, no change beyond normal day-to-day variation."
         },
         {
           "label": "Detour streets",
@@ -37,9 +37,9 @@
         },
         {
           "label": "Queue length",
-          "answer": "38 m, up to 71 m",
+          "answer": "45 m, up to 66 m",
           "status": "ok",
-          "text": "About 6 cars on Cardigan St. It stays clear of Faraday St."
+          "text": "About 7 cars on Cardigan St. It stays clear of Faraday St."
         },
         {
           "label": "Is the detour safe?",
