@@ -8,7 +8,8 @@ for every counted edge and hour, the cars that entered the edge in the normal (b
 against the count target (work/counts.xml), as GEH = sqrt(2 (m - c)^2 / (m + c)). GEH under 5 is the usual pass
 mark for a modelled link. Also reports the health of each hour: share of cars dropped because they could not
 enter within 5 minutes, teleports, and mean speed against the speed limit.
-Writes output/calibration.json. PLAN.md step 6b item 4 says when this passes.
+Writes output/calibration.json. It passes when most counted street-hours are within GEH 5, under 2% of cars are
+dropped, and speeds look like a CBD peak.
 """
 import argparse, json, math, os, re, statistics, xml.etree.ElementTree as ET
 from collections import defaultdict
