@@ -154,7 +154,9 @@ Mocked for Wednesday: scan measurement, and the safety findings that depend on i
 When one is answered, delete it here, add a line to Decisions, and update the section it affects.
 
 - Is the impact based on the plan as drawn, or the plan fitted to the scanned street?
-- What radius do the traffic delay hours cover ("x km")?
+- What radius do the traffic delay hours cover ("x km")? The SUMO run of the test TGS covers 1.1 km by 1.3 km around the site, so about 600 m.
+- For the test TGS, does the report show SUMO's car numbers (about 890 drivers diverted, Moderate) or the lookup's (about 1,500, High)? SUMO's are in `model/sumo/output/smac/`, not yet wired into the app.
+- SUMO and the route data found two things the test TGS does not cover: Faraday St westbound can only turn into the closed lane, and bus 546 drives that lane. Redraw the test TGS, or keep them as findings the report makes on stage?
 
 ## Decisions
 
