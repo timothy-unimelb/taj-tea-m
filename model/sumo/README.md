@@ -78,7 +78,7 @@ A run takes about 6 seconds and 0.1 GB. All 90 take about 3 minutes with `xargs 
 
 **What comes out** (`output/smac/`):
 
-- `impact.json`: the app's ImpactResult. Not yet registered in the app. To show it, copy it to `data/impact/` and add an entry in `lib/impact/models/precomputed.ts`.
+- `impact.json`: the app's ImpactResult. The app shows it for the test TGS (`lib/impact/models/precomputed.ts`, marked preferred, so no setting is needed). After a rerun, copy it to `data/impact/sumo-smac.json`, and `closure-signed.png` to `public/assets/sumo-smac-detour.png` before running `10_site_report.py` so the result carries the picture. It also holds the two plan gaps below as `findings`, which the report shows as recommendations.
 - `facts.json`: every measured number with its unit, in plain words, for a report writer (Claude) to turn into report points. No judgements in it.
 - `runs.json`: the raw numbers per run. `closure-signed.png` and `closure-closure.png`: where the diverted drivers go in each case.
 

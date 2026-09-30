@@ -4,7 +4,8 @@
     SUMO_SITE=smac python3 10_site_report.py --seeds 1 2 3 4 5
 
 For sites other than the CBD sample (that one uses 05_to_impact_json.py). Reads work/<site>/runs/ and writes
-  output/<site>/impact.json   ImpactResult for the app (lib/impact/types.ts, model/IMPACT_CONTRACT.md)
+  output/<site>/impact.json   ImpactResult for the app (lib/impact/types.ts, model/IMPACT_CONTRACT.md), with the plan gaps
+                              below as its findings and, if public/assets/sumo-<site>-detour.png exists, that picture
   output/<site>/facts.json    everything measured, as plain numbers with units, for the report writer (Claude) to
                               turn into the report's traffic, pedestrian, public transport and safety points
   output/<site>/runs.json     the raw numbers per run
@@ -23,6 +24,8 @@ What is measured, and how:
                      planning capacity per lane
   queues             longest jam on the approach to the closure and on each leg of the signed detour
   calibration        simulated traffic against the counts (GEH), cars dropped, speed
+  plan gaps          not from the runs: streets the closure turns into dead ends (from the network), and bus routes
+                     whose OpenStreetMap route uses the closed lane or the signed detour
 """
 import argparse, datetime, json, math, os, re, statistics, xml.etree.ElementTree as ET
 from collections import defaultdict
@@ -273,6 +276,7 @@ net_closed = sumolib.net.readNet(os.path.join(WORK, "net_closed.net.xml"))
 # ---- one closure case against the normal runs --------------------------------------------------------------
 def measure(case):
     rows, extra_s, extra_m, od = [], [], [], set()
+    extra_by_seed = defaultdict(list)
     street_users = {"base": defaultdict(float), case: defaultdict(float)}
     edge_users = {"base": defaultdict(float), case: defaultdict(float)}
     flow = {"base": defaultdict(list), case: defaultdict(list)}
@@ -288,6 +292,7 @@ def measure(case):
             for v in users:
                 if v in tb and v in tc:
                     extra_s.append(tc[v][0] - tb[v][0]); extra_m.append(tc[v][1] - tb[v][1]); od.add((rb[v][0], rb[v][-1]))
+                    extra_by_seed[seed].append(tc[v][0] - tb[v][0])
                 for name, rr in (("base", rb), (case, rc)):
                     if v in rr:
                         for key in {SECTION[e] for e in rr[v] if e in SECTION}:
@@ -318,7 +323,8 @@ def measure(case):
     delay_all = spread([total("delay_all_veh_h", s) for s in seeds], "vehicle-hours", 1)
     delay_users = spread([total("delay_users_veh_h", s) for s in seeds], "vehicle-hours", 1)
     per_trip = dict(median=round(statistics.median(extra_s)), lower_quartile=round(pct(extra_s, 0.25)), upper_quartile=round(pct(extra_s, 0.75)),
-                    mean=round(statistics.mean(extra_s)), trips_compared=len(extra_s))
+                    mean=round(statistics.mean(extra_s)), mean_across_seeds=spread([statistics.mean(v) for v in extra_by_seed.values()], "seconds"),
+                    trips_compared=len(extra_s))
     short = []
     for f, t in od:
         a = net.getShortestPath(net.getEdge(f), net.getEdge(t), vClass="passenger")
@@ -360,6 +366,7 @@ def measure(case):
             cars_an_hour=dict(normal=round(statistics.mean(flow["base"].get(tight.getID(), [0]))), with_closure=round(statistics.mean(flow[case].get(tight.getID(), [0]))),
                               busiest_hour_with_closure=round(max(flow[case].get(tight.getID(), [0])))),
             share_of_capacity_in_busiest_hour=round(fullness(tight), 2),
+            cars_an_hour_by_hour_and_seed=spread(flow[case].get(tight.getID(), [0]), "cars an hour"),
             longest_queue_m=dict(normal_typical=round(statistics.median(s["queue_base"])), normal_worst=round(max(s["queue_base"])),
                                  with_closure_typical=round(statistics.median(s["queue_case"])), with_closure_worst=round(max(s["queue_case"])),
                                  typical_difference_between_two_normal_runs=round(noise), grows_more_than_noise=bool(growth > noise and growth >= 5)),
@@ -405,31 +412,84 @@ cut_off = [dict(street=label(STREET[e.getID()]), length_m=round(e.getLength()), 
                               ([e for e in in_before if e not in in_now], "cars can only reach it through the closed block"))
            for e in group if e.getID() not in closed and e.getLength() > 15]
 
+# ---- plan gaps found from the street network and route data, not from the runs ----------------------------
+def short(name):
+    return name.replace(" Street", " St")
+
+
+findings = []
+for e in [e for e in out_before if e not in out_now and e.getID() not in closed and e.getLength() > 15 and e.getID() in SECTION]:
+    name, way, behind, ahead = SECTION[e.getID()]
+    counted_here = e.getID() in targets[int(hours[0])]
+    over_works = sum(target(h, e.getID()) for h in hours) if counted_here else normal_flow(e) * len(hours)
+    findings.append(dict(
+        mode="cars",
+        title=f"Close {short(name)} {way} at {short(behind)}",
+        summary=f"{name} {way} can only turn into the closed lane at {ahead}, so it becomes a dead end while the works are on. "
+                f"About {round(over_works / len(hours), -1):.0f} cars an hour arrive there.",
+        impact=f"Drivers reach the closure with no way out and have to turn around in {short(name)}.",
+        why=f"About {round(over_works, -1):.0f} cars use this approach over the works hours ({'SCATS detector count' if counted_here else 'simulated'}). "
+            f"The signed detour starts on {C['street']}, so nothing turns these drivers away.",
+        recommendation=f"Put a road closed ahead sign on {short(name)} at {short(behind)}, local access only, so drivers turn off before the block.",
+        source="Street network from OpenStreetMap and SCATS detector counts"))
+
+# bus routes whose OpenStreetMap route uses the closed lane, or a street of the signed detour
+way_of = lambda eid: eid.lstrip("-").split("#")[0]
+closed_ways = {way_of(e) for e in closed_ids}
+leg_ways = {way_of(e): l["street"] for l in legs if l["role"] == "signed detour" for e in l["edges"]}
+through, along = {}, defaultdict(set)
+for _, el in ET.iterparse(OSM):
+    if el.tag == "relation":
+        tags = {t.get("k"): t.get("v") for t in el.findall("tag")}
+        if tags.get("type") == "route" and tags.get("route") == "bus" and tags.get("ref"):
+            ways = {m.get("ref") for m in el.findall("member") if m.get("type") == "way"}
+            if ways & closed_ways:
+                through[tags["ref"]] = (tags.get("name") or "").split(":")[-1].strip().replace("=>", "to").replace(" railway station", "")
+            for w in ways & set(leg_ways):
+                along[leg_ways[w]].add(tags["ref"])
+        el.clear()
+    elif el.tag in ("node", "way"):
+        el.clear()
+for ref, name in sorted(through.items()):
+    findings.append(dict(
+        mode="public_transport",
+        title=f"Agree a detour for bus {ref}",
+        summary=f"Bus {ref} ({name}) drives the closed lane of {C['street']}. It needs its own detour while the works are on.",
+        impact="Buses reach the closure and take the car detour unplanned, run late, or miss stops.",
+        why="A diverted service needs the operator's agreement, and passengers need to know where it stops.",
+        recommendation="Tell the operator and the Department of Transport and Planning before the works start. Agree the detour and any temporary stop, and sign it. "
+                       "The route comes from OpenStreetMap, so confirm it against the current timetable first.",
+        source="Bus routes from OpenStreetMap"))
+bus_text = ""
+if through:
+    bus_text += f" Bus {' and '.join(sorted(through))} uses the closed lane."
+for st, refs in sorted(along.items()):
+    refs = sorted(refs - set(through))
+    leg = next(l for l in main["facts"]["approach_and_signed_detour"] if l["leg"].startswith(st))
+    if refs:
+        t0, t1 = leg["seconds_to_drive"]["normal"], leg["seconds_to_drive"]["with_closure"]
+        bus_text += (f" Buses {', '.join(refs[:-1])} and {refs[-1]} use" if len(refs) > 1 else f" Bus {refs[0]} uses") + f" {st} on the signed detour, where " + \
+                    ("the drive time for a car does not change." if abs(t1 - t0) <= 2 else f"a car takes {t1} seconds to drive the block against {t0} normally.")
+
 # ---- the app's ImpactResult --------------------------------------------------------------------------------
 span = f"{clock(hours[0])} to {clock(hours[-1] + 1)}"
 period = f"{W['days']} {span}"
 via = ", ".join(l["street"] for l in SITE["detour"][:-1]) + " and " + SITE["detour"][-1]["street"]
 mf = main["facts"]
-top = [s["street"].split(",")[0] for s in mf["streets_taking_the_diverted_drivers"][:3]]
-fullest = max(mf["streets_taking_the_diverted_drivers"], key=lambda s: s["share_of_capacity_in_busiest_hour"], default=None)
+detour_legs = [l for l in mf["approach_and_signed_detour"] if l["role"] == "signed detour"]
+fullest = max(detour_legs, key=lambda l: l["share_of_capacity_in_busiest_hour"])
 pt = main["per_trip"]
-if main["delay_users_is_noise"]:
-    delay_text = "The extra travel time for the diverted drivers is too small to separate from run-to-run variation."
-else:
-    delay_text = (f"A diverted trip takes about {pt['mean']} seconds longer on average (middle half of trips: {pt['lower_quartile']} to {pt['upper_quartile']} seconds), "
-                  f"{main['delay_users']['typical']:.0f} vehicle-hours in all over the works hours.")
-delay_text += (" Traffic as a whole shows no change beyond run-to-run variation." if main["delay_all_is_noise"]
-               else f" Across all traffic in the area the delay is about {main['delay_all']['typical']:.0f} vehicle-hours.")
+street_lines = [{"label": f"{l['leg'].split(',')[0]} (normally {l['cars_an_hour']['normal']} cars an hour, reaches {l['share_of_capacity_in_busiest_hour']:.0%} of a lane's capacity)",
+                 "range": l["cars_an_hour_by_hour_and_seed"]} for l in detour_legs]
 cars_mode = {
     "status": "modelled",
     **({} if main["delay_all_is_noise"] else {"delay": {k: (round(v) if k != "unit" else v) for k, v in main["delay_all"].items()}}),
     **({"max_queue": main["max_queue"]["range"]} if main["max_queue"] else {}),
     "forced_diversions": diverted, "detour": main["detour"],
-    **({} if main["delay_users_is_noise"] else {"other": [{"label": "Extra time per diverted trip (middle half of trips)", "range": {"low": pt["lower_quartile"], "typical": pt["median"], "high": pt["upper_quartile"], "unit": "seconds"}}]}),
-    "summary": f"About {diverted['typical']:,} {C['direction']} drivers over the works hours must leave {C['street']} at {C['from_cross']}. The counter on that lane measures {counted:,}. "
-               f"Following the signs they load {', '.join(top[:-1])} and {top[-1]}"
-               + (f", and the fullest, {fullest['street'].split(',')[0]}, reaches {fullest['share_of_capacity_in_busiest_hour']:.0%} of a lane's capacity in its busiest hour. " if fullest else ". ")
-               + delay_text,
+    "other": ([] if main["delay_users_is_noise"] else [{"label": "Extra time per diverted trip", "range": pt["mean_across_seeds"]}]) + street_lines,
+    "summary": f"About {round(diverted['typical'], -1):,} {C['direction']} drivers over the works hours must leave {C['street']} at {C['from_cross']}. "
+               f"On the signed detour the fullest street, {fullest['leg'].split(',')[0]}, reaches {fullest['share_of_capacity_in_busiest_hour']:.0%} of a lane's capacity"
+               + ("." if main["delay_users_is_noise"] else f", and a diverted trip takes about {pt['mean']} seconds longer."),
 }
 q_note = (f"Queue: the longest jam in an hour on {main['max_queue']['leg']}, the longest of the queues on the approach and signed detour that grow by more than two normal runs differ."
           if main["max_queue"] else "Queues on the approach and the signed detour did not grow by more than two normal runs differ from each other, so no queue is reported.")
@@ -445,7 +505,7 @@ result = {
     "recommended_window": None,
     "modes": {
         "cars": cars_mode,
-        "public_transport": {"status": "not modelled", "summary": "Tram and bus services were not simulated."},
+        "public_transport": {"status": "not modelled", "summary": "Tram and bus services were not simulated." + bus_text},
         "pedestrians": {"status": "not modelled", "summary": "Pedestrians were not simulated."},
         "trucks": {"status": "not modelled", "summary": "All vehicles are simulated as cars. Trucks are not modelled on their own."},
     },
@@ -469,8 +529,19 @@ result = {
         q_note,
         "Cars only. No trams, buses, trucks, cyclists or pedestrians were simulated.",
     ],
+    "findings": findings,
     "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
 }
+picture = os.path.join(REPO, "public", "assets", f"sumo-{SITE_ID}-detour.png")   # 06_plot.py --case signed, copied there
+if os.path.exists(picture):
+    import struct
+    width, height = struct.unpack(">II", open(picture, "rb").read(24)[16:24])
+    result["visual"] = {
+        "src": f"/assets/sumo-{SITE_ID}-detour.png", "width": width, "height": height,
+        "alt": f"Map of the streets around the closed lane. Blue lines show the normal routes of drivers who use the lane. Red lines show the same drivers going round by {via}.",
+        "caption": f"One simulated weekday hour from {clock(hours[0])}. The drivers who normally use the closed lane, and the way they go round it when they follow the signs. Thicker lines carry more cars.",
+        "legend": [{"label": "Normal routes", "colour": "#2f6fad"}, {"label": "Routes with the closure", "colour": "#c4462b"}, {"label": "Closed lane", "colour": "#111111"}],
+    }
 
 facts = dict(
     about="Numbers from the SUMO simulation of this closure, for the report writer. Every value is measured from the runs or the counts. Nothing here is a judgement. Ranges are across random seeds.",
@@ -481,6 +552,8 @@ facts = dict(
     diverted_drivers=dict(simulated_over_the_works=diverted, counted_on_the_closed_lane=counted,
                           count_source="SCATS site 4392 detector 5, weekday medians, August 2026", by_hour=hourly),
     streets_cut_off_by_the_closure=cut_off,
+    bus_routes=dict(through_the_closed_lane=sorted(through), on_the_signed_detour={k: sorted(v) for k, v in along.items()}, source="OpenStreetMap route relations"),
+    plan_gaps=findings,
     if_drivers_follow_the_signs=results["signed"]["facts"] if "signed" in results else None,
     if_drivers_know_beforehand=results["closure"]["facts"] if "closure" in results else None,
     calibration_of_the_normal_runs=calib,

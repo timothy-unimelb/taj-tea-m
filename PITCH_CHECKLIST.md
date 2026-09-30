@@ -20,9 +20,9 @@ Lead with time, safety and efficiency: hours of delay across the city, pedestria
 - [x] Site overview image is distorted. Fix. (Joel: artwork shown at its own shape)
 
 Traffic
-- [ ] Hours of delay within an x km radius.
-- [ ] Which streets take the detour, and whether each can carry the extra volume.
-- [ ] Queue length.
+- [x] Hours of delay within an x km radius. (Tim: for the test TGS, from SUMO. About 16 vehicle-hours within about 600 m. Other sites show the lookup's delay with no radius.)
+- [x] Which streets take the detour, and whether each can carry the extra volume. (Tim: for the test TGS, from SUMO. Cars an hour on Faraday St, Cardigan St and Grattan St against a lane's capacity, on the Traffic tab.)
+- [x] Queue length. (Tim: for the test TGS, from SUMO. Other sites show the lookup's queue.)
 - [ ] Is the detour safe.
 
 Pedestrians

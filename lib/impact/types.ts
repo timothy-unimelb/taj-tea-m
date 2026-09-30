@@ -52,6 +52,19 @@ export type ModeImpact = {
   severity_reason?: string;
 };
 
+// A gap in the plan that a model found on the way, such as a street the closure
+// turns into a dead end or a bus route that uses the closed lane. It shows under
+// its mode on the report and as a recommended action. It does not change a rating.
+export type Finding = {
+  mode: ModeId;
+  title: string;             // the action, imperative, under 8 words
+  summary: string;           // one or two sentences: what is wrong and where
+  impact: string;            // what happens on site if nothing changes
+  why: string;               // why it matters, and the evidence
+  recommendation: string;    // what to change before deployment
+  source: string;            // the data it came from, e.g. "Bus routes from OpenStreetMap"
+};
+
 export type ImpactResult = {
   model: string;             // id of the model that produced it, e.g. "mvm", "sumo"
   method: string;            // shown on the report, e.g. "SUMO traffic simulation"
@@ -71,6 +84,7 @@ export type ImpactResult = {
     caption: string;
     legend: { label: string; colour: string }[];
   };
+  findings?: Finding[];      // optional plan gaps found from the model's own data
   overall?: { severity: Severity; reason: string }; // filled in by the severity rule
   generated_at?: string;     // ISO time the result was made
 };

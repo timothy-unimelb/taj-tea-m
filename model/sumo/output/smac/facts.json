@@ -99,6 +99,38 @@
       "problem": "cars on it can only leave through the closed block"
     }
   ],
+  "bus_routes": {
+    "through_the_closed_lane": [
+      "546"
+    ],
+    "on_the_signed_detour": {
+      "Grattan Street": [
+        "241",
+        "402"
+      ]
+    },
+    "source": "OpenStreetMap route relations"
+  },
+  "plan_gaps": [
+    {
+      "mode": "cars",
+      "title": "Close Faraday St westbound at Cardigan St",
+      "summary": "Faraday Street westbound can only turn into the closed lane at Swanston Street, so it becomes a dead end while the works are on. About 60 cars an hour arrive there.",
+      "impact": "Drivers reach the closure with no way out and have to turn around in Faraday St.",
+      "why": "About 370 cars use this approach over the works hours (SCATS detector count). The signed detour starts on Swanston Street, so nothing turns these drivers away.",
+      "recommendation": "Put a road closed ahead sign on Faraday St at Cardigan St, local access only, so drivers turn off before the block.",
+      "source": "Street network from OpenStreetMap and SCATS detector counts"
+    },
+    {
+      "mode": "public_transport",
+      "title": "Agree a detour for bus 546",
+      "summary": "Bus 546 (Heidelberg to Melbourne University) drives the closed lane of Swanston Street. It needs its own detour while the works are on.",
+      "impact": "Buses reach the closure and take the car detour unplanned, run late, or miss stops.",
+      "why": "A diverted service needs the operator's agreement, and passengers need to know where it stops.",
+      "recommendation": "Tell the operator and the Department of Transport and Planning before the works start. Agree the detour and any temporary stop, and sign it. The route comes from OpenStreetMap, so confirm it against the current timetable first.",
+      "source": "Bus routes from OpenStreetMap"
+    }
+  ],
   "if_drivers_follow_the_signs": {
     "case": "drivers go round from the closure, following the signs",
     "delay": {
@@ -107,6 +139,12 @@
         "lower_quartile": -8,
         "upper_quartile": 38,
         "mean": 22,
+        "mean_across_seeds": {
+          "low": 17,
+          "typical": 22,
+          "high": 25,
+          "unit": "seconds"
+        },
         "trips_compared": 4421
       },
       "diverted_trips_total_vehicle_hours": {
@@ -163,7 +201,7 @@
         "verdict": "well within capacity"
       },
       {
-        "street": "Grattan Street westbound, Grattan Place to Cardigan Street",
+        "street": "Grattan Street westbound, Dorrit Street to Cardigan Street",
         "diverted_drivers_over_the_works": 107,
         "lanes_at_busiest_point": 2,
         "cars_an_hour_normal": 217,
@@ -227,11 +265,11 @@
         "fewer_drivers_over_the_works": 67
       },
       {
-        "street": "Swanston Street southbound, Pelham Street to Monahan Lane",
+        "street": "Swanston Street southbound, Monahan Lane to Queensberry Street",
         "fewer_drivers_over_the_works": 57
       },
       {
-        "street": "Swanston Street southbound, Monahan Lane to Queensberry Street",
+        "street": "Swanston Street southbound, Pelham Street to Monahan Lane",
         "fewer_drivers_over_the_works": 57
       }
     ],
@@ -247,6 +285,12 @@
           "busiest_hour_with_closure": 204
         },
         "share_of_capacity_in_busiest_hour": 0.29,
+        "cars_an_hour_by_hour_and_seed": {
+          "low": 124,
+          "typical": 154,
+          "high": 204,
+          "unit": "cars an hour"
+        },
         "longest_queue_m": {
           "normal_typical": 43,
           "normal_worst": 80,
@@ -271,6 +315,12 @@
           "busiest_hour_with_closure": 191
         },
         "share_of_capacity_in_busiest_hour": 0.27,
+        "cars_an_hour_by_hour_and_seed": {
+          "low": 136,
+          "typical": 160,
+          "high": 191,
+          "unit": "cars an hour"
+        },
         "longest_queue_m": {
           "normal_typical": 5,
           "normal_worst": 11,
@@ -295,6 +345,12 @@
           "busiest_hour_with_closure": 331
         },
         "share_of_capacity_in_busiest_hour": 0.47,
+        "cars_an_hour_by_hour_and_seed": {
+          "low": 284,
+          "typical": 312,
+          "high": 331,
+          "unit": "cars an hour"
+        },
         "longest_queue_m": {
           "normal_typical": 19,
           "normal_worst": 31,
@@ -319,6 +375,12 @@
           "busiest_hour_with_closure": 452
         },
         "share_of_capacity_in_busiest_hour": 0.65,
+        "cars_an_hour_by_hour_and_seed": {
+          "low": 395,
+          "typical": 432,
+          "high": 452,
+          "unit": "cars an hour"
+        },
         "longest_queue_m": {
           "normal_typical": 25,
           "normal_worst": 45,
@@ -347,6 +409,12 @@
         "lower_quartile": -21,
         "upper_quartile": 30,
         "mean": 14,
+        "mean_across_seeds": {
+          "low": 8,
+          "typical": 13,
+          "high": 21,
+          "unit": "seconds"
+        },
         "trips_compared": 4418
       },
       "diverted_trips_total_vehicle_hours": {
@@ -487,6 +555,12 @@
           "busiest_hour_with_closure": 87
         },
         "share_of_capacity_in_busiest_hour": 0.12,
+        "cars_an_hour_by_hour_and_seed": {
+          "low": 27,
+          "typical": 36,
+          "high": 87,
+          "unit": "cars an hour"
+        },
         "longest_queue_m": {
           "normal_typical": 43,
           "normal_worst": 80,
@@ -511,6 +585,12 @@
           "busiest_hour_with_closure": 74
         },
         "share_of_capacity_in_busiest_hour": 0.11,
+        "cars_an_hour_by_hour_and_seed": {
+          "low": 36,
+          "typical": 43,
+          "high": 74,
+          "unit": "cars an hour"
+        },
         "longest_queue_m": {
           "normal_typical": 5,
           "normal_worst": 11,
@@ -535,6 +615,12 @@
           "busiest_hour_with_closure": 320
         },
         "share_of_capacity_in_busiest_hour": 0.46,
+        "cars_an_hour_by_hour_and_seed": {
+          "low": 259,
+          "typical": 286,
+          "high": 320,
+          "unit": "cars an hour"
+        },
         "longest_queue_m": {
           "normal_typical": 19,
           "normal_worst": 31,
@@ -559,6 +645,12 @@
           "busiest_hour_with_closure": 412
         },
         "share_of_capacity_in_busiest_hour": 0.59,
+        "cars_an_hour_by_hour_and_seed": {
+          "low": 333,
+          "typical": 363,
+          "high": 412,
+          "unit": "cars an hour"
+        },
         "longest_queue_m": {
           "normal_typical": 25,
           "normal_worst": 45,

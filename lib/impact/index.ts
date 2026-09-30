@@ -1,16 +1,18 @@
 // The model switch. IMPACT_MODEL picks which model the report uses:
 //   mvm      Tamara's past-closures lookup and queue, live, any site (default)
-//   sumo     SUMO simulation, precomputed for the Swanston St sample only
+//   sumo     SUMO simulation, precomputed for the two sites it has been run for
 //   http     any service at IMPACT_MODEL_URL that returns an ImpactResult
 // If the chosen model can't cover the site, or fails, the live lookup model is
 // used instead and the report says so in its assumptions. With IMPACT_MODEL=sumo
-// the Swanston sample gets SUMO and every other site gets the lookup model.
-// The lookup is the default again so every TGS runs the live model (Tim, 30 Sep).
+// the two SUMO sites get SUMO and every other site gets the lookup model.
+// With IMPACT_MODEL not set, every TGS runs the live lookup (Tim, 30 Sep), except
+// a site with a saved result marked preferred: the test TGS on Swanston St between
+// Faraday St and Grattan St shows its SUMO result (Tim, 30 Sep evening).
 
 import type { ImpactRequest, ImpactResult, ImpactModel } from "./types";
 import { mvmModel } from "./models/mvm";
 import { httpModel } from "./models/http";
-import { NotCoveredError, precomputedModel } from "./models/precomputed";
+import { NotCoveredError, precomputedModel, preferredModel } from "./models/precomputed";
 import { rateSeverity } from "./severity";
 
 export const DEFAULT_MODEL = "mvm";
@@ -27,7 +29,7 @@ function chooseModel(id: string): ImpactModel {
   throw new Error(`Unknown impact model "${id}"`);
 }
 
-export async function estimateImpact(request: ImpactRequest, id = process.env.IMPACT_MODEL || DEFAULT_MODEL): Promise<ImpactResult> {
+export async function estimateImpact(request: ImpactRequest, id = process.env.IMPACT_MODEL || preferredModel(request) || DEFAULT_MODEL): Promise<ImpactResult> {
   let result: ImpactResult;
   try {
     result = await chooseModel(id).estimate(request);

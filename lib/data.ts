@@ -6,7 +6,7 @@ import demo from "@/data/mock/barrier-brain.json";
 import savedDemoAnalysis from "@/data/mock/tgs/swanston-analysis.json";
 import sampleTgs from "@/data/mock/tgs/swanston-st-closure.webp";
 import type { TgsAnalysis } from "@/lib/tgs-analysis";
-import type { ImpactResult, ModeImpact, Range, Severity } from "@/lib/impact/types";
+import type { ImpactResult, ModeId, ModeImpact, Range, Severity } from "@/lib/impact/types";
 import type { ScanPointResult, SiteCheck } from "@/lib/site-check";
 
 export const sampleTgsUrl = sampleTgs.src;
@@ -99,17 +99,25 @@ function pickRecommendations(candidates: Action[], points: { id: string; label: 
   return [...first, ...rest].slice(0, MAX_RECOMMENDATIONS).map((action, i) => ({ ...action, id: i + 1, point: points.find(p => p.id === action.category)!.label }));
 }
 
+// Which report point a mode's findings belong to.
+const POINT: Record<ModeId, string> = { cars: "traffic", trucks: "traffic", pedestrians: "pedestrians", public_transport: "transport" };
+
 // `check` is Claude's plan vs street check of real scans. Without it the demo findings show.
+// The impact model's own findings (gaps in the plan, lib/impact/types.ts) show under their
+// report point, in the key findings and as recommendations, ahead of the site check's.
 export function buildReport(impact: ImpactResult, check: SiteCheck | null = null, scansMeasured = 0) {
   const { cars, trucks, pedestrians, public_transport: transport } = impact.modes;
+  const findings = impact.findings ?? [];
+  const gaps = (point: string) => findings.filter(f => POINT[f.mode] === point).map(f => `Plan gap: ${f.summary}`);
+  const findingActions: Action[] = findings.map(f => ({ category: POINT[f.mode], title: f.title, summary: f.summary, impact: f.impact, why: f.why, recommendation: f.recommendation }));
   const safety = check
     ? { severity: check.safety_severity, description: check.safety_summary, basis: `From ${scansMeasured} measured scan${scansMeasured === 1 ? "" : "s"} compared with the plan.` }
     : demo.safety;
   const traffic = trucks.status === "modelled" ? [...details(cars), ...details(trucks).map(line => `Trucks. ${line}`)] : details(cars);
   const impactSummary = [
-    { id: "traffic", label: "Traffic", severity: cars.severity!, description: describe(cars), reason: cars.severity_reason!, details: traffic },
-    { id: "pedestrians", label: "Pedestrian access", severity: pedestrians.severity!, description: describe(pedestrians), reason: pedestrians.severity_reason!, details: details(pedestrians) },
-    { id: "transport", label: "Public transport", severity: transport.severity!, description: describe(transport), reason: transport.severity_reason!, details: details(transport) },
+    { id: "traffic", label: "Traffic", severity: cars.severity!, description: describe(cars), reason: cars.severity_reason!, details: [...traffic, ...gaps("traffic")] },
+    { id: "pedestrians", label: "Pedestrian access", severity: pedestrians.severity!, description: describe(pedestrians), reason: pedestrians.severity_reason!, details: [...details(pedestrians), ...gaps("pedestrians")] },
+    { id: "transport", label: "Public transport", severity: transport.severity!, description: describe(transport), reason: transport.severity_reason!, details: [...details(transport), ...gaps("transport")] },
     { id: "safety", label: "Site safety", severity: safety.severity as Severity, description: safety.description, reason: safety.basis, details: [] },
   ];
   const window = impact.recommended_window;
@@ -121,7 +129,7 @@ export function buildReport(impact: ImpactResult, check: SiteCheck | null = null
     recommendation: `Compare the planned hours with this window (${window.window.toLowerCase()}), and check the work fits.`,
   } : null;
   const siteActions = check ? check.actions : demo.explanations.actions;
-  const actions = pickRecommendations([...siteActions, ...(trafficAction ? [trafficAction] : [])], impactSummary);
+  const actions = pickRecommendations([...findingActions, ...siteActions, ...(trafficAction ? [trafficAction] : [])], impactSummary);
   return {
     period: impact.period,
     overall: impact.overall!.severity,
@@ -129,10 +137,10 @@ export function buildReport(impact: ImpactResult, check: SiteCheck | null = null
     impactSummary,
     decision: check ? check.decision : demo.explanations.decision,
     conflicts: check?.conflicts ?? [],
-    keyFindings: [describe(cars), describe(pedestrians), describe(transport), safety.description],
+    keyFindings: [describe(cars), describe(pedestrians), describe(transport), safety.description, ...findings.map(f => f.summary)],
     actions,
     sourceNote: `${check ? `Based on the TGS and ${scansMeasured} measured scan${scansMeasured === 1 ? "" : "s"}.` : "Based on the TGS. Site findings are sample findings for the demo scan."} Traffic estimate: ${impact.method}${impact.label ? ` (${impact.label.toLowerCase()})` : ""}.`,
-    sources: ["TGS analysis", check ? "Measured site scans" : "Demo site scan", `${impact.method}${impact.label ? `, ${impact.label.toLowerCase()}` : ""}`],
+    sources: ["TGS analysis", check ? "Measured site scans" : "Demo site scan", `${impact.method}${impact.label ? `, ${impact.label.toLowerCase()}` : ""}`, ...new Set(findings.map(f => f.source))],
     method: {
       name: impact.method,
       label: impact.label,

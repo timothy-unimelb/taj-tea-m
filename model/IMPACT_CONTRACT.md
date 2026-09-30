@@ -10,11 +10,13 @@ One setting, the `IMPACT_MODEL` environment variable (in `.env.local` or Vercel)
 
 | Value | Model | Runs |
 |---|---|---|
-| `sumo` | SUMO traffic simulation (`model/sumo/`) | Precomputed, Swanston St sample only |
+| `sumo` | SUMO traffic simulation (`model/sumo/`) | Precomputed, for the two sites it has been run for: the Swanston St sample (La Trobe St) and the test TGS (Swanston St, Faraday St to Grattan St) |
 | `mvm` (default) | Tamara's past-closures lookup plus hourly queue, ported to TypeScript (`lib/impact/models/mvm.ts`) | Live, any site |
 | `http` | Any service at `IMPACT_MODEL_URL` | Live, whatever the service covers |
 
-If the chosen model can't cover the site, or fails, the app uses `mvm` instead and says so in the report's assumptions. So with `sumo` the Swanston sample shows SUMO and every other site shows `mvm`. `mvm` is the default. Note that it assumes half of the signal site's traffic uses the closed street, which overstates streets with little car access such as the Swanston block.
+If the chosen model can't cover the site, or fails, the app uses `mvm` instead and says so in the report's assumptions. So with `sumo` the two SUMO sites show SUMO and every other site shows `mvm`. `mvm` is the default.
+
+One exception to the default: a saved result marked `preferred` in `lib/impact/models/precomputed.ts` is used for its own site when `IMPACT_MODEL` is not set. The test TGS is marked that way, so it shows its SUMO result and every other TGS still runs `mvm`. Setting `IMPACT_MODEL` overrides this. Note that it assumes half of the signal site's traffic uses the closed street, which overstates streets with little car access such as the Swanston block.
 
 ## Three ways to plug in a new model
 
@@ -89,6 +91,17 @@ Built from Claude's TGS analysis plus traffic data (`lib/impact/request.ts`).
     "caption": "One or two sentences on what the picture shows.",
     "legend": [{ "label": "Stopped car", "colour": "#d73027" }]
   },
+  "findings": [
+    {
+      "mode": "cars",
+      "title": "Close Faraday St westbound at Cardigan St",
+      "summary": "One or two sentences: what is wrong and where.",
+      "impact": "What happens on site if nothing changes.",
+      "why": "Why it matters, and the evidence.",
+      "recommendation": "What to change before deployment.",
+      "source": "Street network from OpenStreetMap and SCATS detector counts"
+    }
+  ],
   "generated_at": "2026-09-30T04:00:00Z"
 }
 ```
@@ -102,6 +115,7 @@ Rules:
 - **Never invent a mode.** If your model doesn't cover a mode, set `status: "not modelled"`, leave the metrics out and say so in `summary`.
 - **Say how it was made.** `method` and `label` show on the report. `provenance` is `live`, `precomputed` or `fixture`. List every assumption a traffic engineer would ask about.
 - **Leave out `severity`, `severity_reason` and `overall`.** The app rates every model with the same rule, below.
+- **Findings are optional.** A finding is a gap in the plan that the model's own data shows, such as a street the closure turns into a dead end, or a bus route that uses the closed lane. `mode` says which report point it belongs to. The report shows it under that point (as "Plan gap"), in the key findings, and as a recommended action ahead of the site check's. A finding never changes a rating.
 - **Plain text.** Short sentences. No em dashes.
 
 ## Severity rule
