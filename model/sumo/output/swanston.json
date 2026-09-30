@@ -61,7 +61,7 @@
     "width": 648,
     "height": 410,
     "alt": "Animated map of the streets around the closed block at 5pm, normal street on the left and closure on the right. Cars are dots coloured by speed; the cars that normally use the block are pink on the left and purple on the right, where they go a different way because it is closed.",
-    "caption": "Five simulated minutes at 5pm on a weekday, in the case where the right turn from La Trobe St is allowed (the high figure). Normal street on the left, the block closed on the right. Pink cars on the left drive through the block. The same cars are purple on the right, sent around it because it is closed. Their paths build up as lines, so compare where the lines run on each side.",
+    "caption": "Five simulated minutes at 5pm on a weekday, in the case where the right turn from La Trobe St is allowed (the high figure). Normal street on the left, the block closed on the right. Pink cars on the left drive through the block. The same cars are purple on the right, sent around it because it is closed. Each one trails its recent path, so look at where the pink and purple trails run.",
     "legend": [
       {
         "label": "Via the block",
