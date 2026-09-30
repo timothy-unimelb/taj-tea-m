@@ -248,7 +248,7 @@ if os.path.exists(os.path.join(REPO, "public", "assets", "sumo-swanston-5pm.gif"
     result["visual"] = {
         "src": "/assets/sumo-swanston-5pm.gif", "width": 648, "height": 410,
         "alt": "Animated map of the streets around the closed block at 5pm, normal street on the left and closure on the right. Cars are dots coloured by speed; the cars that normally use the block are purple and go a different way when it is closed.",
-        "caption": "Five simulated minutes at 5pm on a weekday, in the case where the right turn from La Trobe St is allowed (the high figure). Normal street on the left, the block closed on the right. Purple cars normally drive through the block and have to go around it when it is closed.",
+        "caption": "Five simulated minutes at 5pm on a weekday, in the case where the right turn from La Trobe St is allowed (the high figure). Normal street on the left, the block closed on the right. Purple cars normally drive through the block and have to go around it when it is closed. Their paths build up as purple lines, so compare where the lines run on each side.",
         "legend": [{"label": "Diverted car", "colour": "#7b3294"}, {"label": "Stopped car", "colour": "#d73027"},
                    {"label": "Slow car", "colour": "#fdae61"}, {"label": "Moving car", "colour": "#1a9850"}, {"label": "Closed block", "colour": "#000000"},
                    {"label": "Tram only", "colour": "#9fc6e8"}, {"label": "Street", "colour": "#d0d0d0"}],

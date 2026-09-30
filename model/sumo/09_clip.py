@@ -31,7 +31,7 @@ ap.add_argument("--radius", type=float, default=280, help="metres around the blo
 ap.add_argument("--step", type=int, default=3, help="simulated seconds per frame")
 ap.add_argument("--fps", type=int, default=10)
 ap.add_argument("--subtitle", default="", help="extra words for the title, e.g. 'right turn from La Trobe St allowed'")
-ap.add_argument("--trail", type=int, default=90, help="seconds of trail behind each diverted car")
+ap.add_argument("--trail", type=int, default=0, help="seconds of trail behind each diverted car (0: keep the whole clip, so the detours build up as purple lines)")
 ap.add_argument("--copy-to", default=os.path.join(REPO, "public", "assets", "sumo-swanston-5pm.gif"), help="also copy the GIF here for the app ('' to skip)")
 args = ap.parse_args()
 
@@ -94,16 +94,16 @@ for i, (ax, title) in enumerate(zip(axes, ("Normal street", "Swanston St block c
         ax.add_collection(LineCollection([net.getEdge(c).getShape() for c in closed_ids], colors="black", linewidths=6, zorder=2))
     ax.set_xlim(cx - args.radius, cx + args.radius); ax.set_ylim(cy - args.radius, cy + args.radius)
     ax.set_aspect("equal"); ax.axis("off"); ax.set_title(title, fontsize=13)
-    scat.append(ax.scatter([], [], s=14, c=[], cmap="RdYlGn", vmin=0, vmax=10, zorder=3))
-    trails.append(ax.scatter([], [], s=5, color=PURPLE, alpha=0.35, linewidths=0, zorder=3.5))
-    divs.append(ax.scatter([], [], s=34, color=PURPLE, edgecolors="white", linewidths=0.6, zorder=4))
+    scat.append(ax.scatter([], [], s=9, c=[], cmap="RdYlGn", vmin=0, vmax=10, alpha=0.45, linewidths=0, zorder=3))
+    trails.append(ax.scatter([], [], s=7, color=PURPLE, alpha=0.5, linewidths=0, zorder=3.5))
+    divs.append(ax.scatter([], [], s=40, color=PURPLE, edgecolors="white", linewidths=0.7, zorder=4))
 label = fig.text(0.5, 0.125, "", ha="center", fontsize=10)
 title = f"SUMO simulation, weekday {args.hour % 12 or 12}{'am' if args.hour < 12 else 'pm'}, the streets around the closed block"
 if args.subtitle:
     title += f" ({args.subtitle})"
 fig.text(0.5, 0.965, title, ha="center", fontsize=11, color="#222")
 from matplotlib.lines import Line2D
-fig.legend(handles=[Line2D([], [], marker="o", color="none", markerfacecolor=PURPLE, markersize=9, label="Diverted car"),
+fig.legend(handles=[Line2D([], [], marker="o", color="none", markerfacecolor=PURPLE, markersize=9, label="Diverted car and its path"),
                     Line2D([], [], marker="o", color="none", markerfacecolor="#d73027", markersize=7, label="Stopped car"),
                     Line2D([], [], marker="o", color="none", markerfacecolor="#fdae61", markersize=7, label="Slow car"),
                     Line2D([], [], marker="o", color="none", markerfacecolor="#1a9850", markersize=7, label="Moving car"),
@@ -125,7 +125,8 @@ def draw(i):
         plain = [(x, y, s) for vid, x, y, s in fr if vid not in diverted]
         purple = [(x, y) for vid, x, y, _ in fr if vid in diverted]
         seen[k].update(vid for vid, *_ in fr if vid in diverted)
-        past = [(x, y) for tt in times[max(0, i - args.trail // args.step):i] for vid, x, y, _ in run[tt] if vid in diverted]
+        first = max(0, i - args.trail // args.step) if args.trail else 0
+        past = [(x, y) for tt in times[first:i] for vid, x, y, _ in run[tt] if vid in diverted]
         sc.set_offsets([(x, y) for x, y, _ in plain] or [[0, 0]]); sc.set_array([s for _, _, s in plain] or [0])
         dv.set_offsets(purple or [[-1e6, -1e6]])
         tr.set_offsets(past or [[-1e6, -1e6]])
