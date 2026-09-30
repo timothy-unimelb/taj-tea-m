@@ -28,15 +28,24 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--month", default="2026-08", choices=sorted(MONTHS))
 args = ap.parse_args()
 
-spec = json.load(open(os.path.join(HERE, "detector_approaches.json")))["sites"]
+site_pos = {s["site_no"]: (s["lat"], s["lon"]) for s in scats_sites()}
+# only the mapped sites inside this study area (the file also holds sites of other study areas)
+spec = {s: info for s, info in json.load(open(os.path.join(HERE, "detector_approaches.json")))["sites"].items() if in_bbox(*site_pos[int(s)])}
 zpath = os.path.join(WORK, f"vsdata_{args.month}.zip")
+if not os.path.exists(zpath) and os.path.exists(os.path.join(HERE, "work", f"vsdata_{args.month}.zip")):
+    zpath = os.path.join(HERE, "work", f"vsdata_{args.month}.zip")  # already downloaded for the CBD run
 if not os.path.exists(zpath):
     print("downloading", MONTHS[args.month])
     urllib.request.urlretrieve(MONTHS[args.month], zpath + ".part")
     os.rename(zpath + ".part", zpath)
 
 # weekday hourly volumes per (site, detector), skipping detector-days with alarms or missing intervals
-wanted = {int(s) for s in spec}
+def key(site, det):
+    """(site, detector) of a detector entry. 'site:detector' is a detector on another site's controller."""
+    return tuple(int(x) for x in det.split(":")) if isinstance(det, str) else (site, det)
+
+
+wanted = {key(int(s), det)[0] for s, info in spec.items() for dets in info["car_detectors"].values() for det in dets} | {int(s) for s in spec}
 hours = collections.defaultdict(lambda: collections.defaultdict(list))
 z = zipfile.ZipFile(zpath)
 for name in z.namelist():
@@ -57,9 +66,9 @@ site_total = {s["site_no"]: s["daily"] for s in scats_sites()}
 out, ratios = {}, []
 for s, info in spec.items():
     s = int(s)
-    appr = {d: [sum(med.get((s, det), [0] * 24)[h] for det in dets) for h in range(24)]
+    appr = {d: [sum(med.get(key(s, det), [0] * 24)[h] for det in dets) for h in range(24)]
             for d, dets in info["car_detectors"].items()}
-    missing = [det for dets in info["car_detectors"].values() for det in dets if (s, det) not in med]
+    missing = [det for dets in info["car_detectors"].values() for det in dets if key(s, det) not in med]
     car = sum(sum(v) for v in appr.values())
     alld = sum(sum(v) for (site, _), v in med.items() if site == s)
     out[s] = dict(approaches=appr, car_daily=round(car), all_detectors_daily=round(alld),

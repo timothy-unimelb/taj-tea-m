@@ -17,7 +17,8 @@ from matplotlib.lines import Line2D
 from common import *
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--hour", type=int, default=8)
+ap.add_argument("--hour", type=float, default=8, help="clock hour, e.g. 8, or 12.5 for 12:30pm")
+ap.add_argument("--case", default="closure", choices=["closure", "signed"], help="which closure runs to draw (04_run.py)")
 ap.add_argument("--scale", type=float, default=1.0)
 ap.add_argument("--seeds", type=int, nargs="+", default=[1, 2, 3, 4, 5, 6])
 ap.add_argument("--min-cars", type=float, default=2, help="hide streets used by fewer cars an hour than this")
@@ -25,7 +26,7 @@ ap.add_argument("--radius", type=float, default=750, help="metres around the sit
 args = ap.parse_args()
 
 
-t0 = (args.hour - SIM_START_H) * 3600
+t0 = round((args.hour - SIM_START_H) * 3600)
 
 
 net = load_net()
@@ -33,7 +34,7 @@ closed, junction = find_closed_edges(net)
 
 
 def run_file(scenario, seed):
-    return os.path.join(WORK, "runs", f"{scenario}_h{args.hour}_x{args.scale:g}_s{seed}", "vehroute.xml")
+    return os.path.join(WORK, "runs", f"{scenario}_h{args.hour:g}_x{args.scale:g}_s{seed}", "vehroute.xml")
 
 
 def block_users(seed):
@@ -63,7 +64,7 @@ def route_use(scenario):
     return use
 
 
-base, clos = route_use("base"), route_use("closure")
+base, clos = route_use("base"), route_use(args.case)
 
 grey, gains, losses = [], [], []
 for e in net.getEdges():
@@ -88,20 +89,35 @@ for cid in closed:
     ax.plot(xs, ys, color="#111", linewidth=7, solid_capstyle="butt", zorder=5)
 jx, jy = junction.getCoord()
 cx, cy = net.getEdge(closed[0]).getShape()[0] if closed else (jx, jy)
-ax.annotate("Swanston St closed\nLa Trobe St to Little La Trobe St", (cx, cy), xytext=(cx + 200, cy - 330),
-            fontsize=11, fontweight="bold", arrowprops=dict(arrowstyle="-", color="#111"), zorder=6)
+short = lambda name: name.replace(" Street", " St")
+if SITE:
+    c = SITE["closure"]
+    ax.annotate(f"{short(c['street'])} {c['direction']} closed\n{short(c['from_cross'])} to {short(c['to_cross'])}", (cx, cy), xytext=(cx - 420, cy + 60),
+                fontsize=11, fontweight="bold", arrowprops=dict(arrowstyle="-", color="#111"), zorder=6)
+    for nm in sorted({e.getName() for e in net.getEdges() if e.getID() in clos and clos[e.getID()] >= 0.25 * max(clos.values()) and e.getName()}):
+        e = max((e for e in net.getEdges() if e.getName() == nm and e.getID() in clos), key=lambda e: clos[e.getID()] * e.getLength())
+        mx, my = e.getShape()[len(e.getShape()) // 2]
+        ax.text(mx + 12, my + 12, short(nm), fontsize=9, color="#7a2413", zorder=6, clip_on=True)
+else:
+    ax.annotate("Swanston St closed\nLa Trobe St to Little La Trobe St", (cx, cy), xytext=(cx + 200, cy - 330),
+                fontsize=11, fontweight="bold", arrowprops=dict(arrowstyle="-", color="#111"), zorder=6)
 
 ax.set_xlim(jx - args.radius, jx + args.radius); ax.set_ylim(jy - args.radius, jy + args.radius); ax.set_aspect("equal"); ax.axis("off")
-hour = f"{args.hour % 12 or 12}{'am' if args.hour < 12 else 'pm'}"
-ax.set_title(f"Paths taken by drivers who used the closed block, SUMO, weekday {hour} peak hour. Early result.\n"
-             "They enter from eastbound La Trobe St (the right turn from westbound is banned). Traffic fitted to measured SCATS car counts.",
-             fontsize=12, loc="left")
+hour = f"{int(args.hour) % 12 or 12}{':30' if args.hour % 1 else ''}{'am' if args.hour < 12 else 'pm'}"
+if SITE:
+    ax.set_title(f"Paths taken by drivers who used the closed lane, SUMO, one weekday hour from {hour}. Early result.\n"
+                 + ("They reach the closure and follow the signed detour." if args.case == "signed" else "They know of the closure beforehand and pick their own way.")
+                 + " Traffic fitted to measured SCATS car counts.", fontsize=12, loc="left")
+else:
+    ax.set_title(f"Paths taken by drivers who used the closed block, SUMO, weekday {hour} peak hour. Early result.\n"
+                 "They enter from eastbound La Trobe St (the right turn from westbound is banned). Traffic fitted to measured SCATS car counts.",
+                 fontsize=12, loc="left")
 ax.legend(handles=[Line2D([], [], color="#2f6fad", lw=4, label="Their normal routes"),
                    Line2D([], [], color="#c4462b", lw=4, label="Their routes with the closure"),
                    Line2D([], [], color="#111", lw=6, label="Closed block")],
           loc="lower left", frameon=True, fontsize=10)
 ax.text(0.995, 0.005, "Map data © OpenStreetMap contributors", transform=ax.transAxes, ha="right", va="bottom", fontsize=8, color="#555")
 os.makedirs(OUT, exist_ok=True)
-path = os.path.join(OUT, "swanston-closure.png")
+path = os.path.join(OUT, f"closure-{args.case}.png" if SITE else "swanston-closure.png")
 fig.savefig(path, bbox_inches="tight", facecolor="white")
 print(path, os.path.getsize(path) // 1024, "KB")

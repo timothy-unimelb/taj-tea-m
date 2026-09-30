@@ -25,8 +25,8 @@ RULES = json.load(open(os.path.join(HERE, "turn_rules.json")))
 RAW = os.path.join(WORK, "net_raw.net.xml")
 CON = os.path.join(WORK, "turns.con.xml")
 REPORT = os.path.join(WORK, "turn_rules_report.json")
-OSM = os.path.join(HERE, "work", "swanston.osm")
 site_pos = {s["site_no"]: (s["lat"], s["lon"]) for s in scats_sites()}
+RULES["rules"] = [r for r in RULES["rules"] if in_bbox(*site_pos[r["site"]])]  # only the rules inside this study area
 
 
 def osm_way(eid):

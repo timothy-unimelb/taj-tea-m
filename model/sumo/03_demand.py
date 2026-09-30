@@ -37,12 +37,18 @@ def w(name):
 
 
 net = load_net()
+
+
+def route_len_ids(edges):
+    return sum(net.getEdge(e).getLength() for e in edges)
+
+
 closed_ids, junction = find_closed_edges(net)
 print("closed edges:", closed_ids)
 closed = set(closed_ids)
 
 # ---- reachability: which edges are cut off by the closure --------------------------------------
-seed_edge = net.getEdge("279989319")  # La Trobe St, a well connected edge
+seed_edge = connected_edge(net, closed)  # a well connected edge (La Trobe St in the CBD run)
 base_scc = reach(seed_edge) & reach(seed_edge, False)
 clo_fwd = reach(seed_edge, True, closed)
 clo_bwd = reach(seed_edge, False, closed)
@@ -89,11 +95,18 @@ for s in sites:
         continue
     eds = []
     for e in net.getEdges():
-        if not e.allows("passenger") or e.getID() not in in_ids:
+        if SITE or not e.allows("passenger") or e.getID() not in in_ids:
             continue
         (sx, sy), (ex, ey) = e.getShape()[0], e.getShape()[-1]
         if math.hypot(ex - x, ey - y) <= args.max_node_dist and (math.hypot(sx - x, sy - y) > args.max_node_dist or not e.getIncoming()):
             eds.append(e)
+    if SITE:
+        # Other sites (junctions joined, 02_build_net.sh): the car edges into the signalised junction at the site.
+        # The CBD rule above misses a short approach edge that starts inside the radius, such as Grattan St
+        # at Swanston St, cut short by a bus bay.
+        tl = {n for n in net.getNodes() if n.getType() == "traffic_light" and math.hypot(n.getCoord()[0] - x, n.getCoord()[1] - y) <= args.max_node_dist}
+        eds = [e for n in tl for e in n.getIncoming() if e.allows("passenger") and e.getID() in in_ids and e.getFromNode() not in tl]
+        eds = [e for e in eds if not any(o in eds for o in e.getOutgoing())]  # two in a row: keep the one at the stop line
     if not eds:
         skipped.append((s["site_no"], s["name"], f"no car approach within {args.max_node_dist:.0f} m"))
         continue
@@ -182,11 +195,30 @@ if not os.path.exists(w("pool.rou.xml")):
                            "--prefix", "p", "--error-log", w("pool.errors.txt")],
                           stdout=subprocess.DEVNULL)
 
+pool = w("pool.rou.xml")
+if SITE and SITE["closure"].get("through_only"):
+    # The closed block has no driveways, so no trip starts or ends in it. Without this the sampler meets the
+    # block's count with random trips that start inside it, and nothing is left to divert.
+    ends = closed | cutoff_dest | cutoff_orig
+    tree = ET.parse(pool)
+    root = tree.getroot()
+    drop = [v for v in root.findall("vehicle") if {v.find("route").get("edges").split()[0], v.find("route").get("edges").split()[-1]} & ends]
+    for v in drop:
+        root.remove(v)
+    pool = w("pool_through.rou.xml")
+    tree.write(pool)
+    print(f"{len(drop)} candidate routes that start or end inside the closed block left out")
+
 # ---- sample routes to match counts ------------------------------------------------------------
 rs = os.path.join(os.environ["SUMO_HOME"], "tools", "routeSampler.py")
-sampler = subprocess.run([sys.executable, rs, "-r", w("pool.rou.xml"), "-d", w("counts.xml"),
+# The CBD run lets the sampler solve for an exact fit ("--optimize full"). That answer uses about as many distinct
+# routes as there are counted edges, each repeated hundreds of times, so every driver through a closed block
+# goes to the same one or two places. Other sites keep the sampler's own random pick: thousands of distinct
+# routes, still within GEH 5 on the counted edges.
+fit = [] if SITE else ["--optimize", "full"]
+sampler = subprocess.run([sys.executable, rs, "-r", pool, "-d", w("counts.xml"),
                        "--edgedata-attribute", "entered", "-o", w("sampled.rou.xml"), "--prefix", "v",
-                       "--optimize", "full", "--weighted", "-s", str(args.seed), "--min-count", "1",
+                       *fit, "--weighted", "-s", str(args.seed), "--min-count", "1",
                        "--mismatch-output", w("mismatch.xml"), "--geh-ok", "5",
                        "-a", 'departLane="best" departSpeed="max"',
                        "-b", "0", "-e", str((SIM_END_H - SIM_START_H) * 3600)], capture_output=True, text=True, check=True)
@@ -274,6 +306,52 @@ for name, mapping in (("base", None), ("closure", rer)):
                           departPos="random_free")
         ET.SubElement(v, "route", edges=" ".join(e2))
     ET.ElementTree(r).write(w(name + ".rou.xml"))
+
+if SITE:
+    # A second closure demand, signed.rou.xml: drivers who only learn of the closure when they reach it.
+    # closure.rou.xml re-routes each affected trip from its start, as if every driver knew beforehand and picked
+    # the best way. Here each one drives the normal route up to the closed block, then goes round and rejoins that
+    # route straight after the block, as the detour signs ask. Only where that is over 100 m longer than rejoining
+    # further on (a driver who was going to turn off anyway) does the trip take the shorter way. A trip that
+    # would be trapped (its last street before the block has no other way out) keeps the re-route from its start.
+    ncl = sumolib.net.readNet(closed_net)
+    way_round = {}
+
+    def round_to(a, b):
+        if (a, b) not in way_round:
+            path, cost = ncl.getShortestPath(ncl.getEdge(a), ncl.getEdge(b), vClass="passenger")
+            way_round[(a, b)] = ([e.getID() for e in path], cost) if path else (None, 1e9)
+        return way_round[(a, b)]
+
+    signed, trapped = {}, 0
+    for vid in using:
+        if vid not in rer:
+            continue
+        edges = kept_by_id[vid][1]
+        idx = [i for i, e in enumerate(edges) if e in closed]
+        i, j = idx[0], idx[-1]
+        best = first = None
+        for k in range(j + 1, len(edges)):
+            path, cost = round_to(edges[i - 1], edges[k]) if i > 0 else (None, 1e9)
+            if path:
+                option = (cost + route_len_ids(edges[k + 1:]), edges[:i - 1] + path + edges[k + 1:])
+                first = option if k == j + 1 else first
+                best = option if best is None or option[0] < best[0] else best
+        if first and first[0] <= best[0] + 100:
+            best = first
+        if best is None:
+            trapped += 1
+            signed[vid] = rer[vid]
+        else:
+            signed[vid] = best[1]
+    r = ET.Element("routes")
+    ET.SubElement(r, "vType", id="car", vClass="passenger", length="4.8", minGap="2.0", accel="2.6", decel="4.5",
+                  sigma="0.5", tau="1.0", speedFactor="normc(1,0.1,0.8,1.2)")
+    for dep, vid, edges in kept2:
+        v = ET.SubElement(r, "vehicle", id=vid, type="car", depart=f"{dep:.1f}", departLane="best", departSpeed="max", departPos="random_free")
+        ET.SubElement(v, "route", edges=" ".join(signed.get(vid, edges)))
+    ET.ElementTree(r).write(w("signed.rou.xml"))
+    print(f"signed.rou.xml: {len(signed) - trapped} trips go round from the closure, {trapped} trapped trips re-routed from their start")
 
 # static detour length (shortest path on closed net vs original route) for affected trips
 def route_len(edges):

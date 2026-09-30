@@ -54,6 +54,73 @@ python3 05_to_impact_json.py --hours $(seq 7 21) --seeds 1 2 3 4 5 --allowed-sum
 
 `04_run.py --scale 0.5` inserts half the traffic. `03_demand.py --site-totals` goes back to whole-site totals everywhere. `work/` holds everything generated and is not committed.
 
+## Second site: the test TGS (Swanston St, Faraday St to Grattan St)
+
+Added 30 Sep, 7pm. The same scripts run another site when `SUMO_SITE` names a file in `sites/`. `sites/smac.json` is the test TGS in `data/test/`: Swanston St southbound closed between Faraday St and Grattan St, Carlton, Monday to Friday 9:30am to 3:30pm, detour via Faraday St, Cardigan St and Grattan St. Everything is built in `work/smac/` and written to `output/smac/`. The CBD run above is unchanged.
+
+```bash
+export SUMO_SITE=smac
+source env.sh
+bash 01_fetch_osm.sh          # OpenStreetMap for the area in the site file (20 MB)
+bash 02_build_net.sh          # car streets only, junctions joined (see below)
+python3 00_detector_counts.py # reuses the month of SCATS counts in work/
+python3 capped.py -- python3 03_demand.py   # about 2 minutes
+for hour in 9.5 10.5 11.5 12.5 13.5 14.5; do for seed in 1 2 3 4 5; do   # 9.5 is 9:30am to 10:30am
+  python3 04_run.py base --hour $hour --seed $seed
+  python3 04_run.py signed --hour $hour --seed $seed    # drivers go round from the closure, following the signs
+  python3 04_run.py closure --hour $hour --seed $seed   # drivers know beforehand and pick their own way
+done; done
+python3 10_site_report.py --seeds 1 2 3 4 5
+python3 06_plot.py --hour 9.5 --case signed --seeds 1 2 3 4 5 --radius 520
+```
+
+A run takes about 6 seconds and 0.1 GB. All 90 take about 3 minutes with `xargs -P 4`.
+
+**What comes out** (`output/smac/`):
+
+- `impact.json`: the app's ImpactResult. Not yet registered in the app. To show it, copy it to `data/impact/` and add an entry in `lib/impact/models/precomputed.ts`.
+- `facts.json`: every measured number with its unit, in plain words, for a report writer (Claude) to turn into report points. No judgements in it.
+- `runs.json`: the raw numbers per run. `closure-signed.png` and `closure-closure.png`: where the diverted drivers go in each case.
+
+**Result, weekday 9:30am to 3:30pm, 5 seeds:**
+
+| | Drivers follow the signs (main case) | Drivers know beforehand |
+|---|---|---|
+| Drivers who must leave Swanston St | 880 to 892. The lane's own counter measures 888 | same |
+| Where they go | Faraday St eastbound 41 to 160 cars an hour, Cardigan St southbound 187 to 310, Grattan St westbound 301 to 429 | Most turn off a block early at Elgin St, then Cardigan St all the way to Queensberry St. About 270 use Dorrit St, a back street |
+| Fullest street in its busiest hour | Grattan St westbound, Cardigan St to Swanston St: about 450 cars on its one-lane part, 65% of a lane's planning capacity (700 an hour) | Cardigan St southbound at Queensberry St: 57% |
+| Extra distance per diverted trip | median 266 m | median 43 m |
+| Extra time per diverted trip | mean 22 s, median 15 s. 5.4 vehicle-hours in all (4.2 to 6.0); two normal runs differ by 1.1 | mean 14 s. 3.1 vehicle-hours (2.1 to 5.2) |
+| Delay to all traffic in the area | 16 vehicle-hours (2 to 18); two normal runs differ by up to 11, so only just measurable | within noise |
+| Longest queue | Cardigan St southbound into Grattan St: 19 m normally, 38 m typical and 71 m at worst with the closure. The block is 221 m long | 32 m typical, 60 m worst |
+
+- **The closed lane has its own counter.** SCATS site 4392 (Swanston St / Faraday St) also runs the pedestrian crossing at the Melbourne University tram stop, inside the block. Its detector 5 counts southbound cars there: about 2,300 a weekday, 888 over the works hours. So the number of diverted drivers is measured. At the CBD site it had to be inferred.
+- **Faraday St westbound becomes a dead end.** At Swanston St it may only turn left, into the closed lane (signal sheet: signal group 5 is a left turn only). About 60 cars an hour arrive there in the works hours (detector 7). The test TGS has no sign for them.
+- **Bus 546 drives the closed lane.** Its OpenStreetMap route (Heidelberg to Melbourne University) uses the block southbound. Buses 402 and 241 run on the Grattan St leg of the detour. Found from route data, not simulated.
+
+**What had to change for a second site**, all only when `SUMO_SITE` is set:
+
+- `sites/<name>.json` gives the area, the closure (street, direction, from and to), the signed detour and the works hours. `find_closed_edges` finds the closed edges from it.
+- Junctions. Straight from OpenStreetMap, netconvert refuses to join a junction with a tram or bus stop inside it, which left Grattan St / Swanston St as 23 nodes and short edges. The build now goes OpenStreetMap to plain network files to network, which joins them, and joins by name a junction it refuses for parallel carriageways (Grattan St / Lygon St).
+- Car streets only. With the tram tracks in the network the Elgin St and Lygon St junctions jammed from 2:30pm (8% of cars dropped). Without them 0.3%.
+- Counting approaches are the car edges into the signalised junction at the site. The CBD rule missed short approach edges.
+- The route sampler keeps its random pick instead of solving for an exact fit. The exact fit used 44 distinct routes for the whole area, each repeated hundreds of times.
+- No trip starts or ends inside the closed block (it has no driveways).
+- A second closure case, `signed`: each driver drives the normal route to the closure, goes round and rejoins straight after the block.
+- Hours can start on the half hour (`--hour 9.5`).
+
+**Counts.** Seven junctions have their detectors read from DTP signal sheets (`detector_approaches.json`, sites 4391 to 4425): Swanston St at Grattan St, Faraday St and Elgin St, Grattan St at Cardigan St, Bouverie St and Lygon St, and Lygon St at Faraday St. Six more use whole-site totals. The Grattan St / Swanston St sheet is from 2014 and the junction has been rebuilt since: its Swanston St detectors no longer match the counts, so the southbound approach uses the tram stop crossing's detector and the northbound approach is left open.
+
+**Calibration.** 90% of counted street-hours within GEH 5 (99.7% within GEH 10), mean speed 20 km/h, at most 0.3% of cars dropped, at most 28 teleports in a run. That meets all three of the CBD run's targets.
+
+**Limits.**
+
+- Signals are SUMO's own, not the real SCATS plans, so delay and queue are indicative.
+- Cars only. No trams, buses, trucks, bikes or pedestrians. The tram terminus sits in the middle of the block.
+- The plan's note "no right turn from Grattan St into Swanston St north" is not modelled.
+- Capacity is one planning number for every lane (700 cars an hour). It ignores the Faraday St / Cardigan St roundabout.
+- Real drivers will be a mix of the two cases.
+
 ## Turn rules
 
 Which turns cars may make, and from which lane, decides who can use the closed block at all. Every turn into or out of it now has a source (`07_turn_rules.py check` prints the table, saved in `work/turn_rules_report.json`):

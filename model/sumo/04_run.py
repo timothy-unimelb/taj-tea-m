@@ -25,9 +25,11 @@ import argparse, math, os, signal, subprocess, sys, time
 from common import *
 
 ap = argparse.ArgumentParser()
-ap.add_argument("scenario", choices=["base", "closure"])
+ap.add_argument("scenario", choices=["base", "closure", "signed"],
+                help="base: the normal street. closure: closed, drivers re-route from the start of their trip. "
+                     "signed: closed, drivers go round from the closure itself (other sites only, see 03_demand.py)")
 ap.add_argument("--seed", type=int, default=1)
-ap.add_argument("--hour", type=int, default=8, help="clock hour to report, e.g. 8 for 8am to 9am")
+ap.add_argument("--hour", type=float, default=8, help="clock hour to report, e.g. 8 for 8am to 9am, 9.5 for 9:30am to 10:30am")
 ap.add_argument("--scale", type=float, default=1.0, help="share of the sampled demand to insert")
 ap.add_argument("--teleport", type=int, default=300, help="seconds stuck before a vehicle is teleported")
 ap.add_argument("--max-mem-gb", type=float, default=3.0)
@@ -39,7 +41,7 @@ ap.add_argument("--fcd", type=float, default=0, help="save car positions every s
 ap.add_argument("--fcd-radius", type=float, default=320.0)
 args = ap.parse_args()
 
-tag = f"{args.scenario}_h{args.hour}_x{args.scale:g}_s{args.seed}" + ("_gui" if args.gui else "")
+tag = f"{args.scenario}_h{args.hour:g}_x{args.scale:g}_s{args.seed}" + ("_gui" if args.gui else "")
 run = os.path.join(WORK, "runs", tag)
 os.makedirs(run, exist_ok=True)
 netfile = NET if args.scenario == "base" else os.path.join(WORK, "net_closed.net.xml")
@@ -50,7 +52,7 @@ closed_ids, junction = find_closed_edges(net)
 jx, jy = junction.getCoord()
 
 # Simulation time 0 is 6am (see 03_demand.py).
-t0 = (args.hour - SIM_START_H) * 3600
+t0 = round((args.hour - SIM_START_H) * 3600)
 begin, report_end, end = t0 - 1800, t0 + 3600, t0 + 3600 + 1800
 
 # ---- additional file: edge data for the hour + jam detectors near the closed block --------------

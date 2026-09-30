@@ -1,0 +1,77 @@
+{
+  "model": "sumo",
+  "method": "SUMO traffic simulation",
+  "label": "Early result",
+  "provenance": "precomputed",
+  "confidence": "medium",
+  "confidence_note": "A detector counts the closed lane itself, so the number of diverted drivers is measured, not inferred. Where they go and the delay come from simulated routes and SUMO's own signal timings, which reproduce the counts on 90% of counted street-hours.",
+  "period": "Monday to Friday 9:30am to 3:30pm",
+  "recommended_window": null,
+  "modes": {
+    "cars": {
+      "status": "modelled",
+      "delay": {
+        "low": 2,
+        "typical": 16,
+        "high": 18,
+        "unit": "vehicle-hours"
+      },
+      "max_queue": {
+        "low": 33,
+        "typical": 38,
+        "high": 71,
+        "unit": "m"
+      },
+      "forced_diversions": {
+        "low": 880,
+        "typical": 891,
+        "high": 892,
+        "unit": "vehicles"
+      },
+      "detour": {
+        "low": 94,
+        "typical": 266,
+        "high": 291,
+        "unit": "m"
+      },
+      "other": [
+        {
+          "label": "Extra time per diverted trip (middle half of trips)",
+          "range": {
+            "low": -8,
+            "typical": 15,
+            "high": 38,
+            "unit": "seconds"
+          }
+        }
+      ],
+      "summary": "About 891 southbound drivers over the works hours must leave Swanston Street at Faraday Street. The counter on that lane measures 888. Following the signs they load Grattan Street westbound, Cardigan Street southbound and Faraday Street eastbound, and the fullest, Grattan Street westbound, reaches 65% of a lane's capacity in its busiest hour. A diverted trip takes about 22 seconds longer on average (middle half of trips: -8 to 38 seconds), 5 vehicle-hours in all over the works hours. Across all traffic in the area the delay is about 16 vehicle-hours."
+    },
+    "public_transport": {
+      "status": "not modelled",
+      "summary": "Tram and bus services were not simulated."
+    },
+    "pedestrians": {
+      "status": "not modelled",
+      "summary": "Pedestrians were not simulated."
+    },
+    "trucks": {
+      "status": "not modelled",
+      "summary": "All vehicles are simulated as cars. Trucks are not modelled on their own."
+    }
+  },
+  "assumptions": [
+    "Every hour of the works (9:30am to 3:30pm on a weekday) simulated separately after a 30 minute warm-up, 5 random seeds each, and added up.",
+    "Closure: the car lane of Swanston Street southbound between Faraday Street and Grattan Street (232 m). The other direction, bikes and footpaths stay open. The plan's note banning a right turn from Grattan St into Swanston St northbound is not modelled.",
+    "Diverted drivers: cars entering the closed lane in the normal runs, 880 to 892 over the works hours. SCATS detector 5 of site 4392 counts that lane at the Melbourne University tram stop: 888 cars over the same hours (August 2026 weekday medians).",
+    "Main case: drivers drive their normal route to the closure, go round by the signed detour (Faraday Street, Cardigan Street and Grattan Street) and rejoin their route after the block. If instead every driver knows beforehand and picks their own way, most leave Swanston Street a block early and the load moves to Cardigan Street southbound and Queensberry Street westbound.",
+    "Traffic fitted to car counts per approach from SCATS stop-line detectors at 7 junctions around the site (detector roles from DTP signal sheets, some from 2008 and 2014), and to whole-site totals at 6 others, using SUMO routeSampler.",
+    "Calibration: in the normal runs the simulated traffic matches the counts within GEH 5 on 90% of counted street-hours. Mean speed 20 km/h. At most 0.3% of cars could not enter within 5 minutes and were dropped.",
+    "Street network from OpenStreetMap (© OpenStreetMap contributors), car streets only, left-hand traffic, turn restrictions and lane arrows from OpenStreetMap. Signals are SUMO's delay-based actuated control, not the real SCATS plans.",
+    "Delay is the extra travel time of the same trips with and without the closure. For all traffic, two normal runs differ by up to 11 vehicle-hours over the works hours on their own, so a smaller effect would be reported as noise. For the diverted trips alone the floor is 1.1 vehicle-hours.",
+    "Street capacity is a planning value: 700 cars an hour per lane through signals.",
+    "Queue: the longest jam in an hour on Cardigan Street southbound, Faraday Street to Grattan Street, the longest of the queues on the approach and signed detour that grow by more than two normal runs differ.",
+    "Cars only. No trams, buses, trucks, cyclists or pedestrians were simulated."
+  ],
+  "generated_at": "2026-09-30T09:25:18+00:00"
+}

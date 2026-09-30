@@ -1,0 +1,3153 @@
+{
+ "hours": [
+  9.5,
+  10.5,
+  11.5,
+  12.5,
+  13.5,
+  14.5
+ ],
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "per_run": [
+  {
+   "case": "signed",
+   "hour": 9.5,
+   "seed": 1,
+   "trips": 5221,
+   "matched": 5215,
+   "block_users": 151,
+   "delay_all_veh_h": -5.55,
+   "delay_users_veh_h": 0.66,
+   "dropped": 0.0008,
+   "teleports": 15
+  },
+  {
+   "case": "signed",
+   "hour": 9.5,
+   "seed": 2,
+   "trips": 5220,
+   "matched": 5204,
+   "block_users": 152,
+   "delay_all_veh_h": 4.64,
+   "delay_users_veh_h": 0.7,
+   "dropped": 0.0016,
+   "teleports": 21
+  },
+  {
+   "case": "signed",
+   "hour": 9.5,
+   "seed": 3,
+   "trips": 5215,
+   "matched": 5210,
+   "block_users": 151,
+   "delay_all_veh_h": 5.32,
+   "delay_users_veh_h": 0.61,
+   "dropped": 0.0006,
+   "teleports": 16
+  },
+  {
+   "case": "signed",
+   "hour": 9.5,
+   "seed": 4,
+   "trips": 5214,
+   "matched": 5204,
+   "block_users": 153,
+   "delay_all_veh_h": -6.57,
+   "delay_users_veh_h": 1.39,
+   "dropped": 0.0004,
+   "teleports": 14
+  },
+  {
+   "case": "signed",
+   "hour": 9.5,
+   "seed": 5,
+   "trips": 5224,
+   "matched": 5218,
+   "block_users": 151,
+   "delay_all_veh_h": 3.85,
+   "delay_users_veh_h": 0.27,
+   "dropped": 0.0008,
+   "teleports": 16
+  },
+  {
+   "case": "signed",
+   "hour": 10.5,
+   "seed": 1,
+   "trips": 5066,
+   "matched": 5060,
+   "block_users": 151,
+   "delay_all_veh_h": -0.34,
+   "delay_users_veh_h": 0.82,
+   "dropped": 0.0008,
+   "teleports": 11
+  },
+  {
+   "case": "signed",
+   "hour": 10.5,
+   "seed": 2,
+   "trips": 5059,
+   "matched": 5053,
+   "block_users": 151,
+   "delay_all_veh_h": -0.92,
+   "delay_users_veh_h": 1.48,
+   "dropped": 0.0006,
+   "teleports": 11
+  },
+  {
+   "case": "signed",
+   "hour": 10.5,
+   "seed": 3,
+   "trips": 5057,
+   "matched": 5051,
+   "block_users": 152,
+   "delay_all_veh_h": 1.16,
+   "delay_users_veh_h": 1.09,
+   "dropped": 0.0007,
+   "teleports": 10
+  },
+  {
+   "case": "signed",
+   "hour": 10.5,
+   "seed": 4,
+   "trips": 5073,
+   "matched": 5058,
+   "block_users": 151,
+   "delay_all_veh_h": 4.95,
+   "delay_users_veh_h": 1.56,
+   "dropped": 0.0013,
+   "teleports": 7
+  },
+  {
+   "case": "signed",
+   "hour": 10.5,
+   "seed": 5,
+   "trips": 5068,
+   "matched": 5051,
+   "block_users": 151,
+   "delay_all_veh_h": -0.23,
+   "delay_users_veh_h": 1.05,
+   "dropped": 0.001,
+   "teleports": 8
+  },
+  {
+   "case": "signed",
+   "hour": 11.5,
+   "seed": 1,
+   "trips": 5043,
+   "matched": 5035,
+   "block_users": 163,
+   "delay_all_veh_h": -9.52,
+   "delay_users_veh_h": 1.47,
+   "dropped": 0.0004,
+   "teleports": 19
+  },
+  {
+   "case": "signed",
+   "hour": 11.5,
+   "seed": 2,
+   "trips": 5033,
+   "matched": 5021,
+   "block_users": 165,
+   "delay_all_veh_h": 7.62,
+   "delay_users_veh_h": 1.02,
+   "dropped": 0.0011,
+   "teleports": 7
+  },
+  {
+   "case": "signed",
+   "hour": 11.5,
+   "seed": 3,
+   "trips": 5041,
+   "matched": 5032,
+   "block_users": 162,
+   "delay_all_veh_h": 7.02,
+   "delay_users_veh_h": 1.09,
+   "dropped": 0.001,
+   "teleports": 5
+  },
+  {
+   "case": "signed",
+   "hour": 11.5,
+   "seed": 4,
+   "trips": 5036,
+   "matched": 5024,
+   "block_users": 164,
+   "delay_all_veh_h": 2.44,
+   "delay_users_veh_h": 0.82,
+   "dropped": 0.0014,
+   "teleports": 16
+  },
+  {
+   "case": "signed",
+   "hour": 11.5,
+   "seed": 5,
+   "trips": 5039,
+   "matched": 5033,
+   "block_users": 163,
+   "delay_all_veh_h": 4.23,
+   "delay_users_veh_h": 0.61,
+   "dropped": 0.0013,
+   "teleports": 15
+  },
+  {
+   "case": "signed",
+   "hour": 12.5,
+   "seed": 1,
+   "trips": 5270,
+   "matched": 5257,
+   "block_users": 142,
+   "delay_all_veh_h": 9.36,
+   "delay_users_veh_h": 0.89,
+   "dropped": 0.0009,
+   "teleports": 12
+  },
+  {
+   "case": "signed",
+   "hour": 12.5,
+   "seed": 2,
+   "trips": 5278,
+   "matched": 5265,
+   "block_users": 144,
+   "delay_all_veh_h": 3.02,
+   "delay_users_veh_h": 0.59,
+   "dropped": 0.0012,
+   "teleports": 18
+  },
+  {
+   "case": "signed",
+   "hour": 12.5,
+   "seed": 3,
+   "trips": 5276,
+   "matched": 5258,
+   "block_users": 145,
+   "delay_all_veh_h": -4.39,
+   "delay_users_veh_h": 1.04,
+   "dropped": 0.0013,
+   "teleports": 12
+  },
+  {
+   "case": "signed",
+   "hour": 12.5,
+   "seed": 4,
+   "trips": 5277,
+   "matched": 5266,
+   "block_users": 146,
+   "delay_all_veh_h": 4.51,
+   "delay_users_veh_h": 0.89,
+   "dropped": 0.001,
+   "teleports": 8
+  },
+  {
+   "case": "signed",
+   "hour": 12.5,
+   "seed": 5,
+   "trips": 5272,
+   "matched": 5259,
+   "block_users": 143,
+   "delay_all_veh_h": 2.96,
+   "delay_users_veh_h": 0.74,
+   "dropped": 0.0016,
+   "teleports": 11
+  },
+  {
+   "case": "signed",
+   "hour": 13.5,
+   "seed": 1,
+   "trips": 5363,
+   "matched": 5347,
+   "block_users": 134,
+   "delay_all_veh_h": 2.22,
+   "delay_users_veh_h": 0.3,
+   "dropped": 0.0011,
+   "teleports": 16
+  },
+  {
+   "case": "signed",
+   "hour": 13.5,
+   "seed": 2,
+   "trips": 5358,
+   "matched": 5350,
+   "block_users": 134,
+   "delay_all_veh_h": -5.28,
+   "delay_users_veh_h": 0.42,
+   "dropped": 0.001,
+   "teleports": 15
+  },
+  {
+   "case": "signed",
+   "hour": 13.5,
+   "seed": 3,
+   "trips": 5361,
+   "matched": 5346,
+   "block_users": 134,
+   "delay_all_veh_h": -5.74,
+   "delay_users_veh_h": 0.53,
+   "dropped": 0.0022,
+   "teleports": 21
+  },
+  {
+   "case": "signed",
+   "hour": 13.5,
+   "seed": 4,
+   "trips": 5371,
+   "matched": 5353,
+   "block_users": 134,
+   "delay_all_veh_h": 1.01,
+   "delay_users_veh_h": 0.44,
+   "dropped": 0.0012,
+   "teleports": 21
+  },
+  {
+   "case": "signed",
+   "hour": 13.5,
+   "seed": 5,
+   "trips": 5363,
+   "matched": 5337,
+   "block_users": 134,
+   "delay_all_veh_h": -1.28,
+   "delay_users_veh_h": 0.55,
+   "dropped": 0.0021,
+   "teleports": 10
+  },
+  {
+   "case": "signed",
+   "hour": 14.5,
+   "seed": 1,
+   "trips": 5877,
+   "matched": 5851,
+   "block_users": 141,
+   "delay_all_veh_h": 21.95,
+   "delay_users_veh_h": 1.9,
+   "dropped": 0.0017,
+   "teleports": 25
+  },
+  {
+   "case": "signed",
+   "hour": 14.5,
+   "seed": 2,
+   "trips": 5873,
+   "matched": 5849,
+   "block_users": 141,
+   "delay_all_veh_h": 6.83,
+   "delay_users_veh_h": 0.78,
+   "dropped": 0.002,
+   "teleports": 12
+  },
+  {
+   "case": "signed",
+   "hour": 14.5,
+   "seed": 3,
+   "trips": 5866,
+   "matched": 5847,
+   "block_users": 140,
+   "delay_all_veh_h": 6.38,
+   "delay_users_veh_h": 1.03,
+   "dropped": 0.0017,
+   "teleports": 15
+  },
+  {
+   "case": "signed",
+   "hour": 14.5,
+   "seed": 4,
+   "trips": 5883,
+   "matched": 5847,
+   "block_users": 139,
+   "delay_all_veh_h": -4.84,
+   "delay_users_veh_h": 0.83,
+   "dropped": 0.0023,
+   "teleports": 16
+  },
+  {
+   "case": "signed",
+   "hour": 14.5,
+   "seed": 5,
+   "trips": 5872,
+   "matched": 5851,
+   "block_users": 139,
+   "delay_all_veh_h": 6.89,
+   "delay_users_veh_h": 0.99,
+   "dropped": 0.0018,
+   "teleports": 20
+  },
+  {
+   "case": "closure",
+   "hour": 9.5,
+   "seed": 1,
+   "trips": 5221,
+   "matched": 5217,
+   "block_users": 151,
+   "delay_all_veh_h": -5.01,
+   "delay_users_veh_h": 0.08,
+   "dropped": 0.0002,
+   "teleports": 14
+  },
+  {
+   "case": "closure",
+   "hour": 9.5,
+   "seed": 2,
+   "trips": 5220,
+   "matched": 5212,
+   "block_users": 152,
+   "delay_all_veh_h": 2.51,
+   "delay_users_veh_h": 0.19,
+   "dropped": 0.0005,
+   "teleports": 16
+  },
+  {
+   "case": "closure",
+   "hour": 9.5,
+   "seed": 3,
+   "trips": 5215,
+   "matched": 5213,
+   "block_users": 151,
+   "delay_all_veh_h": 3.83,
+   "delay_users_veh_h": 0.04,
+   "dropped": 0.0005,
+   "teleports": 28
+  },
+  {
+   "case": "closure",
+   "hour": 9.5,
+   "seed": 4,
+   "trips": 5214,
+   "matched": 5213,
+   "block_users": 153,
+   "delay_all_veh_h": -7.12,
+   "delay_users_veh_h": 0.92,
+   "dropped": 0.0004,
+   "teleports": 15
+  },
+  {
+   "case": "closure",
+   "hour": 9.5,
+   "seed": 5,
+   "trips": 5224,
+   "matched": 5218,
+   "block_users": 151,
+   "delay_all_veh_h": 7.51,
+   "delay_users_veh_h": -0.32,
+   "dropped": 0.0007,
+   "teleports": 12
+  },
+  {
+   "case": "closure",
+   "hour": 10.5,
+   "seed": 1,
+   "trips": 5066,
+   "matched": 5057,
+   "block_users": 151,
+   "delay_all_veh_h": -7.37,
+   "delay_users_veh_h": 1.05,
+   "dropped": 0.0006,
+   "teleports": 7
+  },
+  {
+   "case": "closure",
+   "hour": 10.5,
+   "seed": 2,
+   "trips": 5059,
+   "matched": 5051,
+   "block_users": 151,
+   "delay_all_veh_h": 0.41,
+   "delay_users_veh_h": 1.08,
+   "dropped": 0.0008,
+   "teleports": 4
+  },
+  {
+   "case": "closure",
+   "hour": 10.5,
+   "seed": 3,
+   "trips": 5057,
+   "matched": 5049,
+   "block_users": 152,
+   "delay_all_veh_h": -1.69,
+   "delay_users_veh_h": 0.77,
+   "dropped": 0.0009,
+   "teleports": 10
+  },
+  {
+   "case": "closure",
+   "hour": 10.5,
+   "seed": 4,
+   "trips": 5073,
+   "matched": 5059,
+   "block_users": 151,
+   "delay_all_veh_h": 5.48,
+   "delay_users_veh_h": 1.33,
+   "dropped": 0.0005,
+   "teleports": 6
+  },
+  {
+   "case": "closure",
+   "hour": 10.5,
+   "seed": 5,
+   "trips": 5068,
+   "matched": 5057,
+   "block_users": 151,
+   "delay_all_veh_h": 5.62,
+   "delay_users_veh_h": 1.73,
+   "dropped": 0.0012,
+   "teleports": 5
+  },
+  {
+   "case": "closure",
+   "hour": 11.5,
+   "seed": 1,
+   "trips": 5043,
+   "matched": 5024,
+   "block_users": 163,
+   "delay_all_veh_h": -5.1,
+   "delay_users_veh_h": 0.24,
+   "dropped": 0.001,
+   "teleports": 19
+  },
+  {
+   "case": "closure",
+   "hour": 11.5,
+   "seed": 2,
+   "trips": 5033,
+   "matched": 5019,
+   "block_users": 165,
+   "delay_all_veh_h": 3.25,
+   "delay_users_veh_h": 0.25,
+   "dropped": 0.0012,
+   "teleports": 13
+  },
+  {
+   "case": "closure",
+   "hour": 11.5,
+   "seed": 3,
+   "trips": 5041,
+   "matched": 5028,
+   "block_users": 162,
+   "delay_all_veh_h": 4.72,
+   "delay_users_veh_h": 0.32,
+   "dropped": 0.0011,
+   "teleports": 7
+  },
+  {
+   "case": "closure",
+   "hour": 11.5,
+   "seed": 4,
+   "trips": 5036,
+   "matched": 5019,
+   "block_users": 164,
+   "delay_all_veh_h": 7.57,
+   "delay_users_veh_h": 1.76,
+   "dropped": 0.0016,
+   "teleports": 14
+  },
+  {
+   "case": "closure",
+   "hour": 11.5,
+   "seed": 5,
+   "trips": 5039,
+   "matched": 5027,
+   "block_users": 163,
+   "delay_all_veh_h": 4.32,
+   "delay_users_veh_h": 1.22,
+   "dropped": 0.0012,
+   "teleports": 16
+  },
+  {
+   "case": "closure",
+   "hour": 12.5,
+   "seed": 1,
+   "trips": 5270,
+   "matched": 5252,
+   "block_users": 142,
+   "delay_all_veh_h": 3.46,
+   "delay_users_veh_h": 0.37,
+   "dropped": 0.0015,
+   "teleports": 16
+  },
+  {
+   "case": "closure",
+   "hour": 12.5,
+   "seed": 2,
+   "trips": 5278,
+   "matched": 5259,
+   "block_users": 144,
+   "delay_all_veh_h": 2.21,
+   "delay_users_veh_h": 0.23,
+   "dropped": 0.0013,
+   "teleports": 14
+  },
+  {
+   "case": "closure",
+   "hour": 12.5,
+   "seed": 3,
+   "trips": 5276,
+   "matched": 5259,
+   "block_users": 145,
+   "delay_all_veh_h": 3.0,
+   "delay_users_veh_h": 1.16,
+   "dropped": 0.001,
+   "teleports": 16
+  },
+  {
+   "case": "closure",
+   "hour": 12.5,
+   "seed": 4,
+   "trips": 5277,
+   "matched": 5267,
+   "block_users": 146,
+   "delay_all_veh_h": 0.38,
+   "delay_users_veh_h": 0.38,
+   "dropped": 0.0007,
+   "teleports": 9
+  },
+  {
+   "case": "closure",
+   "hour": 12.5,
+   "seed": 5,
+   "trips": 5272,
+   "matched": 5259,
+   "block_users": 143,
+   "delay_all_veh_h": 7.26,
+   "delay_users_veh_h": 0.37,
+   "dropped": 0.0008,
+   "teleports": 16
+  },
+  {
+   "case": "closure",
+   "hour": 13.5,
+   "seed": 1,
+   "trips": 5363,
+   "matched": 5352,
+   "block_users": 134,
+   "delay_all_veh_h": -7.12,
+   "delay_users_veh_h": 0.14,
+   "dropped": 0.0015,
+   "teleports": 16
+  },
+  {
+   "case": "closure",
+   "hour": 13.5,
+   "seed": 2,
+   "trips": 5358,
+   "matched": 5343,
+   "block_users": 134,
+   "delay_all_veh_h": 4.54,
+   "delay_users_veh_h": 0.42,
+   "dropped": 0.0012,
+   "teleports": 20
+  },
+  {
+   "case": "closure",
+   "hour": 13.5,
+   "seed": 3,
+   "trips": 5361,
+   "matched": 5351,
+   "block_users": 134,
+   "delay_all_veh_h": -12.56,
+   "delay_users_veh_h": 0.18,
+   "dropped": 0.001,
+   "teleports": 15
+  },
+  {
+   "case": "closure",
+   "hour": 13.5,
+   "seed": 4,
+   "trips": 5371,
+   "matched": 5353,
+   "block_users": 134,
+   "delay_all_veh_h": 0.44,
+   "delay_users_veh_h": 0.25,
+   "dropped": 0.0011,
+   "teleports": 8
+  },
+  {
+   "case": "closure",
+   "hour": 13.5,
+   "seed": 5,
+   "trips": 5363,
+   "matched": 5351,
+   "block_users": 134,
+   "delay_all_veh_h": 2.49,
+   "delay_users_veh_h": 0.34,
+   "dropped": 0.0009,
+   "teleports": 14
+  },
+  {
+   "case": "closure",
+   "hour": 14.5,
+   "seed": 1,
+   "trips": 5877,
+   "matched": 5853,
+   "block_users": 141,
+   "delay_all_veh_h": -2.82,
+   "delay_users_veh_h": 0.2,
+   "dropped": 0.003,
+   "teleports": 17
+  },
+  {
+   "case": "closure",
+   "hour": 14.5,
+   "seed": 2,
+   "trips": 5873,
+   "matched": 5857,
+   "block_users": 141,
+   "delay_all_veh_h": 12.77,
+   "delay_users_veh_h": 0.33,
+   "dropped": 0.0013,
+   "teleports": 15
+  },
+  {
+   "case": "closure",
+   "hour": 14.5,
+   "seed": 3,
+   "trips": 5866,
+   "matched": 5847,
+   "block_users": 140,
+   "delay_all_veh_h": 9.74,
+   "delay_users_veh_h": 0.61,
+   "dropped": 0.0017,
+   "teleports": 17
+  },
+  {
+   "case": "closure",
+   "hour": 14.5,
+   "seed": 4,
+   "trips": 5883,
+   "matched": 5867,
+   "block_users": 139,
+   "delay_all_veh_h": -1.56,
+   "delay_users_veh_h": 0.56,
+   "dropped": 0.0013,
+   "teleports": 24
+  },
+  {
+   "case": "closure",
+   "hour": 14.5,
+   "seed": 5,
+   "trips": 5872,
+   "matched": 5866,
+   "block_users": 139,
+   "delay_all_veh_h": 3.97,
+   "delay_users_veh_h": 0.41,
+   "dropped": 0.0012,
+   "teleports": 10
+  }
+ ],
+ "delay_noise_pairs_all_traffic": [
+  -11.0,
+  -10.2,
+  -3.4,
+  -7.1
+ ],
+ "delay_noise_pairs_diverted_trips": [
+  -0.1,
+  0.3,
+  -0.4,
+  1.1
+ ],
+ "calibration_rows": [
+  {
+   "hour": 9.5,
+   "edge": "-1275894690",
+   "street": "Grattan Street westbound",
+   "count": 249,
+   "simulated": 222,
+   "geh": 1.8
+  },
+  {
+   "hour": 9.5,
+   "edge": "-1314096855",
+   "street": "Grattan Street westbound",
+   "count": 214,
+   "simulated": 194,
+   "geh": 1.4
+  },
+  {
+   "hour": 9.5,
+   "edge": "1122191945",
+   "street": "Faraday Street westbound",
+   "count": 52,
+   "simulated": 28,
+   "geh": 3.8
+  },
+  {
+   "hour": 9.5,
+   "edge": "1123830489#1",
+   "street": "Drummond Street southbound",
+   "count": 275,
+   "simulated": 262,
+   "geh": 0.8
+  },
+  {
+   "hour": 9.5,
+   "edge": "1123830491#1",
+   "street": "Drummond Street northbound",
+   "count": 219,
+   "simulated": 218,
+   "geh": 0.1
+  },
+  {
+   "hour": 9.5,
+   "edge": "1126694712#0",
+   "street": "Faraday Street westbound",
+   "count": 138,
+   "simulated": 139,
+   "geh": 0.1
+  },
+  {
+   "hour": 9.5,
+   "edge": "1127702971",
+   "street": "Faraday Street eastbound",
+   "count": 138,
+   "simulated": 144,
+   "geh": 0.5
+  },
+  {
+   "hour": 9.5,
+   "edge": "113113011#3",
+   "street": "Elgin Street westbound",
+   "count": 271,
+   "simulated": 255,
+   "geh": 1.0
+  },
+  {
+   "hour": 9.5,
+   "edge": "113113016#0",
+   "street": "Swanston Street northbound",
+   "count": 186,
+   "simulated": 200,
+   "geh": 1.0
+  },
+  {
+   "hour": 9.5,
+   "edge": "113113513#0",
+   "street": "Swanston Street southbound",
+   "count": 206,
+   "simulated": 203,
+   "geh": 0.2
+  },
+  {
+   "hour": 9.5,
+   "edge": "113539990#14",
+   "street": "Drummond Street southbound",
+   "count": 99,
+   "simulated": 36,
+   "geh": 7.8
+  },
+  {
+   "hour": 9.5,
+   "edge": "113539990#4",
+   "street": "Drummond Street southbound",
+   "count": 99,
+   "simulated": 29,
+   "geh": 8.8
+  },
+  {
+   "hour": 9.5,
+   "edge": "113549291#11",
+   "street": "Lygon Street southbound",
+   "count": 439,
+   "simulated": 439,
+   "geh": 0.0
+  },
+  {
+   "hour": 9.5,
+   "edge": "1155678672#2",
+   "street": "Faraday Street westbound",
+   "count": 65,
+   "simulated": 66,
+   "geh": 0.1
+  },
+  {
+   "hour": 9.5,
+   "edge": "1304188167#2",
+   "street": "Grattan Street westbound",
+   "count": 99,
+   "simulated": 54,
+   "geh": 5.2
+  },
+  {
+   "hour": 9.5,
+   "edge": "1304191400#0",
+   "street": "Grattan Street westbound",
+   "count": 252,
+   "simulated": 228,
+   "geh": 1.5
+  },
+  {
+   "hour": 9.5,
+   "edge": "1304191418",
+   "street": "Grattan Street eastbound",
+   "count": 384,
+   "simulated": 381,
+   "geh": 0.1
+  },
+  {
+   "hour": 9.5,
+   "edge": "1304191421#0",
+   "street": "Grattan Street eastbound",
+   "count": 99,
+   "simulated": 69,
+   "geh": 3.2
+  },
+  {
+   "hour": 9.5,
+   "edge": "1304191425#0",
+   "street": "Grattan Street eastbound",
+   "count": 256,
+   "simulated": 265,
+   "geh": 0.6
+  },
+  {
+   "hour": 9.5,
+   "edge": "1304191429#0",
+   "street": "Grattan Street eastbound",
+   "count": 294,
+   "simulated": 290,
+   "geh": 0.3
+  },
+  {
+   "hour": 9.5,
+   "edge": "1304193170",
+   "street": "Grattan Street westbound",
+   "count": 344,
+   "simulated": 315,
+   "geh": 1.5
+  },
+  {
+   "hour": 9.5,
+   "edge": "1304193179",
+   "street": "Grattan Street westbound",
+   "count": 99,
+   "simulated": 48,
+   "geh": 6.0
+  },
+  {
+   "hour": 9.5,
+   "edge": "1312977907#1",
+   "street": "Grattan Street eastbound",
+   "count": 99,
+   "simulated": 34,
+   "geh": 8.0
+  },
+  {
+   "hour": 9.5,
+   "edge": "135955007#5",
+   "street": "Swanston Street southbound",
+   "count": 164,
+   "simulated": 151,
+   "geh": 1.1
+  },
+  {
+   "hour": 9.5,
+   "edge": "135955011#0",
+   "street": "Grattan Street eastbound",
+   "count": 384,
+   "simulated": 388,
+   "geh": 0.2
+  },
+  {
+   "hour": 9.5,
+   "edge": "14289920#14",
+   "street": "Cardigan Street northbound",
+   "count": 144,
+   "simulated": 162,
+   "geh": 1.5
+  },
+  {
+   "hour": 9.5,
+   "edge": "1540890893#0",
+   "street": "Cardigan Street southbound",
+   "count": 144,
+   "simulated": 140,
+   "geh": 0.4
+  },
+  {
+   "hour": 9.5,
+   "edge": "190727534#0",
+   "street": "Elgin Street eastbound",
+   "count": 219,
+   "simulated": 207,
+   "geh": 0.8
+  },
+  {
+   "hour": 9.5,
+   "edge": "190727535#10",
+   "street": "Lygon Street northbound",
+   "count": 439,
+   "simulated": 427,
+   "geh": 0.6
+  },
+  {
+   "hour": 9.5,
+   "edge": "190727535#3",
+   "street": "Lygon Street northbound",
+   "count": 341,
+   "simulated": 347,
+   "geh": 0.3
+  },
+  {
+   "hour": 9.5,
+   "edge": "190863997#9",
+   "street": "Lygon Street northbound",
+   "count": 303,
+   "simulated": 300,
+   "geh": 0.1
+  },
+  {
+   "hour": 9.5,
+   "edge": "198994308#13",
+   "street": "Rathdowne Street northbound",
+   "count": 384,
+   "simulated": 379,
+   "geh": 0.2
+  },
+  {
+   "hour": 9.5,
+   "edge": "208823789#1",
+   "street": "Lygon Street southbound",
+   "count": 510,
+   "simulated": 509,
+   "geh": 0.0
+  },
+  {
+   "hour": 9.5,
+   "edge": "208823789#9",
+   "street": "Lygon Street southbound",
+   "count": 455,
+   "simulated": 471,
+   "geh": 0.7
+  },
+  {
+   "hour": 9.5,
+   "edge": "22757634#0",
+   "street": "Drummond Street northbound",
+   "count": 99,
+   "simulated": 108,
+   "geh": 0.8
+  },
+  {
+   "hour": 9.5,
+   "edge": "22757634#14",
+   "street": "Drummond Street northbound",
+   "count": 138,
+   "simulated": 161,
+   "geh": 1.9
+  },
+  {
+   "hour": 9.5,
+   "edge": "313202913#1",
+   "street": "Rathdowne Street southbound",
+   "count": 384,
+   "simulated": 436,
+   "geh": 2.6
+  },
+  {
+   "hour": 9.5,
+   "edge": "32741783#2",
+   "street": "Faraday Street eastbound",
+   "count": 93,
+   "simulated": 92,
+   "geh": 0.1
+  },
+  {
+   "hour": 9.5,
+   "edge": "331952664#0",
+   "street": "Elgin Street eastbound",
+   "count": 271,
+   "simulated": 279,
+   "geh": 0.5
+  },
+  {
+   "hour": 9.5,
+   "edge": "33267165#1",
+   "street": "Cardigan Street northbound",
+   "count": 136,
+   "simulated": 143,
+   "geh": 0.6
+  },
+  {
+   "hour": 9.5,
+   "edge": "33267166#0",
+   "street": "Cardigan Street southbound",
+   "count": 136,
+   "simulated": 124,
+   "geh": 1.0
+  },
+  {
+   "hour": 9.5,
+   "edge": "334961398#0",
+   "street": "Swanston Street northbound",
+   "count": 180,
+   "simulated": 187,
+   "geh": 0.5
+  },
+  {
+   "hour": 9.5,
+   "edge": "4749344#3",
+   "street": "Drummond Street southbound",
+   "count": 110,
+   "simulated": 99,
+   "geh": 1.0
+  },
+  {
+   "hour": 9.5,
+   "edge": "581997963#0",
+   "street": "Elgin Street westbound",
+   "count": 200,
+   "simulated": 194,
+   "geh": 0.4
+  },
+  {
+   "hour": 9.5,
+   "edge": "581997964#1",
+   "street": "Elgin Street eastbound",
+   "count": 219,
+   "simulated": 209,
+   "geh": 0.7
+  },
+  {
+   "hour": 9.5,
+   "edge": "647598277#11",
+   "street": "Bouverie Street northbound",
+   "count": 112,
+   "simulated": 115,
+   "geh": 0.2
+  },
+  {
+   "hour": 9.5,
+   "edge": "664761915#0",
+   "street": "Swanston Street southbound",
+   "count": 303,
+   "simulated": 309,
+   "geh": 0.3
+  },
+  {
+   "hour": 9.5,
+   "edge": "744184363#11",
+   "street": "Elgin Street westbound",
+   "count": 439,
+   "simulated": 398,
+   "geh": 2.0
+  },
+  {
+   "hour": 9.5,
+   "edge": "744184363#4",
+   "street": "Elgin Street westbound",
+   "count": 439,
+   "simulated": 397,
+   "geh": 2.1
+  },
+  {
+   "hour": 9.5,
+   "edge": "802815951#0",
+   "street": "Grattan Street eastbound",
+   "count": 228,
+   "simulated": 231,
+   "geh": 0.2
+  },
+  {
+   "hour": 10.5,
+   "edge": "-1275894690",
+   "street": "Grattan Street westbound",
+   "count": 218,
+   "simulated": 213,
+   "geh": 0.3
+  },
+  {
+   "hour": 10.5,
+   "edge": "-1314096855",
+   "street": "Grattan Street westbound",
+   "count": 192,
+   "simulated": 162,
+   "geh": 2.2
+  },
+  {
+   "hour": 10.5,
+   "edge": "1122191945",
+   "street": "Faraday Street westbound",
+   "count": 64,
+   "simulated": 24,
+   "geh": 5.9
+  },
+  {
+   "hour": 10.5,
+   "edge": "1123830489#1",
+   "street": "Drummond Street southbound",
+   "count": 270,
+   "simulated": 268,
+   "geh": 0.1
+  },
+  {
+   "hour": 10.5,
+   "edge": "1123830491#1",
+   "street": "Drummond Street northbound",
+   "count": 215,
+   "simulated": 218,
+   "geh": 0.2
+  },
+  {
+   "hour": 10.5,
+   "edge": "1126694712#0",
+   "street": "Faraday Street westbound",
+   "count": 135,
+   "simulated": 135,
+   "geh": 0.0
+  },
+  {
+   "hour": 10.5,
+   "edge": "1127702971",
+   "street": "Faraday Street eastbound",
+   "count": 135,
+   "simulated": 149,
+   "geh": 1.2
+  },
+  {
+   "hour": 10.5,
+   "edge": "113113011#3",
+   "street": "Elgin Street westbound",
+   "count": 266,
+   "simulated": 267,
+   "geh": 0.1
+  },
+  {
+   "hour": 10.5,
+   "edge": "113113016#0",
+   "street": "Swanston Street northbound",
+   "count": 198,
+   "simulated": 190,
+   "geh": 0.6
+  },
+  {
+   "hour": 10.5,
+   "edge": "113113513#0",
+   "street": "Swanston Street southbound",
+   "count": 170,
+   "simulated": 171,
+   "geh": 0.1
+  },
+  {
+   "hour": 10.5,
+   "edge": "113539990#14",
+   "street": "Drummond Street southbound",
+   "count": 97,
+   "simulated": 47,
+   "geh": 5.9
+  },
+  {
+   "hour": 10.5,
+   "edge": "113539990#4",
+   "street": "Drummond Street southbound",
+   "count": 97,
+   "simulated": 66,
+   "geh": 3.4
+  },
+  {
+   "hour": 10.5,
+   "edge": "113549291#11",
+   "street": "Lygon Street southbound",
+   "count": 430,
+   "simulated": 438,
+   "geh": 0.4
+  },
+  {
+   "hour": 10.5,
+   "edge": "1155678672#2",
+   "street": "Faraday Street westbound",
+   "count": 80,
+   "simulated": 95,
+   "geh": 1.6
+  },
+  {
+   "hour": 10.5,
+   "edge": "1304188167#2",
+   "street": "Grattan Street westbound",
+   "count": 97,
+   "simulated": 65,
+   "geh": 3.6
+  },
+  {
+   "hour": 10.5,
+   "edge": "1304191400#0",
+   "street": "Grattan Street westbound",
+   "count": 231,
+   "simulated": 226,
+   "geh": 0.3
+  },
+  {
+   "hour": 10.5,
+   "edge": "1304191418",
+   "street": "Grattan Street eastbound",
+   "count": 376,
+   "simulated": 381,
+   "geh": 0.2
+  },
+  {
+   "hour": 10.5,
+   "edge": "1304191421#0",
+   "street": "Grattan Street eastbound",
+   "count": 97,
+   "simulated": 87,
+   "geh": 1.1
+  },
+  {
+   "hour": 10.5,
+   "edge": "1304191425#0",
+   "street": "Grattan Street eastbound",
+   "count": 273,
+   "simulated": 288,
+   "geh": 0.9
+  },
+  {
+   "hour": 10.5,
+   "edge": "1304191429#0",
+   "street": "Grattan Street eastbound",
+   "count": 275,
+   "simulated": 285,
+   "geh": 0.6
+  },
+  {
+   "hour": 10.5,
+   "edge": "1304193170",
+   "street": "Grattan Street westbound",
+   "count": 316,
+   "simulated": 310,
+   "geh": 0.3
+  },
+  {
+   "hour": 10.5,
+   "edge": "1304193179",
+   "street": "Grattan Street westbound",
+   "count": 97,
+   "simulated": 60,
+   "geh": 4.3
+  },
+  {
+   "hour": 10.5,
+   "edge": "1312977907#1",
+   "street": "Grattan Street eastbound",
+   "count": 97,
+   "simulated": 46,
+   "geh": 6.0
+  },
+  {
+   "hour": 10.5,
+   "edge": "135955007#5",
+   "street": "Swanston Street southbound",
+   "count": 154,
+   "simulated": 152,
+   "geh": 0.2
+  },
+  {
+   "hour": 10.5,
+   "edge": "135955011#0",
+   "street": "Grattan Street eastbound",
+   "count": 366,
+   "simulated": 367,
+   "geh": 0.1
+  },
+  {
+   "hour": 10.5,
+   "edge": "14289920#14",
+   "street": "Cardigan Street northbound",
+   "count": 149,
+   "simulated": 150,
+   "geh": 0.1
+  },
+  {
+   "hour": 10.5,
+   "edge": "1540890893#0",
+   "street": "Cardigan Street southbound",
+   "count": 138,
+   "simulated": 135,
+   "geh": 0.3
+  },
+  {
+   "hour": 10.5,
+   "edge": "190727534#0",
+   "street": "Elgin Street eastbound",
+   "count": 215,
+   "simulated": 208,
+   "geh": 0.5
+  },
+  {
+   "hour": 10.5,
+   "edge": "190727535#10",
+   "street": "Lygon Street northbound",
+   "count": 430,
+   "simulated": 427,
+   "geh": 0.2
+  },
+  {
+   "hour": 10.5,
+   "edge": "190727535#3",
+   "street": "Lygon Street northbound",
+   "count": 364,
+   "simulated": 363,
+   "geh": 0.0
+  },
+  {
+   "hour": 10.5,
+   "edge": "190863997#9",
+   "street": "Lygon Street northbound",
+   "count": 321,
+   "simulated": 329,
+   "geh": 0.4
+  },
+  {
+   "hour": 10.5,
+   "edge": "198994308#13",
+   "street": "Rathdowne Street northbound",
+   "count": 376,
+   "simulated": 389,
+   "geh": 0.6
+  },
+  {
+   "hour": 10.5,
+   "edge": "208823789#1",
+   "street": "Lygon Street southbound",
+   "count": 423,
+   "simulated": 441,
+   "geh": 0.9
+  },
+  {
+   "hour": 10.5,
+   "edge": "208823789#9",
+   "street": "Lygon Street southbound",
+   "count": 374,
+   "simulated": 387,
+   "geh": 0.7
+  },
+  {
+   "hour": 10.5,
+   "edge": "22757634#0",
+   "street": "Drummond Street northbound",
+   "count": 97,
+   "simulated": 93,
+   "geh": 0.4
+  },
+  {
+   "hour": 10.5,
+   "edge": "22757634#14",
+   "street": "Drummond Street northbound",
+   "count": 135,
+   "simulated": 154,
+   "geh": 1.6
+  },
+  {
+   "hour": 10.5,
+   "edge": "313202913#1",
+   "street": "Rathdowne Street southbound",
+   "count": 376,
+   "simulated": 423,
+   "geh": 2.3
+  },
+  {
+   "hour": 10.5,
+   "edge": "32741783#2",
+   "street": "Faraday Street eastbound",
+   "count": 117,
+   "simulated": 131,
+   "geh": 1.3
+  },
+  {
+   "hour": 10.5,
+   "edge": "331952664#0",
+   "street": "Elgin Street eastbound",
+   "count": 266,
+   "simulated": 252,
+   "geh": 0.9
+  },
+  {
+   "hour": 10.5,
+   "edge": "33267165#1",
+   "street": "Cardigan Street northbound",
+   "count": 133,
+   "simulated": 132,
+   "geh": 0.1
+  },
+  {
+   "hour": 10.5,
+   "edge": "33267166#0",
+   "street": "Cardigan Street southbound",
+   "count": 133,
+   "simulated": 130,
+   "geh": 0.2
+  },
+  {
+   "hour": 10.5,
+   "edge": "334961398#0",
+   "street": "Swanston Street northbound",
+   "count": 193,
+   "simulated": 186,
+   "geh": 0.5
+  },
+  {
+   "hour": 10.5,
+   "edge": "4749344#3",
+   "street": "Drummond Street southbound",
+   "count": 108,
+   "simulated": 112,
+   "geh": 0.4
+  },
+  {
+   "hour": 10.5,
+   "edge": "581997963#0",
+   "street": "Elgin Street westbound",
+   "count": 222,
+   "simulated": 213,
+   "geh": 0.6
+  },
+  {
+   "hour": 10.5,
+   "edge": "581997964#1",
+   "street": "Elgin Street eastbound",
+   "count": 215,
+   "simulated": 216,
+   "geh": 0.1
+  },
+  {
+   "hour": 10.5,
+   "edge": "647598277#11",
+   "street": "Bouverie Street northbound",
+   "count": 121,
+   "simulated": 118,
+   "geh": 0.3
+  },
+  {
+   "hour": 10.5,
+   "edge": "664761915#0",
+   "street": "Swanston Street southbound",
+   "count": 255,
+   "simulated": 246,
+   "geh": 0.6
+  },
+  {
+   "hour": 10.5,
+   "edge": "744184363#11",
+   "street": "Elgin Street westbound",
+   "count": 430,
+   "simulated": 456,
+   "geh": 1.3
+  },
+  {
+   "hour": 10.5,
+   "edge": "744184363#4",
+   "street": "Elgin Street westbound",
+   "count": 430,
+   "simulated": 453,
+   "geh": 1.1
+  },
+  {
+   "hour": 10.5,
+   "edge": "802815951#0",
+   "street": "Grattan Street eastbound",
+   "count": 208,
+   "simulated": 210,
+   "geh": 0.1
+  },
+  {
+   "hour": 11.5,
+   "edge": "-1275894690",
+   "street": "Grattan Street westbound",
+   "count": 210,
+   "simulated": 202,
+   "geh": 0.6
+  },
+  {
+   "hour": 11.5,
+   "edge": "-1314096855",
+   "street": "Grattan Street westbound",
+   "count": 195,
+   "simulated": 177,
+   "geh": 1.3
+  },
+  {
+   "hour": 11.5,
+   "edge": "1122191945",
+   "street": "Faraday Street westbound",
+   "count": 64,
+   "simulated": 32,
+   "geh": 4.6
+  },
+  {
+   "hour": 11.5,
+   "edge": "1123830489#1",
+   "street": "Drummond Street southbound",
+   "count": 279,
+   "simulated": 283,
+   "geh": 0.2
+  },
+  {
+   "hour": 11.5,
+   "edge": "1123830491#1",
+   "street": "Drummond Street northbound",
+   "count": 223,
+   "simulated": 199,
+   "geh": 1.6
+  },
+  {
+   "hour": 11.5,
+   "edge": "1126694712#0",
+   "street": "Faraday Street westbound",
+   "count": 140,
+   "simulated": 162,
+   "geh": 1.8
+  },
+  {
+   "hour": 11.5,
+   "edge": "1127702971",
+   "street": "Faraday Street eastbound",
+   "count": 140,
+   "simulated": 130,
+   "geh": 0.8
+  },
+  {
+   "hour": 11.5,
+   "edge": "113113011#3",
+   "street": "Elgin Street westbound",
+   "count": 275,
+   "simulated": 274,
+   "geh": 0.1
+  },
+  {
+   "hour": 11.5,
+   "edge": "113113016#0",
+   "street": "Swanston Street northbound",
+   "count": 204,
+   "simulated": 213,
+   "geh": 0.6
+  },
+  {
+   "hour": 11.5,
+   "edge": "113113513#0",
+   "street": "Swanston Street southbound",
+   "count": 156,
+   "simulated": 163,
+   "geh": 0.6
+  },
+  {
+   "hour": 11.5,
+   "edge": "113539990#14",
+   "street": "Drummond Street southbound",
+   "count": 101,
+   "simulated": 35,
+   "geh": 7.9
+  },
+  {
+   "hour": 11.5,
+   "edge": "113539990#4",
+   "street": "Drummond Street southbound",
+   "count": 101,
+   "simulated": 35,
+   "geh": 8.0
+  },
+  {
+   "hour": 11.5,
+   "edge": "113549291#11",
+   "street": "Lygon Street southbound",
+   "count": 445,
+   "simulated": 440,
+   "geh": 0.3
+  },
+  {
+   "hour": 11.5,
+   "edge": "1155678672#2",
+   "street": "Faraday Street westbound",
+   "count": 96,
+   "simulated": 107,
+   "geh": 1.1
+  },
+  {
+   "hour": 11.5,
+   "edge": "1304188167#2",
+   "street": "Grattan Street westbound",
+   "count": 101,
+   "simulated": 55,
+   "geh": 5.1
+  },
+  {
+   "hour": 11.5,
+   "edge": "1304191400#0",
+   "street": "Grattan Street westbound",
+   "count": 229,
+   "simulated": 198,
+   "geh": 2.1
+  },
+  {
+   "hour": 11.5,
+   "edge": "1304191418",
+   "street": "Grattan Street eastbound",
+   "count": 390,
+   "simulated": 398,
+   "geh": 0.4
+  },
+  {
+   "hour": 11.5,
+   "edge": "1304191421#0",
+   "street": "Grattan Street eastbound",
+   "count": 101,
+   "simulated": 67,
+   "geh": 3.6
+  },
+  {
+   "hour": 11.5,
+   "edge": "1304191425#0",
+   "street": "Grattan Street eastbound",
+   "count": 296,
+   "simulated": 252,
+   "geh": 2.6
+  },
+  {
+   "hour": 11.5,
+   "edge": "1304191429#0",
+   "street": "Grattan Street eastbound",
+   "count": 275,
+   "simulated": 253,
+   "geh": 1.4
+  },
+  {
+   "hour": 11.5,
+   "edge": "1304193170",
+   "street": "Grattan Street westbound",
+   "count": 308,
+   "simulated": 288,
+   "geh": 1.2
+  },
+  {
+   "hour": 11.5,
+   "edge": "1304193179",
+   "street": "Grattan Street westbound",
+   "count": 101,
+   "simulated": 49,
+   "geh": 6.0
+  },
+  {
+   "hour": 11.5,
+   "edge": "1312977907#1",
+   "street": "Grattan Street eastbound",
+   "count": 101,
+   "simulated": 37,
+   "geh": 7.7
+  },
+  {
+   "hour": 11.5,
+   "edge": "135955007#5",
+   "street": "Swanston Street southbound",
+   "count": 149,
+   "simulated": 167,
+   "geh": 1.4
+  },
+  {
+   "hour": 11.5,
+   "edge": "135955011#0",
+   "street": "Grattan Street eastbound",
+   "count": 362,
+   "simulated": 345,
+   "geh": 0.9
+  },
+  {
+   "hour": 11.5,
+   "edge": "14289920#14",
+   "street": "Cardigan Street northbound",
+   "count": 159,
+   "simulated": 160,
+   "geh": 0.1
+  },
+  {
+   "hour": 11.5,
+   "edge": "1540890893#0",
+   "street": "Cardigan Street southbound",
+   "count": 148,
+   "simulated": 152,
+   "geh": 0.3
+  },
+  {
+   "hour": 11.5,
+   "edge": "190727534#0",
+   "street": "Elgin Street eastbound",
+   "count": 223,
+   "simulated": 227,
+   "geh": 0.3
+  },
+  {
+   "hour": 11.5,
+   "edge": "190727535#10",
+   "street": "Lygon Street northbound",
+   "count": 445,
+   "simulated": 422,
+   "geh": 1.1
+  },
+  {
+   "hour": 11.5,
+   "edge": "190727535#3",
+   "street": "Lygon Street northbound",
+   "count": 387,
+   "simulated": 373,
+   "geh": 0.7
+  },
+  {
+   "hour": 11.5,
+   "edge": "190863997#9",
+   "street": "Lygon Street northbound",
+   "count": 336,
+   "simulated": 332,
+   "geh": 0.3
+  },
+  {
+   "hour": 11.5,
+   "edge": "198994308#13",
+   "street": "Rathdowne Street northbound",
+   "count": 390,
+   "simulated": 406,
+   "geh": 0.8
+  },
+  {
+   "hour": 11.5,
+   "edge": "208823789#1",
+   "street": "Lygon Street southbound",
+   "count": 404,
+   "simulated": 389,
+   "geh": 0.8
+  },
+  {
+   "hour": 11.5,
+   "edge": "208823789#9",
+   "street": "Lygon Street southbound",
+   "count": 365,
+   "simulated": 357,
+   "geh": 0.4
+  },
+  {
+   "hour": 11.5,
+   "edge": "22757634#0",
+   "street": "Drummond Street northbound",
+   "count": 101,
+   "simulated": 103,
+   "geh": 0.2
+  },
+  {
+   "hour": 11.5,
+   "edge": "22757634#14",
+   "street": "Drummond Street northbound",
+   "count": 140,
+   "simulated": 156,
+   "geh": 1.3
+  },
+  {
+   "hour": 11.5,
+   "edge": "313202913#1",
+   "street": "Rathdowne Street southbound",
+   "count": 390,
+   "simulated": 437,
+   "geh": 2.3
+  },
+  {
+   "hour": 11.5,
+   "edge": "32741783#2",
+   "street": "Faraday Street eastbound",
+   "count": 131,
+   "simulated": 121,
+   "geh": 0.8
+  },
+  {
+   "hour": 11.5,
+   "edge": "331952664#0",
+   "street": "Elgin Street eastbound",
+   "count": 275,
+   "simulated": 291,
+   "geh": 0.9
+  },
+  {
+   "hour": 11.5,
+   "edge": "33267165#1",
+   "street": "Cardigan Street northbound",
+   "count": 138,
+   "simulated": 130,
+   "geh": 0.6
+  },
+  {
+   "hour": 11.5,
+   "edge": "33267166#0",
+   "street": "Cardigan Street southbound",
+   "count": 138,
+   "simulated": 133,
+   "geh": 0.4
+  },
+  {
+   "hour": 11.5,
+   "edge": "334961398#0",
+   "street": "Swanston Street northbound",
+   "count": 200,
+   "simulated": 214,
+   "geh": 0.9
+  },
+  {
+   "hour": 11.5,
+   "edge": "4749344#3",
+   "street": "Drummond Street southbound",
+   "count": 111,
+   "simulated": 114,
+   "geh": 0.3
+  },
+  {
+   "hour": 11.5,
+   "edge": "581997963#0",
+   "street": "Elgin Street westbound",
+   "count": 243,
+   "simulated": 249,
+   "geh": 0.4
+  },
+  {
+   "hour": 11.5,
+   "edge": "581997964#1",
+   "street": "Elgin Street eastbound",
+   "count": 223,
+   "simulated": 222,
+   "geh": 0.0
+  },
+  {
+   "hour": 11.5,
+   "edge": "647598277#11",
+   "street": "Bouverie Street northbound",
+   "count": 128,
+   "simulated": 120,
+   "geh": 0.7
+  },
+  {
+   "hour": 11.5,
+   "edge": "664761915#0",
+   "street": "Swanston Street southbound",
+   "count": 240,
+   "simulated": 245,
+   "geh": 0.3
+  },
+  {
+   "hour": 11.5,
+   "edge": "744184363#11",
+   "street": "Elgin Street westbound",
+   "count": 445,
+   "simulated": 424,
+   "geh": 1.0
+  },
+  {
+   "hour": 11.5,
+   "edge": "744184363#4",
+   "street": "Elgin Street westbound",
+   "count": 445,
+   "simulated": 447,
+   "geh": 0.1
+  },
+  {
+   "hour": 11.5,
+   "edge": "802815951#0",
+   "street": "Grattan Street eastbound",
+   "count": 197,
+   "simulated": 185,
+   "geh": 0.9
+  },
+  {
+   "hour": 12.5,
+   "edge": "-1275894690",
+   "street": "Grattan Street westbound",
+   "count": 210,
+   "simulated": 206,
+   "geh": 0.3
+  },
+  {
+   "hour": 12.5,
+   "edge": "-1314096855",
+   "street": "Grattan Street westbound",
+   "count": 193,
+   "simulated": 179,
+   "geh": 1.0
+  },
+  {
+   "hour": 12.5,
+   "edge": "1122191945",
+   "street": "Faraday Street westbound",
+   "count": 65,
+   "simulated": 25,
+   "geh": 6.0
+  },
+  {
+   "hour": 12.5,
+   "edge": "1123830489#1",
+   "street": "Drummond Street southbound",
+   "count": 286,
+   "simulated": 297,
+   "geh": 0.7
+  },
+  {
+   "hour": 12.5,
+   "edge": "1123830491#1",
+   "street": "Drummond Street northbound",
+   "count": 228,
+   "simulated": 234,
+   "geh": 0.4
+  },
+  {
+   "hour": 12.5,
+   "edge": "1126694712#0",
+   "street": "Faraday Street westbound",
+   "count": 143,
+   "simulated": 161,
+   "geh": 1.5
+  },
+  {
+   "hour": 12.5,
+   "edge": "1127702971",
+   "street": "Faraday Street eastbound",
+   "count": 143,
+   "simulated": 138,
+   "geh": 0.4
+  },
+  {
+   "hour": 12.5,
+   "edge": "113113011#3",
+   "street": "Elgin Street westbound",
+   "count": 282,
+   "simulated": 284,
+   "geh": 0.1
+  },
+  {
+   "hour": 12.5,
+   "edge": "113113016#0",
+   "street": "Swanston Street northbound",
+   "count": 211,
+   "simulated": 203,
+   "geh": 0.5
+  },
+  {
+   "hour": 12.5,
+   "edge": "113113513#0",
+   "street": "Swanston Street southbound",
+   "count": 150,
+   "simulated": 143,
+   "geh": 0.6
+  },
+  {
+   "hour": 12.5,
+   "edge": "113539990#14",
+   "street": "Drummond Street southbound",
+   "count": 103,
+   "simulated": 38,
+   "geh": 7.8
+  },
+  {
+   "hour": 12.5,
+   "edge": "113539990#4",
+   "street": "Drummond Street southbound",
+   "count": 103,
+   "simulated": 28,
+   "geh": 9.3
+  },
+  {
+   "hour": 12.5,
+   "edge": "113549291#11",
+   "street": "Lygon Street southbound",
+   "count": 456,
+   "simulated": 459,
+   "geh": 0.2
+  },
+  {
+   "hour": 12.5,
+   "edge": "1155678672#2",
+   "street": "Faraday Street westbound",
+   "count": 101,
+   "simulated": 126,
+   "geh": 2.4
+  },
+  {
+   "hour": 12.5,
+   "edge": "1304188167#2",
+   "street": "Grattan Street westbound",
+   "count": 103,
+   "simulated": 58,
+   "geh": 5.1
+  },
+  {
+   "hour": 12.5,
+   "edge": "1304191400#0",
+   "street": "Grattan Street westbound",
+   "count": 227,
+   "simulated": 237,
+   "geh": 0.7
+  },
+  {
+   "hour": 12.5,
+   "edge": "1304191418",
+   "street": "Grattan Street eastbound",
+   "count": 399,
+   "simulated": 405,
+   "geh": 0.3
+  },
+  {
+   "hour": 12.5,
+   "edge": "1304191421#0",
+   "street": "Grattan Street eastbound",
+   "count": 103,
+   "simulated": 82,
+   "geh": 2.2
+  },
+  {
+   "hour": 12.5,
+   "edge": "1304191425#0",
+   "street": "Grattan Street eastbound",
+   "count": 305,
+   "simulated": 329,
+   "geh": 1.3
+  },
+  {
+   "hour": 12.5,
+   "edge": "1304191429#0",
+   "street": "Grattan Street eastbound",
+   "count": 289,
+   "simulated": 301,
+   "geh": 0.7
+  },
+  {
+   "hour": 12.5,
+   "edge": "1304193170",
+   "street": "Grattan Street westbound",
+   "count": 304,
+   "simulated": 318,
+   "geh": 0.7
+  },
+  {
+   "hour": 12.5,
+   "edge": "1304193179",
+   "street": "Grattan Street westbound",
+   "count": 103,
+   "simulated": 52,
+   "geh": 5.8
+  },
+  {
+   "hour": 12.5,
+   "edge": "1312977907#1",
+   "street": "Grattan Street eastbound",
+   "count": 103,
+   "simulated": 35,
+   "geh": 8.2
+  },
+  {
+   "hour": 12.5,
+   "edge": "135955007#5",
+   "street": "Swanston Street southbound",
+   "count": 145,
+   "simulated": 138,
+   "geh": 0.6
+  },
+  {
+   "hour": 12.5,
+   "edge": "135955011#0",
+   "street": "Grattan Street eastbound",
+   "count": 364,
+   "simulated": 366,
+   "geh": 0.1
+  },
+  {
+   "hour": 12.5,
+   "edge": "14289920#14",
+   "street": "Cardigan Street northbound",
+   "count": 168,
+   "simulated": 164,
+   "geh": 0.3
+  },
+  {
+   "hour": 12.5,
+   "edge": "1540890893#0",
+   "street": "Cardigan Street southbound",
+   "count": 147,
+   "simulated": 144,
+   "geh": 0.2
+  },
+  {
+   "hour": 12.5,
+   "edge": "190727534#0",
+   "street": "Elgin Street eastbound",
+   "count": 228,
+   "simulated": 224,
+   "geh": 0.2
+  },
+  {
+   "hour": 12.5,
+   "edge": "190727535#10",
+   "street": "Lygon Street northbound",
+   "count": 456,
+   "simulated": 484,
+   "geh": 1.3
+  },
+  {
+   "hour": 12.5,
+   "edge": "190727535#3",
+   "street": "Lygon Street northbound",
+   "count": 404,
+   "simulated": 390,
+   "geh": 0.7
+  },
+  {
+   "hour": 12.5,
+   "edge": "190863997#9",
+   "street": "Lygon Street northbound",
+   "count": 348,
+   "simulated": 355,
+   "geh": 0.4
+  },
+  {
+   "hour": 12.5,
+   "edge": "198994308#13",
+   "street": "Rathdowne Street northbound",
+   "count": 399,
+   "simulated": 398,
+   "geh": 0.0
+  },
+  {
+   "hour": 12.5,
+   "edge": "208823789#1",
+   "street": "Lygon Street southbound",
+   "count": 391,
+   "simulated": 411,
+   "geh": 1.0
+  },
+  {
+   "hour": 12.5,
+   "edge": "208823789#9",
+   "street": "Lygon Street southbound",
+   "count": 355,
+   "simulated": 367,
+   "geh": 0.6
+  },
+  {
+   "hour": 12.5,
+   "edge": "22757634#0",
+   "street": "Drummond Street northbound",
+   "count": 103,
+   "simulated": 112,
+   "geh": 0.9
+  },
+  {
+   "hour": 12.5,
+   "edge": "22757634#14",
+   "street": "Drummond Street northbound",
+   "count": 143,
+   "simulated": 169,
+   "geh": 2.1
+  },
+  {
+   "hour": 12.5,
+   "edge": "313202913#1",
+   "street": "Rathdowne Street southbound",
+   "count": 399,
+   "simulated": 459,
+   "geh": 2.9
+  },
+  {
+   "hour": 12.5,
+   "edge": "32741783#2",
+   "street": "Faraday Street eastbound",
+   "count": 134,
+   "simulated": 132,
+   "geh": 0.2
+  },
+  {
+   "hour": 12.5,
+   "edge": "331952664#0",
+   "street": "Elgin Street eastbound",
+   "count": 282,
+   "simulated": 279,
+   "geh": 0.1
+  },
+  {
+   "hour": 12.5,
+   "edge": "33267165#1",
+   "street": "Cardigan Street northbound",
+   "count": 141,
+   "simulated": 147,
+   "geh": 0.5
+  },
+  {
+   "hour": 12.5,
+   "edge": "33267166#0",
+   "street": "Cardigan Street southbound",
+   "count": 141,
+   "simulated": 153,
+   "geh": 1.0
+  },
+  {
+   "hour": 12.5,
+   "edge": "334961398#0",
+   "street": "Swanston Street northbound",
+   "count": 202,
+   "simulated": 192,
+   "geh": 0.6
+  },
+  {
+   "hour": 12.5,
+   "edge": "4749344#3",
+   "street": "Drummond Street southbound",
+   "count": 114,
+   "simulated": 113,
+   "geh": 0.1
+  },
+  {
+   "hour": 12.5,
+   "edge": "581997963#0",
+   "street": "Elgin Street westbound",
+   "count": 250,
+   "simulated": 266,
+   "geh": 1.0
+  },
+  {
+   "hour": 12.5,
+   "edge": "581997964#1",
+   "street": "Elgin Street eastbound",
+   "count": 228,
+   "simulated": 225,
+   "geh": 0.2
+  },
+  {
+   "hour": 12.5,
+   "edge": "647598277#11",
+   "street": "Bouverie Street northbound",
+   "count": 131,
+   "simulated": 127,
+   "geh": 0.4
+  },
+  {
+   "hour": 12.5,
+   "edge": "664761915#0",
+   "street": "Swanston Street southbound",
+   "count": 234,
+   "simulated": 227,
+   "geh": 0.5
+  },
+  {
+   "hour": 12.5,
+   "edge": "744184363#11",
+   "street": "Elgin Street westbound",
+   "count": 456,
+   "simulated": 454,
+   "geh": 0.1
+  },
+  {
+   "hour": 12.5,
+   "edge": "744184363#4",
+   "street": "Elgin Street westbound",
+   "count": 456,
+   "simulated": 439,
+   "geh": 0.8
+  },
+  {
+   "hour": 12.5,
+   "edge": "802815951#0",
+   "street": "Grattan Street eastbound",
+   "count": 194,
+   "simulated": 206,
+   "geh": 0.8
+  },
+  {
+   "hour": 13.5,
+   "edge": "-1275894690",
+   "street": "Grattan Street westbound",
+   "count": 224,
+   "simulated": 212,
+   "geh": 0.9
+  },
+  {
+   "hour": 13.5,
+   "edge": "-1314096855",
+   "street": "Grattan Street westbound",
+   "count": 190,
+   "simulated": 181,
+   "geh": 0.6
+  },
+  {
+   "hour": 13.5,
+   "edge": "1122191945",
+   "street": "Faraday Street westbound",
+   "count": 65,
+   "simulated": 26,
+   "geh": 5.9
+  },
+  {
+   "hour": 13.5,
+   "edge": "1123830489#1",
+   "street": "Drummond Street southbound",
+   "count": 300,
+   "simulated": 279,
+   "geh": 1.2
+  },
+  {
+   "hour": 13.5,
+   "edge": "1123830491#1",
+   "street": "Drummond Street northbound",
+   "count": 239,
+   "simulated": 233,
+   "geh": 0.4
+  },
+  {
+   "hour": 13.5,
+   "edge": "1126694712#0",
+   "street": "Faraday Street westbound",
+   "count": 150,
+   "simulated": 167,
+   "geh": 1.4
+  },
+  {
+   "hour": 13.5,
+   "edge": "1127702971",
+   "street": "Faraday Street eastbound",
+   "count": 150,
+   "simulated": 154,
+   "geh": 0.3
+  },
+  {
+   "hour": 13.5,
+   "edge": "113113011#3",
+   "street": "Elgin Street westbound",
+   "count": 295,
+   "simulated": 269,
+   "geh": 1.6
+  },
+  {
+   "hour": 13.5,
+   "edge": "113113016#0",
+   "street": "Swanston Street northbound",
+   "count": 229,
+   "simulated": 211,
+   "geh": 1.2
+  },
+  {
+   "hour": 13.5,
+   "edge": "113113513#0",
+   "street": "Swanston Street southbound",
+   "count": 141,
+   "simulated": 138,
+   "geh": 0.3
+  },
+  {
+   "hour": 13.5,
+   "edge": "113539990#14",
+   "street": "Drummond Street southbound",
+   "count": 108,
+   "simulated": 33,
+   "geh": 8.9
+  },
+  {
+   "hour": 13.5,
+   "edge": "113539990#4",
+   "street": "Drummond Street southbound",
+   "count": 108,
+   "simulated": 29,
+   "geh": 9.5
+  },
+  {
+   "hour": 13.5,
+   "edge": "113549291#11",
+   "street": "Lygon Street southbound",
+   "count": 477,
+   "simulated": 479,
+   "geh": 0.1
+  },
+  {
+   "hour": 13.5,
+   "edge": "1155678672#2",
+   "street": "Faraday Street westbound",
+   "count": 89,
+   "simulated": 104,
+   "geh": 1.5
+  },
+  {
+   "hour": 13.5,
+   "edge": "1304188167#2",
+   "street": "Grattan Street westbound",
+   "count": 108,
+   "simulated": 50,
+   "geh": 6.5
+  },
+  {
+   "hour": 13.5,
+   "edge": "1304191400#0",
+   "street": "Grattan Street westbound",
+   "count": 225,
+   "simulated": 198,
+   "geh": 1.8
+  },
+  {
+   "hour": 13.5,
+   "edge": "1304191418",
+   "street": "Grattan Street eastbound",
+   "count": 418,
+   "simulated": 413,
+   "geh": 0.2
+  },
+  {
+   "hour": 13.5,
+   "edge": "1304191421#0",
+   "street": "Grattan Street eastbound",
+   "count": 108,
+   "simulated": 70,
+   "geh": 4.0
+  },
+  {
+   "hour": 13.5,
+   "edge": "1304191425#0",
+   "street": "Grattan Street eastbound",
+   "count": 317,
+   "simulated": 322,
+   "geh": 0.3
+  },
+  {
+   "hour": 13.5,
+   "edge": "1304191429#0",
+   "street": "Grattan Street eastbound",
+   "count": 300,
+   "simulated": 310,
+   "geh": 0.6
+  },
+  {
+   "hour": 13.5,
+   "edge": "1304193170",
+   "street": "Grattan Street westbound",
+   "count": 312,
+   "simulated": 288,
+   "geh": 1.4
+  },
+  {
+   "hour": 13.5,
+   "edge": "1304193179",
+   "street": "Grattan Street westbound",
+   "count": 108,
+   "simulated": 43,
+   "geh": 7.5
+  },
+  {
+   "hour": 13.5,
+   "edge": "1312977907#1",
+   "street": "Grattan Street eastbound",
+   "count": 108,
+   "simulated": 36,
+   "geh": 8.5
+  },
+  {
+   "hour": 13.5,
+   "edge": "135955007#5",
+   "street": "Swanston Street southbound",
+   "count": 142,
+   "simulated": 137,
+   "geh": 0.4
+  },
+  {
+   "hour": 13.5,
+   "edge": "135955011#0",
+   "street": "Grattan Street eastbound",
+   "count": 375,
+   "simulated": 387,
+   "geh": 0.6
+  },
+  {
+   "hour": 13.5,
+   "edge": "14289920#14",
+   "street": "Cardigan Street northbound",
+   "count": 169,
+   "simulated": 189,
+   "geh": 1.5
+  },
+  {
+   "hour": 13.5,
+   "edge": "1540890893#0",
+   "street": "Cardigan Street southbound",
+   "count": 154,
+   "simulated": 143,
+   "geh": 1.0
+  },
+  {
+   "hour": 13.5,
+   "edge": "190727534#0",
+   "street": "Elgin Street eastbound",
+   "count": 239,
+   "simulated": 243,
+   "geh": 0.3
+  },
+  {
+   "hour": 13.5,
+   "edge": "190727535#10",
+   "street": "Lygon Street northbound",
+   "count": 477,
+   "simulated": 478,
+   "geh": 0.0
+  },
+  {
+   "hour": 13.5,
+   "edge": "190727535#3",
+   "street": "Lygon Street northbound",
+   "count": 418,
+   "simulated": 458,
+   "geh": 1.9
+  },
+  {
+   "hour": 13.5,
+   "edge": "190863997#9",
+   "street": "Lygon Street northbound",
+   "count": 366,
+   "simulated": 387,
+   "geh": 1.1
+  },
+  {
+   "hour": 13.5,
+   "edge": "198994308#13",
+   "street": "Rathdowne Street northbound",
+   "count": 418,
+   "simulated": 449,
+   "geh": 1.5
+  },
+  {
+   "hour": 13.5,
+   "edge": "208823789#1",
+   "street": "Lygon Street southbound",
+   "count": 366,
+   "simulated": 368,
+   "geh": 0.1
+  },
+  {
+   "hour": 13.5,
+   "edge": "208823789#9",
+   "street": "Lygon Street southbound",
+   "count": 336,
+   "simulated": 328,
+   "geh": 0.5
+  },
+  {
+   "hour": 13.5,
+   "edge": "22757634#0",
+   "street": "Drummond Street northbound",
+   "count": 108,
+   "simulated": 111,
+   "geh": 0.3
+  },
+  {
+   "hour": 13.5,
+   "edge": "22757634#14",
+   "street": "Drummond Street northbound",
+   "count": 150,
+   "simulated": 171,
+   "geh": 1.7
+  },
+  {
+   "hour": 13.5,
+   "edge": "313202913#1",
+   "street": "Rathdowne Street southbound",
+   "count": 418,
+   "simulated": 474,
+   "geh": 2.6
+  },
+  {
+   "hour": 13.5,
+   "edge": "32741783#2",
+   "street": "Faraday Street eastbound",
+   "count": 124,
+   "simulated": 131,
+   "geh": 0.6
+  },
+  {
+   "hour": 13.5,
+   "edge": "331952664#0",
+   "street": "Elgin Street eastbound",
+   "count": 295,
+   "simulated": 275,
+   "geh": 1.2
+  },
+  {
+   "hour": 13.5,
+   "edge": "33267165#1",
+   "street": "Cardigan Street northbound",
+   "count": 148,
+   "simulated": 153,
+   "geh": 0.4
+  },
+  {
+   "hour": 13.5,
+   "edge": "33267166#0",
+   "street": "Cardigan Street southbound",
+   "count": 148,
+   "simulated": 132,
+   "geh": 1.3
+  },
+  {
+   "hour": 13.5,
+   "edge": "334961398#0",
+   "street": "Swanston Street northbound",
+   "count": 210,
+   "simulated": 194,
+   "geh": 1.1
+  },
+  {
+   "hour": 13.5,
+   "edge": "4749344#3",
+   "street": "Drummond Street southbound",
+   "count": 119,
+   "simulated": 110,
+   "geh": 0.8
+  },
+  {
+   "hour": 13.5,
+   "edge": "581997963#0",
+   "street": "Elgin Street westbound",
+   "count": 268,
+   "simulated": 258,
+   "geh": 0.6
+  },
+  {
+   "hour": 13.5,
+   "edge": "581997964#1",
+   "street": "Elgin Street eastbound",
+   "count": 239,
+   "simulated": 242,
+   "geh": 0.2
+  },
+  {
+   "hour": 13.5,
+   "edge": "647598277#11",
+   "street": "Bouverie Street northbound",
+   "count": 138,
+   "simulated": 150,
+   "geh": 1.1
+  },
+  {
+   "hour": 13.5,
+   "edge": "664761915#0",
+   "street": "Swanston Street southbound",
+   "count": 221,
+   "simulated": 230,
+   "geh": 0.6
+  },
+  {
+   "hour": 13.5,
+   "edge": "744184363#11",
+   "street": "Elgin Street westbound",
+   "count": 477,
+   "simulated": 458,
+   "geh": 0.9
+  },
+  {
+   "hour": 13.5,
+   "edge": "744184363#4",
+   "street": "Elgin Street westbound",
+   "count": 478,
+   "simulated": 458,
+   "geh": 0.9
+  },
+  {
+   "hour": 13.5,
+   "edge": "802815951#0",
+   "street": "Grattan Street eastbound",
+   "count": 196,
+   "simulated": 193,
+   "geh": 0.3
+  },
+  {
+   "hour": 14.5,
+   "edge": "-1275894690",
+   "street": "Grattan Street westbound",
+   "count": 248,
+   "simulated": 243,
+   "geh": 0.4
+  },
+  {
+   "hour": 14.5,
+   "edge": "-1314096855",
+   "street": "Grattan Street westbound",
+   "count": 196,
+   "simulated": 184,
+   "geh": 0.9
+  },
+  {
+   "hour": 14.5,
+   "edge": "1122191945",
+   "street": "Faraday Street westbound",
+   "count": 60,
+   "simulated": 38,
+   "geh": 3.2
+  },
+  {
+   "hour": 14.5,
+   "edge": "1123830489#1",
+   "street": "Drummond Street southbound",
+   "count": 332,
+   "simulated": 341,
+   "geh": 0.5
+  },
+  {
+   "hour": 14.5,
+   "edge": "1123830491#1",
+   "street": "Drummond Street northbound",
+   "count": 264,
+   "simulated": 230,
+   "geh": 2.2
+  },
+  {
+   "hour": 14.5,
+   "edge": "1126694712#0",
+   "street": "Faraday Street westbound",
+   "count": 166,
+   "simulated": 198,
+   "geh": 2.4
+  },
+  {
+   "hour": 14.5,
+   "edge": "1127702971",
+   "street": "Faraday Street eastbound",
+   "count": 166,
+   "simulated": 162,
+   "geh": 0.3
+  },
+  {
+   "hour": 14.5,
+   "edge": "113113011#3",
+   "street": "Elgin Street westbound",
+   "count": 326,
+   "simulated": 316,
+   "geh": 0.6
+  },
+  {
+   "hour": 14.5,
+   "edge": "113113016#0",
+   "street": "Swanston Street northbound",
+   "count": 253,
+   "simulated": 251,
+   "geh": 0.1
+  },
+  {
+   "hour": 14.5,
+   "edge": "113113513#0",
+   "street": "Swanston Street southbound",
+   "count": 124,
+   "simulated": 128,
+   "geh": 0.3
+  },
+  {
+   "hour": 14.5,
+   "edge": "113539990#14",
+   "street": "Drummond Street southbound",
+   "count": 120,
+   "simulated": 38,
+   "geh": 9.2
+  },
+  {
+   "hour": 14.5,
+   "edge": "113539990#4",
+   "street": "Drummond Street southbound",
+   "count": 120,
+   "simulated": 31,
+   "geh": 10.1
+  },
+  {
+   "hour": 14.5,
+   "edge": "113549291#11",
+   "street": "Lygon Street southbound",
+   "count": 528,
+   "simulated": 532,
+   "geh": 0.2
+  },
+  {
+   "hour": 14.5,
+   "edge": "1155678672#2",
+   "street": "Faraday Street westbound",
+   "count": 72,
+   "simulated": 110,
+   "geh": 3.9
+  },
+  {
+   "hour": 14.5,
+   "edge": "1304188167#2",
+   "street": "Grattan Street westbound",
+   "count": 120,
+   "simulated": 53,
+   "geh": 7.2
+  },
+  {
+   "hour": 14.5,
+   "edge": "1304191400#0",
+   "street": "Grattan Street westbound",
+   "count": 232,
+   "simulated": 214,
+   "geh": 1.2
+  },
+  {
+   "hour": 14.5,
+   "edge": "1304191418",
+   "street": "Grattan Street eastbound",
+   "count": 463,
+   "simulated": 463,
+   "geh": 0.0
+  },
+  {
+   "hour": 14.5,
+   "edge": "1304191421#0",
+   "street": "Grattan Street eastbound",
+   "count": 120,
+   "simulated": 74,
+   "geh": 4.6
+  },
+  {
+   "hour": 14.5,
+   "edge": "1304191425#0",
+   "street": "Grattan Street eastbound",
+   "count": 375,
+   "simulated": 367,
+   "geh": 0.4
+  },
+  {
+   "hour": 14.5,
+   "edge": "1304191429#0",
+   "street": "Grattan Street eastbound",
+   "count": 352,
+   "simulated": 319,
+   "geh": 1.8
+  },
+  {
+   "hour": 14.5,
+   "edge": "1304193170",
+   "street": "Grattan Street westbound",
+   "count": 326,
+   "simulated": 338,
+   "geh": 0.6
+  },
+  {
+   "hour": 14.5,
+   "edge": "1304193179",
+   "street": "Grattan Street westbound",
+   "count": 120,
+   "simulated": 49,
+   "geh": 7.6
+  },
+  {
+   "hour": 14.5,
+   "edge": "1312977907#1",
+   "street": "Grattan Street eastbound",
+   "count": 120,
+   "simulated": 34,
+   "geh": 9.7
+  },
+  {
+   "hour": 14.5,
+   "edge": "135955007#5",
+   "street": "Swanston Street southbound",
+   "count": 134,
+   "simulated": 143,
+   "geh": 0.8
+  },
+  {
+   "hour": 14.5,
+   "edge": "135955011#0",
+   "street": "Grattan Street eastbound",
+   "count": 440,
+   "simulated": 427,
+   "geh": 0.6
+  },
+  {
+   "hour": 14.5,
+   "edge": "14289920#14",
+   "street": "Cardigan Street northbound",
+   "count": 161,
+   "simulated": 176,
+   "geh": 1.1
+  },
+  {
+   "hour": 14.5,
+   "edge": "1540890893#0",
+   "street": "Cardigan Street southbound",
+   "count": 166,
+   "simulated": 184,
+   "geh": 1.3
+  },
+  {
+   "hour": 14.5,
+   "edge": "190727534#0",
+   "street": "Elgin Street eastbound",
+   "count": 264,
+   "simulated": 276,
+   "geh": 0.7
+  },
+  {
+   "hour": 14.5,
+   "edge": "190727535#10",
+   "street": "Lygon Street northbound",
+   "count": 528,
+   "simulated": 532,
+   "geh": 0.2
+  },
+  {
+   "hour": 14.5,
+   "edge": "190727535#3",
+   "street": "Lygon Street northbound",
+   "count": 453,
+   "simulated": 439,
+   "geh": 0.6
+  },
+  {
+   "hour": 14.5,
+   "edge": "190863997#9",
+   "street": "Lygon Street northbound",
+   "count": 405,
+   "simulated": 401,
+   "geh": 0.2
+  },
+  {
+   "hour": 14.5,
+   "edge": "198994308#13",
+   "street": "Rathdowne Street northbound",
+   "count": 463,
+   "simulated": 476,
+   "geh": 0.6
+  },
+  {
+   "hour": 14.5,
+   "edge": "208823789#1",
+   "street": "Lygon Street southbound",
+   "count": 343,
+   "simulated": 333,
+   "geh": 0.6
+  },
+  {
+   "hour": 14.5,
+   "edge": "208823789#9",
+   "street": "Lygon Street southbound",
+   "count": 327,
+   "simulated": 343,
+   "geh": 0.9
+  },
+  {
+   "hour": 14.5,
+   "edge": "22757634#0",
+   "street": "Drummond Street northbound",
+   "count": 120,
+   "simulated": 123,
+   "geh": 0.3
+  },
+  {
+   "hour": 14.5,
+   "edge": "22757634#14",
+   "street": "Drummond Street northbound",
+   "count": 166,
+   "simulated": 172,
+   "geh": 0.5
+  },
+  {
+   "hour": 14.5,
+   "edge": "313202913#1",
+   "street": "Rathdowne Street southbound",
+   "count": 463,
+   "simulated": 528,
+   "geh": 3.0
+  },
+  {
+   "hour": 14.5,
+   "edge": "32741783#2",
+   "street": "Faraday Street eastbound",
+   "count": 108,
+   "simulated": 91,
+   "geh": 1.8
+  },
+  {
+   "hour": 14.5,
+   "edge": "331952664#0",
+   "street": "Elgin Street eastbound",
+   "count": 326,
+   "simulated": 321,
+   "geh": 0.3
+  },
+  {
+   "hour": 14.5,
+   "edge": "33267165#1",
+   "street": "Cardigan Street northbound",
+   "count": 163,
+   "simulated": 170,
+   "geh": 0.5
+  },
+  {
+   "hour": 14.5,
+   "edge": "33267166#0",
+   "street": "Cardigan Street southbound",
+   "count": 163,
+   "simulated": 170,
+   "geh": 0.5
+  },
+  {
+   "hour": 14.5,
+   "edge": "334961398#0",
+   "street": "Swanston Street northbound",
+   "count": 232,
+   "simulated": 235,
+   "geh": 0.2
+  },
+  {
+   "hour": 14.5,
+   "edge": "4749344#3",
+   "street": "Drummond Street southbound",
+   "count": 132,
+   "simulated": 130,
+   "geh": 0.2
+  },
+  {
+   "hour": 14.5,
+   "edge": "581997963#0",
+   "street": "Elgin Street westbound",
+   "count": 284,
+   "simulated": 284,
+   "geh": 0.1
+  },
+  {
+   "hour": 14.5,
+   "edge": "581997964#1",
+   "street": "Elgin Street eastbound",
+   "count": 264,
+   "simulated": 260,
+   "geh": 0.2
+  },
+  {
+   "hour": 14.5,
+   "edge": "647598277#11",
+   "street": "Bouverie Street northbound",
+   "count": 154,
+   "simulated": 157,
+   "geh": 0.3
+  },
+  {
+   "hour": 14.5,
+   "edge": "664761915#0",
+   "street": "Swanston Street southbound",
+   "count": 221,
+   "simulated": 215,
+   "geh": 0.4
+  },
+  {
+   "hour": 14.5,
+   "edge": "744184363#11",
+   "street": "Elgin Street westbound",
+   "count": 528,
+   "simulated": 511,
+   "geh": 0.8
+  },
+  {
+   "hour": 14.5,
+   "edge": "744184363#4",
+   "street": "Elgin Street westbound",
+   "count": 528,
+   "simulated": 537,
+   "geh": 0.4
+  },
+  {
+   "hour": 14.5,
+   "edge": "802815951#0",
+   "street": "Grattan Street eastbound",
+   "count": 224,
+   "simulated": 213,
+   "geh": 0.7
+  }
+ ]
+}

@@ -1,0 +1,650 @@
+{
+  "about": "Numbers from the SUMO simulation of this closure, for the report writer. Every value is measured from the runs or the counts. Nothing here is a judgement. Ranges are across random seeds.",
+  "site": {
+    "name": "Swanston Street, Faraday Street to Grattan Street",
+    "area": "Carlton",
+    "closure": "Swanston Street southbound closed between Faraday Street and Grattan Street",
+    "closed_length_m": 232,
+    "works": "Monday to Friday 9:30am to 3:30pm",
+    "signed_detour": [
+      "Faraday Street eastbound",
+      "Cardigan Street southbound",
+      "Grattan Street westbound"
+    ],
+    "study_area_km": "1.1 by 1.3 around the site"
+  },
+  "diverted_drivers": {
+    "simulated_over_the_works": {
+      "low": 880,
+      "typical": 891,
+      "high": 892,
+      "unit": "vehicles"
+    },
+    "counted_on_the_closed_lane": 888,
+    "count_source": "SCATS site 4392 detector 5, weekday medians, August 2026",
+    "by_hour": [
+      {
+        "hour": "9:30am to 10:30am",
+        "simulated_median": 151.0,
+        "simulated_range": [
+          149.0,
+          154.0
+        ],
+        "counted": 164,
+        "mean_speed_kmh": 20.6,
+        "dropped_share": 0.001
+      },
+      {
+        "hour": "10:30am to 11:30am",
+        "simulated_median": 153.0,
+        "simulated_range": [
+          151.0,
+          154.0
+        ],
+        "counted": 154,
+        "mean_speed_kmh": 22.5,
+        "dropped_share": 0.002
+      },
+      {
+        "hour": "11:30am to 12:30pm",
+        "simulated_median": 166.0,
+        "simulated_range": [
+          166.0,
+          168.0
+        ],
+        "counted": 149,
+        "mean_speed_kmh": 20.6,
+        "dropped_share": 0.002
+      },
+      {
+        "hour": "12:30pm to 1:30pm",
+        "simulated_median": 139.0,
+        "simulated_range": [
+          136.0,
+          140.0
+        ],
+        "counted": 145,
+        "mean_speed_kmh": 20.3,
+        "dropped_share": 0.003
+      },
+      {
+        "hour": "1:30pm to 2:30pm",
+        "simulated_median": 138.0,
+        "simulated_range": [
+          135.0,
+          140.0
+        ],
+        "counted": 142,
+        "mean_speed_kmh": 20.0,
+        "dropped_share": 0.002
+      },
+      {
+        "hour": "2:30pm to 3:30pm",
+        "simulated_median": 143.0,
+        "simulated_range": [
+          141.0,
+          144.0
+        ],
+        "counted": 134,
+        "mean_speed_kmh": 18.9,
+        "dropped_share": 0.002
+      }
+    ]
+  },
+  "streets_cut_off_by_the_closure": [
+    {
+      "street": "Faraday Street westbound",
+      "length_m": 111,
+      "cars_an_hour_normal": 29,
+      "problem": "cars on it can only leave through the closed block"
+    }
+  ],
+  "if_drivers_follow_the_signs": {
+    "case": "drivers go round from the closure, following the signs",
+    "delay": {
+      "extra_seconds_per_diverted_trip": {
+        "median": 15,
+        "lower_quartile": -8,
+        "upper_quartile": 38,
+        "mean": 22,
+        "trips_compared": 4421
+      },
+      "diverted_trips_total_vehicle_hours": {
+        "low": 4.2,
+        "typical": 5.4,
+        "high": 6.0,
+        "unit": "vehicle-hours"
+      },
+      "diverted_trips_noise_floor_vehicle_hours": 1.1,
+      "all_traffic_vehicle_hours": {
+        "low": 1.5,
+        "typical": 15.9,
+        "high": 18.1,
+        "unit": "vehicle-hours"
+      },
+      "all_traffic_noise_floor_vehicle_hours": 11.0,
+      "all_traffic_change_is_within_noise": false
+    },
+    "extra_distance_per_diverted_trip_m": {
+      "lower_quartile": 94,
+      "median": 266,
+      "upper_quartile": 291,
+      "shortest_way_round_median": 7
+    },
+    "streets_taking_the_diverted_drivers": [
+      {
+        "street": "Grattan Street westbound, Cardigan Street to Swanston Street",
+        "diverted_drivers_over_the_works": 757,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 301,
+        "cars_an_hour_with_closure": 429,
+        "cars_in_busiest_hour_with_closure": 452,
+        "share_of_capacity_in_busiest_hour": 0.65,
+        "verdict": "busy"
+      },
+      {
+        "street": "Cardigan Street southbound, Faraday Street to Grattan Street",
+        "diverted_drivers_over_the_works": 737,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 187,
+        "cars_an_hour_with_closure": 310,
+        "cars_in_busiest_hour_with_closure": 331,
+        "share_of_capacity_in_busiest_hour": 0.47,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Faraday Street eastbound, Swanston Street to Cardigan Street",
+        "diverted_drivers_over_the_works": 713,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 41,
+        "cars_an_hour_with_closure": 160,
+        "cars_in_busiest_hour_with_closure": 191,
+        "share_of_capacity_in_busiest_hour": 0.27,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Grattan Street westbound, Grattan Place to Cardigan Street",
+        "diverted_drivers_over_the_works": 107,
+        "lanes_at_busiest_point": 2,
+        "cars_an_hour_normal": 217,
+        "cars_an_hour_with_closure": 236,
+        "cars_in_busiest_hour_with_closure": 256,
+        "share_of_capacity_in_busiest_hour": 0.18,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Dorrit Street southbound, Faraday Street to Grattan Street",
+        "diverted_drivers_over_the_works": 106,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 212,
+        "cars_an_hour_with_closure": 231,
+        "cars_in_busiest_hour_with_closure": 258,
+        "share_of_capacity_in_busiest_hour": 0.37,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Cardigan Street southbound, Argyle Place North to Pelham Street",
+        "diverted_drivers_over_the_works": 68,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 221,
+        "cars_an_hour_with_closure": 232,
+        "cars_in_busiest_hour_with_closure": 270,
+        "share_of_capacity_in_busiest_hour": 0.39,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Faraday Street westbound, Lygon Street to Dorrit Street",
+        "diverted_drivers_over_the_works": 63,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 188,
+        "cars_an_hour_with_closure": 199,
+        "cars_in_busiest_hour_with_closure": 226,
+        "share_of_capacity_in_busiest_hour": 0.32,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Cardigan Street southbound, Grattan Street to Argyle Place North",
+        "diverted_drivers_over_the_works": 62,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 164,
+        "cars_an_hour_with_closure": 175,
+        "cars_in_busiest_hour_with_closure": 188,
+        "share_of_capacity_in_busiest_hour": 0.27,
+        "verdict": "well within capacity"
+      }
+    ],
+    "streets_relieved": [
+      {
+        "street": "Faraday Street westbound, Cardigan Street to Swanston Street",
+        "fewer_drivers_over_the_works": 171
+      },
+      {
+        "street": "Swanston Street southbound, Grattan Street to Pelham Street",
+        "fewer_drivers_over_the_works": 82
+      },
+      {
+        "street": "Cardigan Street southbound, Tyne Street to Faraday Street",
+        "fewer_drivers_over_the_works": 67
+      },
+      {
+        "street": "Swanston Street southbound, Pelham Street to Monahan Lane",
+        "fewer_drivers_over_the_works": 57
+      },
+      {
+        "street": "Swanston Street southbound, Monahan Lane to Queensberry Street",
+        "fewer_drivers_over_the_works": 57
+      }
+    ],
+    "approach_and_signed_detour": [
+      {
+        "leg": "Swanston Street southbound, Elgin Street to Faraday Street",
+        "role": "approach to the closure",
+        "length_m": 176,
+        "lanes_at_fullest_point": 1,
+        "cars_an_hour": {
+          "normal": 158,
+          "with_closure": 158,
+          "busiest_hour_with_closure": 204
+        },
+        "share_of_capacity_in_busiest_hour": 0.29,
+        "longest_queue_m": {
+          "normal_typical": 43,
+          "normal_worst": 80,
+          "with_closure_typical": 0,
+          "with_closure_worst": 2,
+          "typical_difference_between_two_normal_runs": 8,
+          "grows_more_than_noise": false
+        },
+        "seconds_to_drive": {
+          "normal": 29,
+          "with_closure": 18
+        }
+      },
+      {
+        "leg": "Faraday Street eastbound, Swanston Street to Cardigan Street",
+        "role": "signed detour",
+        "length_m": 113,
+        "lanes_at_fullest_point": 1,
+        "cars_an_hour": {
+          "normal": 41,
+          "with_closure": 160,
+          "busiest_hour_with_closure": 191
+        },
+        "share_of_capacity_in_busiest_hour": 0.27,
+        "longest_queue_m": {
+          "normal_typical": 5,
+          "normal_worst": 11,
+          "with_closure_typical": 11,
+          "with_closure_worst": 24,
+          "typical_difference_between_two_normal_runs": 0,
+          "grows_more_than_noise": true
+        },
+        "seconds_to_drive": {
+          "normal": 12,
+          "with_closure": 12
+        }
+      },
+      {
+        "leg": "Cardigan Street southbound, Faraday Street to Grattan Street",
+        "role": "signed detour",
+        "length_m": 221,
+        "lanes_at_fullest_point": 1,
+        "cars_an_hour": {
+          "normal": 187,
+          "with_closure": 310,
+          "busiest_hour_with_closure": 331
+        },
+        "share_of_capacity_in_busiest_hour": 0.47,
+        "longest_queue_m": {
+          "normal_typical": 19,
+          "normal_worst": 31,
+          "with_closure_typical": 38,
+          "with_closure_worst": 71,
+          "typical_difference_between_two_normal_runs": 3,
+          "grows_more_than_noise": true
+        },
+        "seconds_to_drive": {
+          "normal": 27,
+          "with_closure": 29
+        }
+      },
+      {
+        "leg": "Grattan Street westbound, Cardigan Street to Swanston Street",
+        "role": "signed detour",
+        "length_m": 92,
+        "lanes_at_fullest_point": 1,
+        "cars_an_hour": {
+          "normal": 301,
+          "with_closure": 429,
+          "busiest_hour_with_closure": 452
+        },
+        "share_of_capacity_in_busiest_hour": 0.65,
+        "longest_queue_m": {
+          "normal_typical": 25,
+          "normal_worst": 45,
+          "with_closure_typical": 29,
+          "with_closure_worst": 60,
+          "typical_difference_between_two_normal_runs": 2,
+          "grows_more_than_noise": false
+        },
+        "seconds_to_drive": {
+          "normal": 13,
+          "with_closure": 12
+        }
+      }
+    ],
+    "worst_single_lane_queue_growth_m": 101,
+    "health": {
+      "max_dropped_share": 0.0023,
+      "max_teleports": 25
+    }
+  },
+  "if_drivers_know_beforehand": {
+    "case": "drivers know beforehand and pick their own way",
+    "delay": {
+      "extra_seconds_per_diverted_trip": {
+        "median": 3,
+        "lower_quartile": -21,
+        "upper_quartile": 30,
+        "mean": 14,
+        "trips_compared": 4418
+      },
+      "diverted_trips_total_vehicle_hours": {
+        "low": 2.1,
+        "typical": 3.1,
+        "high": 5.2,
+        "unit": "vehicle-hours"
+      },
+      "diverted_trips_noise_floor_vehicle_hours": 1.1,
+      "all_traffic_vehicle_hours": {
+        "low": -24.0,
+        "typical": 7.0,
+        "high": 31.2,
+        "unit": "vehicle-hours"
+      },
+      "all_traffic_noise_floor_vehicle_hours": 11.0,
+      "all_traffic_change_is_within_noise": true
+    },
+    "extra_distance_per_diverted_trip_m": {
+      "lower_quartile": 0,
+      "median": 43,
+      "upper_quartile": 253,
+      "shortest_way_round_median": 7
+    },
+    "streets_taking_the_diverted_drivers": [
+      {
+        "street": "Cardigan Street southbound, Faraday Street to Grattan Street",
+        "diverted_drivers_over_the_works": 599,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 187,
+        "cars_an_hour_with_closure": 287,
+        "cars_in_busiest_hour_with_closure": 320,
+        "share_of_capacity_in_busiest_hour": 0.46,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Cardigan Street southbound, Elgin Street to Tyne Street",
+        "diverted_drivers_over_the_works": 484,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 195,
+        "cars_an_hour_with_closure": 276,
+        "cars_in_busiest_hour_with_closure": 304,
+        "share_of_capacity_in_busiest_hour": 0.43,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Cardigan Street southbound, Tyne Street to Faraday Street",
+        "diverted_drivers_over_the_works": 461,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 229,
+        "cars_an_hour_with_closure": 306,
+        "cars_in_busiest_hour_with_closure": 345,
+        "share_of_capacity_in_busiest_hour": 0.49,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Cardigan Street southbound, Argyle Place North to Pelham Street",
+        "diverted_drivers_over_the_works": 433,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 221,
+        "cars_an_hour_with_closure": 293,
+        "cars_in_busiest_hour_with_closure": 335,
+        "share_of_capacity_in_busiest_hour": 0.48,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Cardigan Street southbound, Grattan Street to Argyle Place North",
+        "diverted_drivers_over_the_works": 427,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 164,
+        "cars_an_hour_with_closure": 236,
+        "cars_in_busiest_hour_with_closure": 248,
+        "share_of_capacity_in_busiest_hour": 0.35,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Queensberry Street westbound, Cardigan Street to Swanston Street",
+        "diverted_drivers_over_the_works": 424,
+        "lanes_at_busiest_point": 2,
+        "cars_an_hour_normal": 413,
+        "cars_an_hour_with_closure": 483,
+        "cars_in_busiest_hour_with_closure": 549,
+        "share_of_capacity_in_busiest_hour": 0.39,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Cardigan Street southbound, Argyle Place South to Queensberry Street",
+        "diverted_drivers_over_the_works": 414,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 277,
+        "cars_an_hour_with_closure": 343,
+        "cars_in_busiest_hour_with_closure": 402,
+        "share_of_capacity_in_busiest_hour": 0.57,
+        "verdict": "well within capacity"
+      },
+      {
+        "street": "Cardigan Street southbound, Pelham Street to Argyle Place South",
+        "diverted_drivers_over_the_works": 404,
+        "lanes_at_busiest_point": 1,
+        "cars_an_hour_normal": 216,
+        "cars_an_hour_with_closure": 283,
+        "cars_in_busiest_hour_with_closure": 337,
+        "share_of_capacity_in_busiest_hour": 0.48,
+        "verdict": "well within capacity"
+      }
+    ],
+    "streets_relieved": [
+      {
+        "street": "Swanston Street southbound, Elgin Street to Faraday Street",
+        "fewer_drivers_over_the_works": 674
+      },
+      {
+        "street": "Swanston Street southbound, Grattan Street to Pelham Street",
+        "fewer_drivers_over_the_works": 340
+      },
+      {
+        "street": "Swanston Street southbound, Pelham Street to Monahan Lane",
+        "fewer_drivers_over_the_works": 311
+      },
+      {
+        "street": "Swanston Street southbound, Monahan Lane to Queensberry Street",
+        "fewer_drivers_over_the_works": 311
+      },
+      {
+        "street": "Elgin Street westbound, Cardigan Street to Swanston Street",
+        "fewer_drivers_over_the_works": 185
+      }
+    ],
+    "approach_and_signed_detour": [
+      {
+        "leg": "Swanston Street southbound, Elgin Street to Faraday Street",
+        "role": "approach to the closure",
+        "length_m": 176,
+        "lanes_at_fullest_point": 1,
+        "cars_an_hour": {
+          "normal": 158,
+          "with_closure": 45,
+          "busiest_hour_with_closure": 87
+        },
+        "share_of_capacity_in_busiest_hour": 0.12,
+        "longest_queue_m": {
+          "normal_typical": 43,
+          "normal_worst": 80,
+          "with_closure_typical": 0,
+          "with_closure_worst": 3,
+          "typical_difference_between_two_normal_runs": 8,
+          "grows_more_than_noise": false
+        },
+        "seconds_to_drive": {
+          "normal": 29,
+          "with_closure": 18
+        }
+      },
+      {
+        "leg": "Faraday Street eastbound, Swanston Street to Cardigan Street",
+        "role": "signed detour",
+        "length_m": 113,
+        "lanes_at_fullest_point": 1,
+        "cars_an_hour": {
+          "normal": 41,
+          "with_closure": 47,
+          "busiest_hour_with_closure": 74
+        },
+        "share_of_capacity_in_busiest_hour": 0.11,
+        "longest_queue_m": {
+          "normal_typical": 5,
+          "normal_worst": 11,
+          "with_closure_typical": 5,
+          "with_closure_worst": 18,
+          "typical_difference_between_two_normal_runs": 0,
+          "grows_more_than_noise": false
+        },
+        "seconds_to_drive": {
+          "normal": 12,
+          "with_closure": 12
+        }
+      },
+      {
+        "leg": "Cardigan Street southbound, Faraday Street to Grattan Street",
+        "role": "signed detour",
+        "length_m": 221,
+        "lanes_at_fullest_point": 1,
+        "cars_an_hour": {
+          "normal": 187,
+          "with_closure": 287,
+          "busiest_hour_with_closure": 320
+        },
+        "share_of_capacity_in_busiest_hour": 0.46,
+        "longest_queue_m": {
+          "normal_typical": 19,
+          "normal_worst": 31,
+          "with_closure_typical": 32,
+          "with_closure_worst": 60,
+          "typical_difference_between_two_normal_runs": 3,
+          "grows_more_than_noise": true
+        },
+        "seconds_to_drive": {
+          "normal": 27,
+          "with_closure": 28
+        }
+      },
+      {
+        "leg": "Grattan Street westbound, Cardigan Street to Swanston Street",
+        "role": "signed detour",
+        "length_m": 92,
+        "lanes_at_fullest_point": 1,
+        "cars_an_hour": {
+          "normal": 301,
+          "with_closure": 366,
+          "busiest_hour_with_closure": 412
+        },
+        "share_of_capacity_in_busiest_hour": 0.59,
+        "longest_queue_m": {
+          "normal_typical": 25,
+          "normal_worst": 45,
+          "with_closure_typical": 26,
+          "with_closure_worst": 65,
+          "typical_difference_between_two_normal_runs": 2,
+          "grows_more_than_noise": false
+        },
+        "seconds_to_drive": {
+          "normal": 13,
+          "with_closure": 12
+        }
+      }
+    ],
+    "worst_single_lane_queue_growth_m": 111,
+    "health": {
+      "max_dropped_share": 0.003,
+      "max_teleports": 28
+    }
+  },
+  "calibration_of_the_normal_runs": {
+    "counted_street_hours": 300,
+    "geh_under_5": 0.9,
+    "geh_under_10": 0.997,
+    "mean_geh": 1.52,
+    "mean_speed_kmh": 20.5,
+    "max_dropped_share": 0.003,
+    "max_teleports": 23,
+    "worst": [
+      {
+        "hour": 14.5,
+        "edge": "113539990#4",
+        "street": "Drummond Street southbound",
+        "count": 120,
+        "simulated": 31,
+        "geh": 10.1
+      },
+      {
+        "hour": 14.5,
+        "edge": "1312977907#1",
+        "street": "Grattan Street eastbound",
+        "count": 120,
+        "simulated": 34,
+        "geh": 9.7
+      },
+      {
+        "hour": 13.5,
+        "edge": "113539990#4",
+        "street": "Drummond Street southbound",
+        "count": 108,
+        "simulated": 29,
+        "geh": 9.5
+      },
+      {
+        "hour": 12.5,
+        "edge": "113539990#4",
+        "street": "Drummond Street southbound",
+        "count": 103,
+        "simulated": 28,
+        "geh": 9.3
+      },
+      {
+        "hour": 14.5,
+        "edge": "113539990#14",
+        "street": "Drummond Street southbound",
+        "count": 120,
+        "simulated": 38,
+        "geh": 9.2
+      },
+      {
+        "hour": 13.5,
+        "edge": "113539990#14",
+        "street": "Drummond Street southbound",
+        "count": 108,
+        "simulated": 33,
+        "geh": 8.9
+      }
+    ]
+  },
+  "lane_capacity_assumed_cars_an_hour": 700.0,
+  "not_simulated": [
+    "trams",
+    "buses",
+    "trucks",
+    "cyclists",
+    "pedestrians",
+    "the plan's right-turn ban at Grattan St"
+  ]
+}

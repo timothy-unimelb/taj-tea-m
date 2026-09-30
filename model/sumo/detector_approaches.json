@@ -1,5 +1,5 @@
 {
-  "about": "Which SCATS detectors count cars at the stop line, per approach, at the junctions around the Swanston closure. Read by hand from DTP Traffic Signal Configuration Data Sheets (CC-BY 4.0), 30 Sep 2026. Bike, tram, queue, hook-turn box and pedestrian detectors are left out. 'no_car_approaches' are approaches where the network has a car edge but the sheet shows no general car traffic, so the simulation gets a count of zero there. 'all_car_approaches_counted' marks sites whose car total is complete, used to correct sites without a sheet. Approaches not listed are left unconstrained.",
+  "about": "Which SCATS detectors count cars at the stop line, per approach, at the junctions around the Swanston closure (CBD), and around the test TGS on Swanston St between Faraday St and Grattan St (sites 4391 to 4425). Read by hand from DTP Traffic Signal Configuration Data Sheets (CC-BY 4.0), 30 Sep 2026. Bike, tram, queue, hook-turn box and pedestrian detectors are left out. 'no_car_approaches' are approaches where the network has a car edge but the sheet shows no general car traffic, so the simulation gets a count of zero there. 'all_car_approaches_counted' marks sites whose car total is complete, used to correct sites without a sheet. Approaches not listed are left unconstrained. A detector written as 'site:detector' belongs to another site's controller.",
   "sites": {
     "2921": {
       "name": "SWANSTON/LATROBE",
@@ -169,6 +169,162 @@
       ],
       "all_car_approaches_counted": false,
       "notes": "Swanston St here is the permit-only section, which netconvert opens to cars. Detector 1 (northbound right turn in the tram lane, about 1,800 a day) is left out and the northbound edge gets zero, to keep general cars off it."
+    },
+    "4392": {
+      "name": "SWANSTON/FARADAY/MONASH",
+      "sheet": "DOC/24/46559, 25/01/2024 (Melb Uni tram terminus upgrade)",
+      "confidence": "high",
+      "car_detectors": {
+        "northbound": [
+          2
+        ],
+        "southbound": [
+          3,
+          4
+        ],
+        "westbound": [
+          7
+        ],
+        "eastbound": [
+          8
+        ]
+      },
+      "all_car_approaches_counted": true,
+      "notes": "The site also runs the pedestrian crossing at the Melbourne University tram stop, inside the block south of Faraday St: detector 1 counts northbound cars there (the same cars as detector 2 at the Faraday St stop line) and detector 5 counts southbound cars there, about 2,300 a weekday. Detector 5 is the count of the lane the test TGS closes; it is used as the southbound approach of 4391. Detectors 6 and 9 are bike loops, 10 to 23 tram inputs, 24 to 28 push buttons. Eastbound is Monash Rd, the university entry."
+    },
+    "4391": {
+      "name": "GRATTAN/SWANSTON",
+      "sheet": "plan 496941C, 3/03/2014",
+      "confidence": "medium",
+      "car_detectors": {
+        "eastbound": [
+          8,
+          9,
+          10
+        ],
+        "westbound": [
+          5,
+          6,
+          7
+        ],
+        "southbound": [
+          "4392:5"
+        ]
+      },
+      "all_car_approaches_counted": false,
+      "notes": "The sheet is from 2014, before the junction was rebuilt. Grattan St detectors 5 to 10 still count plausible car volumes (they agree with 4395 and 4425 on either side). The sheet's Swanston St detectors do not: 2 and 4 (right-turn lanes that no longer exist) read zero, 1 and 3 report only 8 days in the month, and 11 and 12, 'not used' on the sheet, now count about 4,300 a day each. So the southbound approach uses detector 5 of site 4392, which counts the same lane 150 m upstream with no side street between, and the northbound approach is left unconstrained. Detectors 13 to 16 are tram loops, 17 to 20 push buttons."
+    },
+    "4395": {
+      "name": "GRATTAN/CARDIGAN",
+      "sheet": "Document 18561011, 18/05/2020",
+      "confidence": "high",
+      "car_detectors": {
+        "westbound": [
+          1
+        ],
+        "eastbound": [
+          2
+        ],
+        "northbound": [
+          3
+        ],
+        "southbound": [
+          4
+        ]
+      },
+      "all_car_approaches_counted": true,
+      "notes": "One loop across all lanes of each approach. Detectors 5 and 6 are push buttons."
+    },
+    "4393": {
+      "name": "SWANSTON/ELGIN",
+      "sheet": "DOC/24/270736, 18/10/2024",
+      "confidence": "high",
+      "car_detectors": {
+        "northbound": [
+          2
+        ],
+        "southbound": [
+          4
+        ],
+        "westbound": [
+          5,
+          6
+        ],
+        "eastbound": [
+          7
+        ]
+      },
+      "all_car_approaches_counted": true,
+      "notes": "Detectors 1, 3 and 8 are bike detectors (8 reports about 10,000 a day, so it is not a usable count). 10 and 14 are tram loops, 16 a tram push button. Eastbound is Tin Alley."
+    },
+    "4425": {
+      "name": "GRATTAN/BOUVERIE",
+      "sheet": "DOC/24/142280, 22/01/2024",
+      "confidence": "high",
+      "car_detectors": {
+        "eastbound": [
+          4
+        ],
+        "westbound": [
+          2
+        ],
+        "northbound": [
+          5,
+          6
+        ]
+      },
+      "all_car_approaches_counted": true,
+      "notes": "Detectors 1 and 3 are bike loops, 7 and 8 bus detectors in the eastbound bus lane, 9 and 10 push buttons."
+    },
+    "4396": {
+      "name": "GRATTAN/LYGON",
+      "sheet": "plan 889368, 13/08/2008",
+      "confidence": "medium",
+      "car_detectors": {
+        "northbound": [
+          5,
+          6
+        ],
+        "southbound": [
+          7,
+          8
+        ],
+        "eastbound": [
+          3,
+          4
+        ],
+        "westbound": [
+          1,
+          2
+        ]
+      },
+      "all_car_approaches_counted": true,
+      "notes": "Old sheet, but the eight lane detectors add up to the site total. Detectors 9 to 12 are push buttons. Detector 3 reports only 12 days in the month."
+    },
+    "4407": {
+      "name": "LYGON/FARADAY",
+      "sheet": "plan P 437554, 14/08/2008",
+      "confidence": "medium",
+      "car_detectors": {
+        "northbound": [
+          1,
+          2
+        ],
+        "southbound": [
+          3,
+          4
+        ],
+        "westbound": [
+          5,
+          6
+        ],
+        "eastbound": [
+          7,
+          8
+        ]
+      },
+      "all_car_approaches_counted": true,
+      "notes": "Old sheet, but the eight lane detectors add up to the site total. Detectors 9 to 12 are push buttons."
     }
   }
 }

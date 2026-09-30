@@ -1,0 +1,74 @@
+{
+  "about": "The test TGS in data/test/ (swanston-smac-lane-closure.jpg): Swanston St between Faraday St and Grattan St, Carlton, opposite the Sidney Myer Asia Centre. Southbound closed at Faraday St, Monday to Friday 9:30am to 3:30pm, detour via Faraday St, Cardigan St and Grattan St. Run the scripts with SUMO_SITE=smac; they then work in work/smac/ and output/smac/.",
+  "name": "Swanston Street, Faraday Street to Grattan Street",
+  "area": "Carlton",
+  "osm": "work/smac/area.osm",
+  "osm_bbox": [
+    144.954,
+    -37.809,
+    144.976,
+    -37.79
+  ],
+  "bbox": [
+    144.9585,
+    -37.8058,
+    144.9715,
+    -37.794
+  ],
+  "vclasses": "passenger",
+  "vclasses_note": "Car streets only. With the tram tracks in the network (as in the CBD run) the junctions along Elgin St and Lygon St get signal programs that jam in the afternoon: 8% of cars dropped from 2:30pm, against 0.1% without. No tram services are simulated either way.",
+  "closure": {
+    "street": "Swanston Street",
+    "direction": "southbound",
+    "from": [
+      -37.79846,
+      144.9644
+    ],
+    "to": [
+      -37.8003,
+      144.96409
+    ],
+    "from_cross": "Faraday Street",
+    "to_cross": "Grattan Street",
+    "through_only": true
+  },
+  "approach": {
+    "street": "Swanston Street",
+    "direction": "southbound",
+    "between": [
+      "Elgin Street",
+      "Faraday Street"
+    ]
+  },
+  "detour": [
+    {
+      "street": "Faraday Street",
+      "direction": "eastbound",
+      "between": [
+        "Swanston Street",
+        "Cardigan Street"
+      ]
+    },
+    {
+      "street": "Cardigan Street",
+      "direction": "southbound",
+      "between": [
+        "Faraday Street",
+        "Grattan Street"
+      ]
+    },
+    {
+      "street": "Grattan Street",
+      "direction": "westbound",
+      "between": [
+        "Cardigan Street",
+        "Swanston Street"
+      ]
+    }
+  ],
+  "works": {
+    "days": "Monday to Friday",
+    "start_hour": 9.5,
+    "end_hour": 15.5
+  }
+}
