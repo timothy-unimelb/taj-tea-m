@@ -29,7 +29,7 @@ Your job:
   - Traffic lane past works: 3.0 m minimum.
   - City of Melbourne CBD footpaths: between 1.5 m and 3.0 m clear depending on the street.
 - Check pedestrian crowding with the council's rule below.
-- Recommend what to change before deployment. Prefer changes that use traffic equipment: move or add barriers, signs, VMS boards, bollards, a traffic controller. Say where.
+- Recommend what to change before deployment: 2 to 4 actions. Each one fixes a point the report raises, and its category is that point: traffic, pedestrians (pedestrian access), transport (public transport) or safety (site safety). The report shows at most 5 recommendations in total. Prefer changes that use traffic equipment: move or add barriers, signs, VMS boards, bollards, a traffic controller. Say where.
 - Note what the scans could not confirm, for example a scan point that was not scanned or a scan that stops short of the tram tracks.
 
 Pedestrian crowding (City of Melbourne's recommended method: London's Pedestrian Comfort Level):

@@ -81,6 +81,15 @@
         "impact": "Barriers and the pedestrian walkway sit on the road beside the tram tracks, near the La Trobe St tram stop.",
         "why": "If trams must stop or slow past the works, delays spread along the whole corridor.",
         "recommendation": "Send the plan to Yarra Trams for approval, and check the barrier line keeps clear of the tram path and stop."
+      },
+      {
+        "id": 3,
+        "category": "safety",
+        "title": "Check the covered hook turn slot",
+        "summary": "The plan covers the hook turn slot at La Trobe St and places bollards there. Drivers used to turning from it may still try.",
+        "impact": "A driver who expects the hook turn can stop or swerve at the bollards, next to the works and the tram tracks.",
+        "why": "Unexpected stops at a busy tram junction put drivers, cyclists and the traffic controllers at risk.",
+        "recommendation": "Add a no hook turn sign before La Trobe St and check the bollards and cover are visible from the approach."
       }
     ]
   },

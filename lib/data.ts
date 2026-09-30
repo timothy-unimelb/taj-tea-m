@@ -80,6 +80,25 @@ function describe(mode: ModeImpact) {
 const PROVENANCE = { live: "Calculated for this plan", precomputed: "Calculated in advance for this site", fixture: "Fixed demo values" };
 
 // Everything the report shows from the impact model. The report reads only this.
+// Recommendations match the report: each one belongs to a point in the impact
+// summary (traffic, pedestrian access, public transport, site safety). The most
+// severe points come first, each point gets one before any gets a second, and
+// there are at most MAX_RECOMMENDATIONS.
+const MAX_RECOMMENDATIONS = 5;
+const SEVERITY_ORDER = ["High", "Moderate", "Review required", "Low", "Not modelled"];
+type Action = { category: string; title: string; summary: string; impact: string; why: string; recommendation: string };
+function pickRecommendations(candidates: Action[], points: { id: string; label: string; severity: string }[]) {
+  const rank = (a: Action) => {
+    const point = points.find(p => p.id === a.category);
+    return point ? SEVERITY_ORDER.indexOf(point.severity) : SEVERITY_ORDER.length;
+  };
+  const unique = candidates.filter((a, i) => candidates.findIndex(b => b.title === a.title) === i && points.some(p => p.id === a.category));
+  const ordered = unique.map((a, i) => ({ a, i })).sort((x, y) => rank(x.a) - rank(y.a) || x.i - y.i).map(x => x.a);
+  const first = ordered.filter((a, i) => ordered.findIndex(b => b.category === a.category) === i);
+  const rest = ordered.filter(a => !first.includes(a));
+  return [...first, ...rest].slice(0, MAX_RECOMMENDATIONS).map((action, i) => ({ ...action, id: i + 1, point: points.find(p => p.id === action.category)!.label }));
+}
+
 // `check` is Claude's plan vs street check of real scans. Without it the demo findings show.
 export function buildReport(impact: ImpactResult, check: SiteCheck | null = null, scansMeasured = 0) {
   const { cars, trucks, pedestrians, public_transport: transport } = impact.modes;
@@ -102,7 +121,7 @@ export function buildReport(impact: ImpactResult, check: SiteCheck | null = null
     recommendation: `Compare the planned hours with this window (${window.window.toLowerCase()}), and check the work fits.`,
   } : null;
   const siteActions = check ? check.actions : demo.explanations.actions;
-  const actions = [...siteActions, ...(trafficAction ? [trafficAction] : [])].map((action, i) => ({ ...action, id: i + 1 }));
+  const actions = pickRecommendations([...siteActions, ...(trafficAction ? [trafficAction] : [])], impactSummary);
   return {
     period: impact.period,
     overall: impact.overall!.severity,

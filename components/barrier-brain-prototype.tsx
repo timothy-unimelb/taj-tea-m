@@ -170,7 +170,7 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   return <div className={`mobile-app ${isPdf ? "pdf-mode" : ""}`}>
     <a href="#main-content" className="skip-link" onClick={event => { event.preventDefault(); main.current?.querySelector<HTMLElement>("h1")?.focus(); }}>Skip to content</a>
     <header className={`app-header ${isReport || isPdf ? "report-toolbar" : ""}`}>
-      {screen === "projects" ? <Brand /> : <button className="back-button" onClick={() => navigate(backScreens[screen])}><ArrowLeftIcon size={18} aria-hidden="true" /><span>Back</span></button>}
+      {screen === "projects" ? <Brand /> : isReport ? <button className="back-button" onClick={() => navigate("projects")}><XIcon size={18} aria-hidden="true" /><span>Close</span></button> : <button className="back-button" onClick={() => navigate(backScreens[screen])}><ArrowLeftIcon size={18} aria-hidden="true" /><span>Back</span></button>}
       {isPdf && <span className="document-filename">{project.name.replaceAll(" ", "_")}_Report.pdf</span>}
       {(isReport || isPdf) && <div className="toolbar-actions"><button className="toolbar-button" onClick={share} aria-label="Share report"><ShareNetworkIcon size={20} aria-hidden="true" />{!isPdf && <span>Share</span>}</button>{isReport && <button className="toolbar-button" onClick={() => navigate("pdf")}><FilePdfIcon size={20} aria-hidden="true" /><span>Export PDF</span></button>}</div>}
     </header>

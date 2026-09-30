@@ -40,7 +40,7 @@ Site safety
 - [ ] Three valid, useful, actionable points. Claude picks them from the data sources, the problem statement, our solution and the demo TGS, drawing on the traffic, pedestrian and public transport points. Keep the screen light. Possible point: is any part of the site accidentally exposed.
 
 Recommended before deployment
-- [ ] Matches the points in the report. At most 5.
+- [x] Matches the points in the report. At most 5. (Joel: each recommendation names its report point, most severe point first, one per point before any second, max 5, same list in the PDF)
 
 ## Export PDF
 
@@ -49,7 +49,7 @@ Recommended before deployment
 
 ## Last screen
 
-- [ ] The Back button becomes a Close button that returns to the first screen.
+- [x] The Back button becomes a Close button that returns to the first screen. (Joel: on the report; the PDF preview keeps Back to the report)
 
 ## From the pre-screening PDF's "what's left"
 
