@@ -21,7 +21,21 @@
           "label": "Hours of delay",
           "answer": "8 vehicle-hours a day",
           "status": "watch",
-          "text": "About 32 s for each diverted driver. For all traffic within 600 m, no change beyond normal day-to-day variation."
+          "text": "About 32 s for each diverted driver. For all traffic within 600 m, no change beyond normal day-to-day variation.",
+          "by_time": {
+            "9am": {
+              "answer": "1.2 vehicle-hours this hour",
+              "text": "About 29 s for each of the 153 drivers diverted. 8 vehicle-hours a day in total."
+            },
+            "12pm": {
+              "answer": "1.4 vehicle-hours this hour",
+              "text": "About 31 s for each of the 167 drivers diverted. 8 vehicle-hours a day in total."
+            },
+            "3pm": {
+              "answer": "1.2 vehicle-hours this hour",
+              "text": "About 31 s for each of the 141 drivers diverted. 8 vehicle-hours a day in total."
+            }
+          }
         },
         {
           "label": "Detour streets",
@@ -45,7 +59,18 @@
           "label": "Is the detour safe?",
           "answer": "Not as drawn",
           "status": "fix",
-          "text": "The VMS boards stand past the turn, and Faraday St westbound becomes a dead end."
+          "text": "The VMS boards stand past the turn, and Faraday St westbound becomes a dead end.",
+          "by_time": {
+            "9am": {
+              "text": "The VMS boards stand past the turn, so about 153 drivers this hour reach the closure. Faraday St westbound becomes a dead end."
+            },
+            "12pm": {
+              "text": "The VMS boards stand past the turn, so about 167 drivers this hour reach the closure. Faraday St westbound becomes a dead end."
+            },
+            "3pm": {
+              "text": "The VMS boards stand past the turn, so about 141 drivers this hour reach the closure. Faraday St westbound becomes a dead end."
+            }
+          }
         }
       ]
     },
@@ -69,7 +94,27 @@
           "label": "Lunchtime crowding",
           "answer": "708 people an hour",
           "status": "watch",
-          "text": "The council's rule needs 1.5 m clear. The plan keeps exactly 1.5 m."
+          "text": "The council's rule needs 1.5 m clear. The plan keeps exactly 1.5 m.",
+          "by_time": {
+            "9am": {
+              "label": "Footpath crowding",
+              "answer": "316 people an hour",
+              "status": "ok",
+              "text": "The council's rule needs 0.9 m clear. The plan's 1.5 m leaves 0.6 m spare."
+            },
+            "12pm": {
+              "label": "Footpath crowding",
+              "answer": "698 people an hour",
+              "status": "watch",
+              "text": "The council's rule needs 1.5 m clear. The plan keeps exactly 1.5 m, with no spare."
+            },
+            "3pm": {
+              "label": "Footpath crowding",
+              "answer": "582 people an hour",
+              "status": "ok",
+              "text": "The council's rule needs 1.3 m clear. The plan's 1.5 m leaves 0.2 m spare."
+            }
+          }
         }
       ]
     },
@@ -103,13 +148,35 @@
           "label": "Move VMS 1 and 2 before Faraday St",
           "answer": "Traffic",
           "status": "fix",
-          "text": "They stand past the only detour turn. About 150 drivers an hour would turn around by the tram stop."
+          "text": "They stand past the only detour turn. About 150 drivers an hour would turn around by the tram stop.",
+          "by_time": {
+            "9am": {
+              "text": "They stand past the only detour turn. About 153 drivers this hour would turn around by the tram stop."
+            },
+            "12pm": {
+              "text": "They stand past the only detour turn. About 167 drivers this hour would turn around by the tram stop."
+            },
+            "3pm": {
+              "text": "They stand past the only detour turn. About 141 drivers this hour would turn around by the tram stop."
+            }
+          }
         },
         {
           "label": "Guard the plant crossing",
           "answer": "Pedestrians",
           "status": "fix",
-          "text": "It is the one open gap in the barriers, onto a footpath with 700 people an hour. Traffic controllers hold people. Move plant outside noon to 2pm."
+          "text": "It is the one open gap in the barriers, onto a footpath with 700 people an hour. Traffic controllers hold people. Move plant outside noon to 2pm.",
+          "by_time": {
+            "9am": {
+              "text": "The one open gap in the barriers. About 316 people an hour walk past now, the quietest works hour. A good time to move plant, with traffic controllers holding people."
+            },
+            "12pm": {
+              "text": "The one open gap in the barriers. About 698 people an hour walk past now. Hold plant moves until after 2pm."
+            },
+            "3pm": {
+              "text": "The one open gap in the barriers. About 582 people an hour walk past now. Traffic controllers hold people for every plant crossing."
+            }
+          }
         },
         {
           "label": "Check tram clearance at set-out",
@@ -170,6 +237,71 @@
         "impact": "Without the permit the works can be stopped on the day.",
         "why": "Works within 20 m of a tram stop need a PTV permit, and works near the tracks need Yarra Trams approval.",
         "recommendation": "Send the plan to PTV and Yarra Trams together, with the barrier clearance to the tram envelope marked."
+      }
+    ]
+  },
+  "times": [
+    {
+      "id": "9am",
+      "label": "9am",
+      "traffic_window": "9:30am to 10:30am",
+      "people_window": "9am to 10am"
+    },
+    {
+      "id": "12pm",
+      "label": "12pm",
+      "traffic_window": "11:30am to 12:30pm",
+      "people_window": "12pm to 1pm"
+    },
+    {
+      "id": "3pm",
+      "label": "3pm",
+      "traffic_window": "2:30pm to 3:30pm",
+      "people_window": "3pm to 4pm"
+    }
+  ],
+  "day_table": {
+    "note": "Traffic is the simulated hour nearest each time (SUMO, signed detour). People are the council sensor's clock hour at Grattan St and Swanston St, a typical weekday. Width needed follows the council's comfort rule. The plan keeps 1.5 m.",
+    "rows": [
+      {
+        "label": "Drivers diverted that hour",
+        "values": {
+          "9am": "153",
+          "12pm": "167",
+          "3pm": "141"
+        }
+      },
+      {
+        "label": "Extra driving (vehicle-hours)",
+        "values": {
+          "9am": "1.2",
+          "12pm": "1.4",
+          "3pm": "1.2"
+        }
+      },
+      {
+        "label": "People walking past that hour",
+        "values": {
+          "9am": "316",
+          "12pm": "698",
+          "3pm": "582"
+        }
+      },
+      {
+        "label": "Footpath clear width needed",
+        "values": {
+          "9am": "0.9 m",
+          "12pm": "1.5 m",
+          "3pm": "1.3 m"
+        }
+      },
+      {
+        "label": "Comfort grade at 1.5 m clear",
+        "values": {
+          "9am": "A",
+          "12pm": "B+",
+          "3pm": "A-"
+        }
       }
     ]
   }

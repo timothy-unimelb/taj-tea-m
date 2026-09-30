@@ -17,11 +17,16 @@ import type { ScanPointResult, SiteCheck } from "@/lib/site-check";
 // `answer` is the short result that stands out, `text` one short line behind it,
 // `status` its colour: ok, watch or fix. Site safety checks are actions, and their
 // `answer` names the report point they come from.
-type Check = { label: string; text: string; answer?: string; status?: "ok" | "watch" | "fix" };
+type Check = { label: string; text: string; answer?: string; status?: "ok" | "watch" | "fix"; by_time?: Record<string, Partial<Omit<Check, "by_time">>> };
+// Times of day the report can be read at (the time slider), and the PDF's table of them.
+type ReportTime = { id: string; label: string; traffic_window: string; people_window: string };
+type DayTable = { note: string; rows: { label: string; values: Record<string, string> }[] };
 export type SavedReport = {
   points: Record<"traffic" | "pedestrians" | "transport" | "safety", { summary?: string; reason?: string; checks: Check[] }>;
   site_check: SiteCheck;
   sources: string[];
+  times?: ReportTime[];
+  day_table?: DayTable;
 };
 
 // The demo TGS files, each with a saved Claude analysis so rehearsals are instant and free.
@@ -169,6 +174,8 @@ export function buildReport(impact: ImpactResult, check: SiteCheck | null = null
     overall: impact.overall!.severity,
     overallReason: impact.overall!.reason,
     impactSummary,
+    times: saved?.times ?? [],
+    dayTable: saved?.day_table ?? null,
     decision: check ? check.decision : demo.explanations.decision,
     conflicts: check?.conflicts ?? [],
     keyFindings: [...impactSummary.map(p => p.description), ...findings.map(f => f.summary)],
