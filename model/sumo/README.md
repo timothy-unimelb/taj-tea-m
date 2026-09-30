@@ -60,7 +60,7 @@ Which turns cars may make, and from which lane, decides who can use the closed b
 
 | Turn | Allowed? | Source |
 |---|---|---|
-| Westbound La Trobe St, right into the block | No | DTP signal sheet DOC/24/198884 for site 2921: no car right-turn signal group, only a bike hook turn. Not yet checked on site. |
+| Westbound La Trobe St, right into the block | No | DTP signal sheet DOC/24/198884 for site 2921: no car right-turn signal group, only a bike hook turn. Confirmed on Google Street View, Nov 2025 imagery: No Right Turn and straight-ahead-only signs on the approach (`output/2921-latrobe-westbound-signs-streetview-nov2025.png`). |
 | Eastbound La Trobe St, left into the block | Yes | OpenStreetMap way connectivity, no restriction tagged |
 | Out of the block, straight on up Swanston St | Yes | OpenStreetMap |
 | Out of the block, left into Little La Trobe St | Yes | OpenStreetMap |
@@ -176,7 +176,7 @@ What this says: the closed block matters little for cars, and whether it matters
 The plan to fix these, in order, is PLAN.md step 6b (less janky) and then 6c (any site).
 
 - **No count constrains the closed lane.** The range is how many simulated drivers enter it, which depends on simulated queues.
-- **The right-turn ban rests on one sheet reading.** Site 2921's signal sheet shows no car right-turn signal from westbound La Trobe St, so the model bans it and almost no cars use the block. If the turn is allowed, drivers use the block as a shortcut and the figure is about ten times higher (the sensitivity case). Check on site or with the City of Melbourne.
+- **The right-turn-allowed case is a what-if, not a possible reading of the street.** Site 2921's signal sheet shows no car right-turn signal from westbound La Trobe St, and Street View (Nov 2025) shows a No Right Turn sign on the approach. So the main case is the street as it is. The allowed case shows how much the block would matter if that ban were lifted, about ten times more, and is the only reason to keep the sensitivity figure in the report's range.
 - **The afternoon peak is still too congested.** From 3pm to 6pm 5% to 7% of cars are dropped and speeds are about 7 km/h. Victoria St, the northern edge, carries about 60% of its count because the joined Victoria St / Swanston St junction's signal program cannot serve it. The 40 sites without a sheet still use whole-site totals times 0.57.
 - **Hook turns have no box.** A waiting hook turner blocks the kerb lane at the stop line.
 - **Some sheets are old or don't match the counts.** 4523's sheet is from 2019 and three of its detectors that are off on the sheet now count traffic. Elizabeth St at 2906 and 4512 has no car detectors. Only 3 of the 9 sheets had their turn signals read.
