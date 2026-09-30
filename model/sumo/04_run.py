@@ -21,7 +21,7 @@ Safety limits (added 30 Sep after a run grew to 300 GB of memory and crashed the
   Cars that cannot enter the network within 5 minutes are dropped and counted,
   instead of waiting in memory forever. Only each car's last route is kept.
 """
-import argparse, math, os, signal, subprocess, sys, time
+import argparse, math, os, re, signal, subprocess, sys, time
 from common import *
 
 ap = argparse.ArgumentParser()
@@ -91,7 +91,13 @@ if args.gui:
     with open(view, "w") as f:
         f.write(f'<viewsettings>\n  <scheme name="real world"/>\n  <viewport zoom="1400" x="{jx:.0f}" y="{jy + 60:.0f}"/>\n  <delay value="60"/>\n</viewsettings>\n')
     gui_opts = ["--start", "--quit-on-end", "false", "--gui-settings-file", view, "--window-size", "1400,900"]
-cmd = [sumo_bin, "-n", netfile, "-r", routes, "-a", add, "--seed", str(args.seed),
+# Signal plans read from DTP signal sheets replace netconvert's guesses at those junctions (sites/<name>.json).
+plans = [os.path.join(HERE, p) for p in (SITE or {}).get("signal_plans", [])]
+for p in plans:
+    for tl in re.findall(r'<tlLogic id="([^"]+)"', open(p).read()):
+        if f'<tlLogic id="{tl}"' not in open(netfile).read():
+            sys.exit(f"{p}: junction {tl} is not in {netfile}. The network was rebuilt; update the id.")
+cmd = [sumo_bin, "-n", netfile, "-r", routes, "-a", ",".join([add, *plans]), "--seed", str(args.seed),
        "--begin", str(begin), "--end", str(end), "--scale", str(args.scale),
        "--step-length", "1", "--no-step-log", *([] if args.warnings else ["--no-warnings"]),
        "--tripinfo-output", f"{run}/tripinfo.xml",

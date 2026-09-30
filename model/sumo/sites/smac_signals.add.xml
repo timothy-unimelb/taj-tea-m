@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Signal plan for Swanston St / Faraday St / Monash Rd (SCATS site 4392), from its DTP Traffic Signal
+Configuration Data Sheet (DOC/24/46559, 25 Jan 2024, CC BY 4.0; work/smac/sheets/4250-4449/4392.pdf).
+Loaded by 04_run.py for every run of this site (base, signed and closure), in place of the plan netconvert
+guessed. The guess had two phases and let drivers turn left from Swanston St into Faraday St on green all
+the time, so with the closure (when every driver turns there) nobody ever waited.
+
+The sheet's phases (page 2), in the order A, B, C:
+  A (pivot)  Swanston St both ways (SG1 to SG4), SB left into Faraday St with them.
+             Pedestrians cross Faraday St (P2) and Monash Rd (P1) at the same time.
+  B          Tram stop and bike phase: P3 and P4 cross Swanston St, SG9 bikes, trams. No Faraday St car movement.
+  C          Swanston St northbound (SG2) and the left turn from Faraday St into Swanston St southbound (SG5).
+Timings (pages 5 and 6): P2 walk 15 s, clearance 6 s. P3 and P4 walk 8 s, clearance 15 + 1 s.
+A: minimum green 2 s, maximum extension 20 s, yellow 3 s, all red 5.5 s. B: minimum 8 s.
+C: minimum 8 s, maximum extension 10 s, yellow 3 s, all red 1.5 s.
+
+SUMO has no pedestrians here, so:
+  - Drivers turning left into Faraday St give way to people on P2. They are held for P2's 15 s walk at the
+    start of A, then turn for the rest of A. In the street they may filter through gaps in the crowd.
+  - B runs every cycle for its walk and clearance (24 s). Near the university and the tram stop the push
+    buttons and trams call it almost every cycle.
+The real cycle length is set by SCATS minute by minute and is not published. The phase lengths here let
+SUMO's delay-based control stretch A and C with traffic, within the sheet's limits.
+
+Links of this junction in the network (same in net.net.xml and net_closed.net.xml):
+  0 Swanston St northbound, straight on          (SG2)
+  1 Faraday St westbound, left into Swanston St  (SG5)
+  2 Swanston St southbound, left into Faraday St (SG3)
+  3 Swanston St southbound, straight on          (SG3)
+The id is the one netconvert gives the joined junction. Rebuilding the network can change it; 04_run.py
+stops with an error if it is missing.
+-->
+<additional>
+    <tlLogic id="joinedS_1492169268_cluster_10828409218_10828409219_1283708082_1492169239_#3more" type="delay_based" programID="sheet4392" offset="0">
+        <phase duration="15" minDur="15" maxDur="15" state="GrrG" name="A: P2 walk, left turners wait"/>
+        <phase duration="15" minDur="6"  maxDur="26" state="GrGG" name="A: rest"/>
+        <phase duration="3"  state="yryy" name="A yellow"/>
+        <phase duration="5.5" state="rrrr" name="A all red"/>
+        <phase duration="24" minDur="24" maxDur="24" state="rrrr" name="B: tram stop crossings and bikes"/>
+        <phase duration="10" minDur="8"  maxDur="18" state="GGrr" name="C: northbound and Faraday St left"/>
+        <phase duration="3"  state="yyrr" name="C yellow"/>
+        <phase duration="1.5" state="rrrr" name="C all red"/>
+    </tlLogic>
+</additional>

@@ -20,7 +20,7 @@ Lead with time, safety and efficiency: hours of delay across the city, pedestria
 - [x] Site overview image is distorted. Fix. (Joel: artwork shown at its own shape)
 
 Traffic
-- [x] Hours of delay within an x km radius. (Tim: for the test TGS, from SUMO. About 16 vehicle-hours within about 600 m. Other sites show the lookup's delay with no radius.)
+- [x] Hours of delay within an x km radius. (Tim: for the test TGS, from SUMO. About 8 vehicle-hours for the diverted drivers (about 32 s each); for all traffic within about 600 m the change is within day-to-day noise. Faraday St lights run from their signal sheet. Other sites show the lookup's delay with no radius.)
 - [x] Which streets take the detour, and whether each can carry the extra volume. (Tim: for the test TGS, from SUMO. Cars an hour on Faraday St, Cardigan St and Grattan St against a lane's capacity, on the Traffic tab.)
 - [x] Queue length. (Tim: for the test TGS, from SUMO. Other sites show the lookup's queue.)
 - [x] Is the detour safe. (Tim: for the demo TGS, saved report point. Not as drawn: VMS 1 and 2 stand past the Faraday St turn, and Faraday St westbound becomes a dead end.)

@@ -499,7 +499,7 @@ result = {
     "label": "Early result",
     "provenance": "precomputed",
     "confidence": "medium" if calib["geh_under_5"] >= 0.85 and calib["max_dropped_share"] < 0.02 else "low",
-    "confidence_note": f"A detector counts the closed lane itself, so the number of diverted drivers is measured, not inferred. Where they go and the delay come from simulated routes and SUMO's own signal timings, "
+    "confidence_note": f"A detector counts the closed lane itself, so the number of diverted drivers is measured, not inferred. Where they go and the delay come from simulated routes and simulated signal timings (the real phases at Faraday St, SUMO's own elsewhere), "
                        f"which reproduce the counts on {calib['geh_under_5']:.0%} of counted street-hours.",
     "period": period,
     "recommended_window": None,
@@ -521,7 +521,8 @@ result = {
         f"and to whole-site totals at {len(demand['counting_sites']) - len(demand['measured_sites'])} others, using SUMO routeSampler.",
         f"Calibration: in the normal runs the simulated traffic matches the counts within GEH 5 on {calib['geh_under_5']:.0%} of counted street-hours. Mean speed {calib['mean_speed_kmh']:.0f} km/h. "
         f"At most {calib['max_dropped_share']:.1%} of cars could not enter within 5 minutes and were dropped.",
-        "Street network from OpenStreetMap (© OpenStreetMap contributors), car streets only, left-hand traffic, turn restrictions and lane arrows from OpenStreetMap. Signals are SUMO's delay-based actuated control, not the real SCATS plans.",
+        "Street network from OpenStreetMap (© OpenStreetMap contributors), car streets only, left-hand traffic, turn restrictions and lane arrows from OpenStreetMap. " + ("Swanston St / Faraday St runs the phases and walk times of its 2024 DTP signal sheet (site 4392): drivers turning left into Faraday St wait for the 15 s pedestrian walk, and the tram stop crossings get their own phase every cycle. Every other junction uses SUMO's delay-based actuated control, not the real SCATS plans. SCATS sets the real cycle length minute by minute and does not publish it."
+        if SITE.get("signal_plans") else "Signals are SUMO's delay-based actuated control, not the real SCATS plans."),
         f"Delay is the extra travel time of the same trips with and without the closure. For all traffic, two normal runs differ by up to {floor:,.0f} vehicle-hours over the works hours on their own"
         + (f", and the closure runs differ from normal by {main['delay_all']['low']:,.0f} to {main['delay_all']['high']:,.0f}, so no area-wide delay is reported." if main["delay_all_is_noise"] else ", so a smaller effect would be reported as noise.")
         + f" For the diverted trips alone the floor is {floor_u:,.1f} vehicle-hours.",
@@ -533,7 +534,17 @@ result = {
     "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
 }
 picture = os.path.join(REPO, "public", "assets", f"sumo-{SITE_ID}-detour.png")   # 06_plot.py --case signed, copied there
-if os.path.exists(picture):
+clip = SITE.get("clip")   # 09_clip.py --copy-to public/assets/..., shown in place of the route map
+if clip and os.path.exists(os.path.join(REPO, "public", clip["src"].lstrip("/"))):
+    import struct
+    width, height = struct.unpack("<HH", open(os.path.join(REPO, "public", clip["src"].lstrip("/")), "rb").read(10)[6:10])
+    result["visual"] = {
+        "src": clip["src"], "width": width, "height": height,
+        "alt": f"Animation of {clip['minutes']} simulated minutes around the closed lane. Left, the normal street: purple dots are drivers using the lane, and a queue forms at the Faraday Street lights. Right, the lane closed: the same drivers go round by {via}.",
+        "caption": f"{clip['minutes']} simulated minutes from {clock(clip['hour'])} on a weekday. Left: the normal street. Right: the lane closed, drivers following the signs. Purple dots are the drivers who normally use the closed lane.",
+        "legend": [],   # the clip has its own legend
+    }
+elif os.path.exists(picture):
     import struct
     width, height = struct.unpack(">II", open(picture, "rb").read(24)[16:24])
     result["visual"] = {

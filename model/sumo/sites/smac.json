@@ -16,6 +16,9 @@
     -37.794
   ],
   "vclasses": "passenger",
+  "signal_plans": ["sites/smac_signals.add.xml"],
+  "clip": {"src": "/assets/sumo-smac-clip.gif", "hour": 11.5, "minutes": 6},
+  "signal_plans_note": "Swanston St / Faraday St (site 4392) runs its 2024 signal sheet's phases, with drivers turning left into Faraday St held for the pedestrian walk. Every other junction keeps netconvert's delay-based guess. Grattan St / Swanston St (4391) has only a 2014 sheet from before the junction was rebuilt, so it is not used.",
   "vclasses_note": "Car streets only. With the tram tracks in the network (as in the CBD run) the junctions along Elgin St and Lygon St get signal programs that jam in the afternoon: 8% of cars dropped from 2:30pm, against 0.1% without. No tram services are simulated either way.",
   "closure": {
     "street": "Swanston Street",
