@@ -13,6 +13,7 @@ Done:
 
 ## Tim
 Now:
+- [18:25] Working out which report points (traffic, pedestrians, public transport, site safety) come from SUMO, which from Claude, and which from SUMO fed into Claude. Trying SUMO on the demo site: the test TGS, Swanston St between Grattan St and Faraday St, southbound closed. model/sumo/ only, in its own work folder; the CBD run is untouched.
 Done:
 - [16:34] A TGS that closes a whole direction is now modelled with no lanes open: Claude reports `direction_closed` (lib/tgs-analysis.ts, prompts/tgs-analysis.md), and the lookup model uses it. The test TGS now shows about 1,500 diversions (1,200 to 1,900), cars High, night works recommended. Also fixed the "No traffic signal site matched" note showing on non-tram streets that did match.
 - [16:32] Default impact model is `mvm` again (lib/impact/index.ts), live on Vercel. The TypeScript port matches Tamara's Python on 9 test cases. Test TGS on Vercel: runs `mvm` live in 0.8 s. Cars show Low (0 delay) because Claude reads 0 lanes, so the model assumes 2 each way with 1 open, but the plan closes the whole southbound side. With 0 lanes open it would be about 1,500 to 1,900 diversions.
