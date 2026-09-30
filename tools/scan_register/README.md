@@ -1,4 +1,25 @@
-# scan_register: line a point cloud up with satellite imagery (bird's-eye view)
+# Scan registration tools
+
+Two sets of tools. The first runs the app's automatic registration from the command line. The second is the earlier interactive satellite-imagery tool (Python).
+
+## Automatic registration (TypeScript, the same code the app runs)
+
+The app registers uploaded LAS scans to each other and places the result on the map with no manual step (`lib/scan/site-scan.ts`; how it works is in `scans/swanston_registered_v2/SCAN_REGISTRATION_STATUS.md`). These scripts run that code on files. They need Node and the repo's `node_modules` (`npm install`); `jiti` runs the TypeScript directly.
+
+```
+node_modules/.bin/jiti tools/scan_register/register.ts out.las in1.las in2.las ... [--report r.json] [--no-georef] [--reference ref.json] [--save-reference ref.json] [--truth truth.json]
+```
+Writes the merged, georeferenced LAS, a full log next to it (`out.las.log`) and, with `--report`, a JSON report (per-scan status, fit numbers, map placement). `--no-georef` skips the map step. `--reference` uses saved map data instead of fetching it; `--save-reference` saves what was fetched. `--truth` prints errors against known transforms (synthetic tests).
+
+Other scripts:
+- `make_synthetic.ts <dir> [seed]`: four synthetic scans of a street with phone-like errors, plus `truth.json` and `reference.json`. The end-to-end test: make them, register with `--reference` and `--truth`, expect a few cm scan to scan and under 1 m on the map.
+- `render.ts out.png report.json scan_dir [--res 0.05] [--ground] [--colour] [--raw] [--reference ref.json] [--v2 transforms.json]`: top-down picture of the scans, one tint each, with the report's transforms applied (or none with `--raw`, or Tamara's v2 transforms), optionally with map data drawn on top.
+- `compare_v2.ts report.json`: differences from Tamara's validated Swanston St transforms, per scan. Her JSON is rounded to six decimals against seven-digit coordinates, so positions carry about 3 m of slop; headings are exact.
+- `probe.ts fixed.las moving.las yaw tx ty` and `georef_probe.ts scan.las reference.json yaw tx ty`: score a known placement with the same checks the registration uses, for tuning.
+
+Real scans stay out of the repo: put them in `scans/raw/` (git-ignored).
+
+## Interactive satellite tool (Python)
 
 Needs Python 3 with **numpy** (the project `.venv` has it) and internet access in your browser for the imagery.
 Works with uncompressed LAS 1.0–1.4 in projected metres (UTM / MGA). Your input file is never modified.

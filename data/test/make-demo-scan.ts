@@ -20,7 +20,7 @@ const out = join(__dirname, "..", "..", "public", "scans", "swanston-st-site-sca
 (async () => {
   const inputs = process.argv.slice(2);
   if (!inputs.length) throw new Error("Give the LAS scans to join.");
-  const stitched = await stitchScans(inputs.map(path => new File([readFileSync(path)], basename(path))));
+  const stitched = (await stitchScans(inputs.map(path => new File([readFileSync(path)], basename(path))))).file;
   const full = new Uint8Array(await stitched.arrayBuffer()), header = new DataView(full.buffer);
   const offset = header.getUint32(96, true), record = header.getUint16(105, true), count = header.getUint32(107, true);
   const kept = Math.ceil(count / KEEP_EVERY);
