@@ -20,11 +20,13 @@ Another site (SUMO_SITE=smac) compares with its main case, the signed detour:
     SUMO_SITE=smac python3 04_run.py signed --hour 11.5 --seed 1 --fcd 10
     SUMO_SITE=smac python3 09_clip.py --scenario signed --hour 11.5 --seed 1 --minutes 6 --centre=-37.7994,144.9649 --radius 175
 
---queues also colours each block of street (one direction, from one cross street to the next) by how fast its
-cars are moving, in both panels, and writes a second file (clip-<hour>-queues.gif). The measure is the average
-speed of the cars on the block over the last two minutes, as a share of the speed limit. Two minutes is longer
-than a signal cycle, so one red light does not turn a street red. Green is over half the limit, yellow 30% to
-50%, orange 15% to 30%, red under 15%. A block with fewer than 10 car-seconds in the two minutes is green. The
+--queues also colours each block of street (one direction, from one cross street to the next) by how many
+more cars are queued on it than on the normal street, and writes a second file (clip-<hour>-queues.gif). A car
+is queued when it is under 5 km/h. The count is the average over the last two minutes, which is longer than a
+signal cycle, so one red light does not colour a street. It is compared with the block's average over the whole
+hour in the normal run. Green is under 20% more, yellow 20% to 50%, orange 50% to 100%, red double or more. A
+block also needs 2 more queued cars to be coloured, so an empty street is not red for one waiting car. Both
+panels use the same rule, so the left panel shows how much the normal street moves about its own average. The
 colours are one run. The fcd.xml files must come from the current 04_run.py, which also saves each car's lane.
 
 --scale 10 draws runs made with 04_run.py --scale 10 (ten times the measured traffic, a what-if). The title
@@ -85,10 +87,10 @@ def diverted_ids():
     return ids
 
 
-# --queues: seconds looked back over, the share of the speed limit under which a block turns yellow, orange and red,
-# and the fewest car-seconds in the window for a block to be coloured.
-WINDOW, BANDS, MIN_SECONDS = 120, (0.5, 0.3, 0.15), 10
-QUEUE = (("#2fae57", 5, "Flowing"), ("#ffd21f", 7, "Slow"), ("#ff8a00", 8, "Very slow"), ("#e0201b", 9, "Queued"))   # colour, line width, legend
+# --queues: seconds looked back over, the speed (m/s) under which a car counts as queued, the share of extra queued cars
+# at which a block turns yellow, orange and red, and the fewest extra queued cars that count.
+WINDOW, SLOW, BANDS, MIN_EXTRA = 120, 1.4, (0.2, 0.5, 1.0), 2
+QUEUE = (("#2fae57", 5, "About normal"), ("#ffd21f", 7, "20% to 50% more"), ("#ff8a00", 8, "50% to 100% more"), ("#e0201b", 9, "Double or more"))   # colour, line width, legend
 
 
 def way(e):
@@ -120,45 +122,41 @@ def blocks():
 
 
 block_of = {e.getID(): i for i, b in enumerate(blocks()) for e in b} if args.queues else {}   # edge id -> its block
-limit = {e.getID(): e.getSpeed() for e in net.getEdges()}
 
 
 def positions(scenario):
-    """Car positions for each frame, and for --queues each block's car-seconds and summed speed (as a share of the limit) in every second of the clip and the WINDOW before it."""
+    """Car positions for each frame, and for --queues the cars queued on each block in every second from WINDOW before the hour to its end."""
     frames, first = {}, None
-    n = int(t1 - c0) + WINDOW
-    seconds, speed = np.zeros((max(block_of.values(), default=0) + 1, n)), np.zeros((max(block_of.values(), default=0) + 1, n))
+    queued = np.zeros((max(block_of.values(), default=0) + 1, 3600 + WINDOW))
     for _, el in ET.iterparse(os.path.join(run_dir(scenario), "fcd.xml")):
         if el.tag == "timestep":
             t = float(el.get("time"))
             first = t if first is None else first
             if c0 <= t < t1 and int(t - c0) % args.step == 0:
                 frames[t] = [(v.get("id"), float(v.get("x")), float(v.get("y")), float(v.get("speed"))) for v in el.iter("vehicle")]
-            if args.queues and c0 - WINDOW <= t < t1:
+            if args.queues and t0 - WINDOW <= t < t0 + 3600:
                 for v in el.iter("vehicle"):
                     if v.get("lane") is None:
                         sys.exit("fcd.xml has no lanes. Run 04_run.py --fcd again for both scenarios.")
-                    edge = v.get("lane").rsplit("_", 1)[0]
-                    i = block_of.get(edge)
-                    if i is not None:
-                        seconds[i, int(t - c0) + WINDOW] += 1
-                        speed[i, int(t - c0) + WINDOW] += float(v.get("speed")) / limit[edge]
+                    i = block_of.get(v.get("lane").rsplit("_", 1)[0])
+                    if i is not None and float(v.get("speed")) < SLOW:
+                        queued[i, int(t - t0) + WINDOW] += 1
             el.clear()
-    if args.queues and first > c0 - WINDOW:
+    if args.queues and first > t0 - WINDOW:
         sys.exit("fcd.xml starts too late for the two-minute average. Run 04_run.py --fcd again for both scenarios.")
-    return frames, (np.cumsum(seconds, axis=1), np.cumsum(speed, axis=1))
+    return frames, queued
 
 
-def levels(sums, t):
-    """Each block's place in QUEUE at time t: the average speed of its cars over the last WINDOW seconds, as a share of the limit."""
-    i = int(t - c0) + WINDOW - 1
-    seconds, speed = (a[:, i] - a[:, i - WINDOW] for a in sums)
-    share = np.where(seconds >= MIN_SECONDS, speed / np.maximum(seconds, 1), 1.0)
-    return sum(share < b for b in BANDS)
+def levels(queued, normal, t):
+    """Each block's place in QUEUE at time t: its queue over the last WINDOW seconds against its normal average."""
+    i = int(t - t0) + WINDOW
+    extra = queued[:, i - WINDOW + 1:i + 1].mean(axis=1) - normal
+    return sum((extra >= MIN_EXTRA) & (extra >= b * normal) for b in BANDS)
 
 
 diverted = diverted_ids()
 (base, base_q), (clos, clos_q) = positions("base"), positions(args.scenario)
+normal = base_q[:, WINDOW:].mean(axis=1)   # cars queued on each block, averaged over the hour in the normal run
 times = sorted(set(base) & set(clos))
 print(len(times), "frames;", len(diverted), "cars use the block in the normal run over the whole hour")
 PURPLE, GREY = "#7b3294", "#333333" if args.queues else "#9a9a9a"   # drivers who normally use the block (both panels); other traffic
@@ -193,15 +191,13 @@ scat, trails, divs, streets = [], [], [], []
 in_block = [(l, i) for l, _, i in lines if i is not None]   # the lines to colour, each with its block
 closed_name = f"{SITE['closure']['street']} {SITE['closure']['direction']} closed" if SITE else "Swanston St block closed"
 for i, (ax, title) in enumerate(zip(axes, ("Normal street", closed_name))):
-    ax.add_collection(LineCollection([l for l, tram, block in lines if not tram and block is None], colors="#d0d0d0" if args.queues else "#e4e4e4", linewidths=2.5, zorder=1))
+    ax.add_collection(LineCollection([l for l, tram, block in lines if not tram and block is None], colors="#e4e4e4", linewidths=2.5, zorder=1))
     ax.add_collection(LineCollection([l for l, tram, _ in lines if tram], colors="#9fc6e8", linewidths=1.2, zorder=1.5))
     streets.append(ax.add_collection(LineCollection([l for l, _ in in_block], colors=QUEUE[0][0], linewidths=QUEUE[0][1], capstyle="butt", zorder=1.2)))
     if i == 1:   # the block is only closed in the right-hand panel
         ax.add_collection(LineCollection([net.getEdge(c).getShape() for c in closed_ids], colors="black", linewidths=6, zorder=2))
     ax.set_xlim(cx - args.radius, cx + args.radius); ax.set_ylim(cy - args.radius, cy + args.radius)
     for name, (x, y, angle) in street_labels.items():
-        if args.queues:   # beside the street, so the name does not cover its colour
-            x, y = x - math.sin(math.radians(angle)) * args.radius * 0.07, y + math.cos(math.radians(angle)) * args.radius * 0.07
         ax.text(x, y, name, rotation=angle, ha="center", va="center", fontsize=8, color="#555", zorder=5,
                 path_effects=[patheffects.withStroke(linewidth=3, foreground="white")])
     ax.set_aspect("equal"); ax.axis("off"); ax.set_title(title, fontsize=13)
@@ -228,7 +224,7 @@ fig.legend(handles=[Line2D([], [], marker="o", color="none", markerfacecolor=PUR
            loc="lower center", ncol=3, frameon=False, fontsize=10, bbox_to_anchor=(0.5, 0.02), handletextpad=0.4, columnspacing=1.8)
 fig.text(0.99, 0.005, "Map data © OpenStreetMap contributors", ha="right", fontsize=7, color="#777")
 if args.queues:
-    fig.legend(handles=[Line2D([], [], color=c, linewidth=w, label=words) for c, w, words in QUEUE], title="How fast cars moved on each block over the last 2 minutes",
+    fig.legend(handles=[Line2D([], [], color=c, linewidth=w, label=words) for c, w, words in QUEUE], title="Cars queued on each block in the last 2 minutes, against the normal street's average",
                loc="lower center", ncol=4, frameon=False, fontsize=10, title_fontsize=10, bbox_to_anchor=(0.5, 0.075), handletextpad=0.6, columnspacing=1.6)
 fig.subplots_adjust(left=0.01, right=0.99, top=0.9, bottom=0.26 if args.queues else 0.15, wspace=0.03)
 
@@ -239,7 +235,7 @@ seen = [set(), set()]   # diverted cars that have appeared so far, per panel
 def draw(i):
     t = times[i]
     for st, q in zip(streets, (base_q, clos_q)):
-        level = levels(q, t)
+        level = levels(q, normal, t)
         st.set_color([QUEUE[level[i]][0] for _, i in in_block]); st.set_linewidth([QUEUE[level[i]][1] for _, i in in_block])
     for k, (sc, tr, dv, run) in enumerate(zip(scat, trails, divs, (base, clos))):
         fr = run[t]
