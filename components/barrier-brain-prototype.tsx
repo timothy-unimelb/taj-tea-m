@@ -163,6 +163,8 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   useEffect(() => () => { if (uploadedImageUrl) URL.revokeObjectURL(uploadedImageUrl); }, [uploadedImageUrl]);
   const usingDemoTgs = !tgsFile?.file;
   const tgsPreviewUrl = tgsFile && !tgsFile.file ? demoTgsUrl(tgsFile.name) : uploadedImageUrl;
+  // A report opened straight from a link has no TGS loaded. It is built from the demo TGS's analysis, so it shows that TGS.
+  const reportTgsUrl = tgsPreviewUrl ?? (tgsAnalysis ? null : demoTgsUrl());
   function startTgsAnalysis() { setTgsAnalysis(null); setImpact(null); setTgsError(""); setTgsAttempt(n => n + 1); }
   useEffect(() => { if (!notification) return; const timer = window.setTimeout(() => setNotification(""), 4500); return () => window.clearTimeout(timer); }, [notification]);
 
@@ -207,7 +209,7 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
         <section className="projects-section"><h2>Recent projects</h2><div className="project-list">{filteredProjects.map(p => <button key={p.id} className="project-card" onClick={() => openProject(p.id, p.status)}><ReferenceAsset kind="road" alt="Street work zone" /><span className="project-info"><strong>{p.name}</strong><span className="project-meta"><time>{p.date}</time><span className={`project-status status-${p.status.toLowerCase().replaceAll(" ", "-")}`}>{p.status}</span></span></span><CaretRightIcon size={17} aria-hidden="true" /></button>)}</div>{filteredProjects.length === 0 && <p className="empty-state" role="status">No projects match “{search}”.</p>}</section>
       </> : isReport || isPdf ? <>
         {report && reportReady ? <SiteReport report={report} project={reportProject} document={isPdf} overview={[
-          ...(tgsPreviewUrl ? [{ src: tgsPreviewUrl, alt: "The traffic guidance scheme for this work zone", caption: "Traffic guidance scheme" }] : []),
+          ...(reportTgsUrl ? [{ src: reportTgsUrl, alt: "The traffic guidance scheme for this work zone", caption: "Traffic guidance scheme" }] : []),
           ...(realScan && scanImage ? [{ src: scanImage, alt: "Top-down view of the site scan. Ground shaded by height, objects standing on it in red.", caption: `Site scan from above, north up: ground by height, objects in red (${realScan.length_m} m of street)` }] : []),
         ]} /> : impactError ? <><div className="scan-warning" role="alert"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>{impactError}</p></div><div className="bottom-actions"><PrimaryButton onClick={retryImpact} arrow={false}>Try again</PrimaryButton></div></> : <p className="source-note" role="status">Loading the impact estimate.</p>}
         {isPdf && report && <div className="document-print"><PrimaryButton onClick={() => window.print()} arrow={false}><FilePdfIcon size={20} aria-hidden="true" />Print / Save PDF</PrimaryButton><p>Use your browser’s print options to save this report as a PDF.</p></div>}
