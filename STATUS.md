@@ -13,8 +13,8 @@ Done:
 
 ## Tim
 Now:
-- [16:28] Default impact model back to `mvm` (the live lookup) on main, then testing it on Vercel with the test TGS (data/test).
 Done:
+- [16:32] Default impact model is `mvm` again (lib/impact/index.ts), live on Vercel. The TypeScript port matches Tamara's Python on 9 test cases. Test TGS on Vercel: runs `mvm` live in 0.8 s. Cars show Low (0 delay) because Claude reads 0 lanes, so the model assumes 2 each way with 1 open, but the plan closes the whole southbound side. With 0 lanes open it would be about 1,500 to 1,900 diversions.
 - [10:30] SUMO clip on the Swanston report under "How this was estimated": five simulated minutes at 5pm, normal street beside the closure, with a legend. Optional `visual` field in the impact result (model/IMPACT_CONTRACT.md). Report numbers unchanged.
 - [10:45] Clip redone so the difference shows: cars that use the block are purple with a trail, the closed block is drawn only on the closure panel, and the clip is from the right-turn-allowed case (the main case moves a car or two a minute and the panels looked identical). Caption says which case it is. Numbers unchanged.
 - [11:35] Checked the La Trobe St westbound right turn on Google Street View (Nov 2025): No Right Turn sign on the approach, so the model's main case is the real street. Turn rule now high confidence; photo in model/sumo/output. The report's high figure (right turn allowed) is now a what-if rather than a possible reading of the street, which the team should decide how to present.
