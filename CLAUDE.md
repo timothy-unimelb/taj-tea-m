@@ -4,7 +4,7 @@
 
 ## What this is
 
-Barrier Brain is a mobile web app for traffic management planners. The planner uploads a traffic guidance scheme (TGS) and LiDAR scans of the street, and AI agents check the plan against the real street and report the knock-on effects on pedestrians, buses and trams, cars and trucks before any equipment goes out.
+Barrier Brain is a mobile web app for traffic management planners. The planner uploads a traffic guidance scheme (TGS) and photogrammetry scans of the street, and AI agents check the plan against the real street and report the knock-on effects on pedestrians, buses and trams, cars and trucks before any equipment goes out.
 
 Built for the RPM Hire problem statement at the UniMelb FEIT Hackathon 2026. Read BRIEF.md for the full brief, components, terms and open questions. Update both when the idea changes.
 

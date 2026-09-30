@@ -10,7 +10,7 @@ Locked frontend flow, 29 Sep. Mobile browser at 393 x 852, responsive from 375 t
 1. **Projects.** New assessment, search and the three recent projects from the board.
 2. **Upload TGS.** PDF, PNG or JPG up to 20 MB. Demo file selected. Analyse TGS.
 3. **TGS analysis.** Brief progress state, then plan elements and areas requiring site verification.
-4. **Upload site scan.** External LiDAR app only. PLY, LAS, E57 or ZIP upload. Check scan completeness.
+4. **Upload site scan.** External photogrammetry scanning app only. PLY, LAS, E57 or ZIP upload. Check scan completeness.
 5. **Incomplete scan.** Four of five areas captured. Intersection approach missing. View missing area or upload additional scan. No Continue action.
 6. **Complete scan.** Five of five areas captured. Generate impact report.
 7. **Generating report.** Five progressive processing steps, then automatically show the report.

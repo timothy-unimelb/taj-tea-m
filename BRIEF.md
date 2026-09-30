@@ -22,7 +22,7 @@ Barrier Brain is a mobile web app for traffic management planners. It checks a p
 
 1. The planner uploads a traffic guidance scheme (TGS).
 2. An AI agent reads the TGS. It lists the places on site that need scanning.
-3. The planner scans those places with Scaniverse on a LiDAR iPhone. They upload the scans.
+3. The planner scans those places with a phone camera. Photogrammetry turns the photos into a 3D model. They upload the scans.
 4. An AI agent compares the scans with the plan. It finds where the street differs from the drawing.
 5. The app estimates the effects on pedestrians, buses and trams, cars and trucks.
 6. The app produces an impact report for the team to act on.
@@ -46,7 +46,7 @@ It is a Next.js app on Vercel, laid out for a phone. It is not a native app.
 From the team flowchart. Three layers.
 
 - **Data layer.** The planner uploads the TGS. A traffic API provides base reference data.
-- **App.** Analyse TGS, then identify points of interest to scan, then LiDAR site scan, then analyse site scan, then simulate traffic flow, then generate report and metrics. The base reference data feeds into both the simulation and the report. (The flowchart only shows the report. The simulation needs it too.)
+- **App.** Analyse TGS, then identify points of interest to scan, then photogrammetry site scan, then analyse site scan, then simulate traffic flow, then generate report and metrics. The base reference data feeds into both the simulation and the report. (The flowchart only shows the report. The simulation needs it too.)
 - **Organisational process.** The report goes to the team.
 
 ## Screens
@@ -57,7 +57,7 @@ From the whiteboard sketch. The sketch splits the flow into two phases: preparat
 
 - **Analyse TGS (agent).** Reads the layout, the equipment, the pedestrian routes and the widths the plan assumes. Works out the drawing's scale by matching features to map data with coordinates. Use City of Melbourne open data or Vicmap. Google Maps terms ban extracting data from its imagery.
 - **Identify scan points (agent).** Picks every place where the plan assumes there is enough space. Both edges of the zone, both ends, where pedestrians are sent, each sign and equipment position, and where work vehicles park.
-- **Scan.** Scaniverse in LiDAR mesh mode, exported as PLY, LAS or OBJ. A later version may use our own scanner that keeps data when the phone moves.
+- **Scan.** Photogrammetry: a 3D model built from phone photos of the site, exported as PLY or OBJ. Works on any phone, not just LiDAR iPhones. A later version may use our own scanner that keeps data when the phone moves.
 - **Scan check.** A scan fails if it misses the spot it was meant to cover. Check: the phone's location at upload (browser geolocation) must be within about 15 m of the scan point. Later, also check the scan contains the expected feature, such as a kerb.
 - **Analyse scans.** Two parts. Code measures the scan. The agent interprets the measurements. See "Scan measurement" below.
 - **Impact model.** Built, in `model/`. It is not machine learning. It is a lookup table learned from about 2,700 past Melbourne closures (RADAR, 2024 to 2026) matched to SCATS signal counts within 200 m, plus an hour-by-hour queue calculation. Inputs: closure type, work hours, daily traffic, lanes open. Outputs: likely traffic change as a range, chance of a big drop, delay, queue length, forced diversions and the best work window. It runs in Python from CSVs in the repo, and a TypeScript port runs live in the app. See `model/README.md`.
@@ -133,6 +133,7 @@ Mocked for Wednesday: scan measurement, and the safety findings that depend on i
 When one is answered, delete it here, add a line to Decisions, and update the section it affects.
 
 - Is the impact based on the plan as drawn, or the plan fitted to the scanned street?
+- How does a photogrammetry scan get its true scale, and is it accurate enough to measure footpath widths?
 
 ## Decisions
 
@@ -156,6 +157,7 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - [30 Sep] Tim: the TGS analysis runs on Claude Sonnet 5.5, not Opus, to fit a student budget. Claude models need paid AI Gateway credit; the free monthly credit doesn't cover them.
 - [30 Sep] Tim: impact models are swappable behind one result shape, so we are not locked into one approach. Tamara's model runs live as the default; SUMO is being tested. The report shows which method produced its numbers, and severity comes from one written rule.
 - [30 Sep] Tim: SUMO is the default impact model where it has a result (the Swanston sample), with Tamara's model everywhere else. A review showed the lookup overstates Swanston: it assumes half the intersection's traffic uses the closed block, which is mostly tram only.
+- [30 Sep] Advait: site scans use photogrammetry instead of LiDAR.
 
 ## Terms
 
@@ -174,6 +176,7 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - **GTFS.** The standard timetable format for public transport. PTV publishes static and realtime feeds for trams and buses.
 - **Pedestrian Counting System.** City of Melbourne sensors that count people walking, hourly, at about 100 locations.
 - **LiDAR.** A depth sensor in iPhone Pro models. It measures to within a few centimetres at up to about 5 m.
-- **Scaniverse.** A free iPhone app by Niantic that makes 3D scans using LiDAR.
+- **Photogrammetry.** Building a 3D model from many overlapping photos. It needs a known length in the scene to get the true scale.
+- **Scaniverse.** A free phone app by Niantic that makes 3D scans from photos or LiDAR.
 - **SUMO.** A free, open-source traffic microsimulator that imports OpenStreetMap.
 - **Georeferencing.** Matching points on a drawing to real map coordinates to recover its scale and position.
