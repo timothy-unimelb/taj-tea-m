@@ -6,6 +6,7 @@
 
 ## Joel
 Now:
+- [19:00] On branch `joel`: scan upload page takes several scans (one hook, lib/scan/stitch.ts, for Tamara's stitching; a plain GPS join until then), no .zip, scan evidence images only after an upload, "Upload additional scan" opens the file picker instead of going back. Fixing the stretched site overview image. Researching the council's pedestrian crowding rule for the scan check prompt. Report layout left to Tim.
 Done:
 - [12:10] Test TGS redrawn in the sample's layout (Vicmap aerial) and moved to where the site scan was taken: southbound kerbside lane, east side, 22 to 60 m north of Grattan St. Site overview now shows the real TGS and a top-down render of the scan. Scan measurement finds the real kerb more reliably; the merged site scan's kerb reads 50 mm, so widths are still withheld. Full pipeline rerun against Vercel: works.
 - [11:55] End-to-end test on Vercel with the test TGS (data/test) and the 4 real Scaniverse scans merged into one site scan: TGS read by Claude (17 s), site check by Claude (14 s), report generated. Kerb found (150 mm); footpath widths withheld as unreliable. Found: the lookup model keeps a lane open for a lane closure even when the direction has only one lane, so Traffic shows Low for this TGS.
