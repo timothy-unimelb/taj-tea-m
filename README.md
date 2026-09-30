@@ -4,8 +4,6 @@ Team taj tea-m, FEIT Hackathon 2026. RPM Hire problem statement.
 
 Barrier Brain is a mobile web app for traffic management planners. The planner uploads a traffic guidance scheme (TGS). Claude reads it and lists the places to scan on site. After a LiDAR scan, the app estimates the knock-on effects on traffic, pedestrians and public transport before any equipment goes out.
 
-What is real and what is still demo data: **PLAN.md, "Where things stand"**.
-
 ## Run locally
 
 ```bash
@@ -51,7 +49,6 @@ Jump straight to the report with `#report/swanston-street`.
 ## Project docs
 
 - **BRIEF.md**: what we are building and why, decisions log.
-- **PLAN.md**: build steps, their state, and where things stand.
 - **STATUS.md**: who is working on what.
 - **DESIGN.md**: the locked design and screen flow.
 - **THIRD_PARTY.md**: every outside library, dataset and tool. Required by the competition.
