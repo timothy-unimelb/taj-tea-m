@@ -7,6 +7,7 @@
 ## Joel
 Now:
 Done:
+- [22:30] On branch `joel` (not merged): time slider on the report (9am, 12pm, 3pm, snaps to stops, starts at 12pm). Delay, drivers reaching the closure, footpath crowding and plant crossing advice follow it (SUMO per-hour results, council sensor hours). PDF gets a "Through the works day" table. Demo project only, since only it has per-hour data.
 - [21:30] Merged into main and checked on Vercel: report reworked for the demo TGS so key takeaways stand out. Each check leads with a short coloured answer and one line; one-sentence summaries; Traffic covers delay hours, detour streets, capacity, queue, detour safety; Site safety is three actions tagged by point, incl. the open plant crossing. Figures unchanged. data/mock/reports/swanston-smac-report.json, components/site-report.tsx, app/globals.css.
 - [20:45] Merged `joel` into main and checked on Vercel: multi-scan upload page, evidence after upload, additional scan without the trip back, undistorted site overview, recommendations tied to report points (max 5), Close on the report. Site check on Vercel with a real scan: finds the nearest council pedestrian sensor (Grattan St-Swanston St, 45 m) and applies the crowding rule (708 an hour needs 1.5 m clear for B+).
 - [20:10] On branch `joel`: "Recommended before deployment" now matches the report's points (each names its point, most severe first, max 5, same in the PDF). Report's Back is now Close, back to Projects. Demo copy has a site safety recommendation.
