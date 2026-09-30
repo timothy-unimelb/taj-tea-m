@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // The TGS route reads its prompt from this file at runtime, so ship it with the route.
+  // The Claude routes read their prompts from these files at runtime, so ship them with the routes.
   outputFileTracingIncludes: {
     "/api/analyse-tgs": ["./prompts/**/*"],
+    "/api/site-check": ["./prompts/**/*"],
   },
 };
 

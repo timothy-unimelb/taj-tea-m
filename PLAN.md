@@ -18,9 +18,8 @@ Read this first when picking up the work. All of it is on `main` (merged from `t
 - A five-minute animated clip of the SUMO simulation (5pm, right-turn-allowed case, normal street beside the closure, cars that use the block pink on the left and purple on the right, paths kept for the whole clip, with a legend) under "How this was estimated" on the Swanston report. Any model can supply one through the result's optional `visual` field (`model/IMPACT_CONTRACT.md`); `model/sumo/09_clip.py` makes this one.
 
 **Still fixed demo data**
-- Scan upload and check: the file is not read, "4 of 5" then "5 of 5 captured" are scripted (steps 3 and 4).
-- Scan measurement and the plan vs street comparison (steps 4 and 5).
-- The safety finding and the first two recommended actions, written for the Swanston sample (`data/mock/barrier-brain.json`). They show for any TGS.
+- The demo scan ("Use demo site scan"): fills all but the last scan point, then the rest. Its safety finding and two actions are fixed Swanston copy (`data/mock/barrier-brain.json`).
+- Real scans (branch `joel`, 30 Sep): each PLY or LAS file is measured in the browser (`lib/scan/measure.ts`) and Claude compares it with the plan (`/api/site-check`, prompt `prompts/site-check.md`). Tested only on synthetic scans (`data/test/`). No real Scaniverse export tested yet. The Claude check has not run yet (no gateway login locally); the rule fallback in `lib/site-check.ts` ran.
 - Projects list: three fixed entries, and every project shows the Swanston report.
 - The aerial site image on the report is artwork from the design board.
 - Pedestrians, trams, buses and trucks: no model covers them. Tram streets come from a hand-made list in `lib/impact/request.ts`.
@@ -63,19 +62,25 @@ Read this first when picking up the work. All of it is on `main` (merged from `t
 - **later** Recover the drawing's scale by matching it to map data (Vicmap or City of Melbourne open data). Not Google Maps: its terms ban extracting data.
 - **later** Upload limit copy says 20 MB but Vercel allows 4.5 MB until Blob is in. Raina's copy is locked, so check with her.
 
-## 3. Scan upload and coverage check (later)
+## 3. Scan upload and coverage check (in progress, branch `joel`)
+
+- **done** One scan per scan point, from the TGS analysis. Check: enough points, at least 2 m of street, kerb found.
 
 - Upload scans to Blob (step 1).
 - Check each scan covers its scan point: phone location at upload within about 15 m (BRIEF.md). Later, check the expected feature is in the scan, such as a kerb.
 - Replace the fixed "4 of 5 captured" result with the real one.
 
-## 4. Scan measurement in Python (later, riskiest)
+## 4. Scan measurement (in progress, branch `joel`)
+
+- **done** In TypeScript in the browser instead of Python: ground, kerb, obstacles, clear widths per 0.5 m slice (`lib/scan/measure.ts`). Works on synthetic scans. **next** Test on a real Scaniverse PLY export.
 
 Plan in BRIEF.md "Scan measurement": Open3D, trimesh, laspy. Find ground, kerb and obstacles, slice every 0.5 m, output clear widths as JSON. Runs as a Vercel Python function or a small separate service.
 
 - **first** Get one real Scaniverse export of a street and measure it offline. This proves the approach before any wiring.
 
-## 5. Plan vs street comparison with Claude (later)
+## 5. Plan vs street comparison with Claude (in progress, branch `joel`)
+
+- **done** `/api/site-check` with `prompts/site-check.md`; rule fallback. **next** Run it on Vercel with the gateway.
 
 Claude reads the TGS analysis and the scan measurements, flags each conflict ("footpath 1.4 m clear, plan needs 1.8 m") and suggests fixes from RPM's equipment inventory. Code produces every number. Claude only explains and recommends.
 
@@ -159,3 +164,4 @@ User accounts, error handling, tests on measurement and model code, AI cost limi
 - [30 Sep 10am] Tim: `tim` merged into `main` (fast-forward, 30 commits, lint and build pass). Vercel production now serves the Swanston report from the saved SUMO result.
 - [30 Sep 9am] Tim: SUMO less janky (6b items 3 and 4), done on branch `tim-sumo-refinement` and merged into `tim` at 9:55am. The network had been built for right-hand traffic and netconvert had dropped 20 OpenStreetMap turn restrictions; both fixed, with the sheet's right-turn ban as the main case. Delay-based signals. New calibration check of simulated traffic against the counts found three demand bugs (boundary sites, side-street-only sites, cars on tram-only Swanston St). Now 71% of counted street-hours within GEH 5, afternoon peak still too congested. Diversions about 123 (110 to 162) over the works hours, about 1,080 if the right turn is allowed. App numbers unchanged until the team reviews.
 - [30 Sep 7:45am] Tim: SUMO covers every hour of the works (7am to 10pm, 320 runs). About 810 shortcut drivers over the works hours with the La Trobe St right turn allowed, about 77 with it banned; the report shows 77 to 871. Delay left out when it is noise, so the rating rests on diversions (Moderate).
+- [30 Sep 11:30am] Joel: on branch `joel`, scan screens use the TGS scan points, real scans are measured in the browser, Claude writes the safety finding and actions from the measurements. Test TGS (Swanston St at the Sidney Myer Asia Centre) and synthetic scans in `data/test/`.

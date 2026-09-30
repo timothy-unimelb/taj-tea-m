@@ -41,8 +41,10 @@ export function Stepper({ active, tgsComplete = false }: { active: number; tgsCo
   })}</ol>;
 }
 
-export function Checklist({ items, details, captured = items.length, pending = false, statusLabel = "captured" }: { items: string[]; details?: string[]; captured?: number; pending?: boolean; statusLabel?: string }) {
-  return <ul className="checklist">{items.map((item, i) => <li key={`${i}-${item}`}><span className={`check-symbol ${i >= captured ? pending ? "pending" : "failed" : ""}`}>{i < captured ? <CheckIcon size={13} weight="bold" aria-hidden="true" /> : !pending && <XIcon size={12} weight="bold" aria-hidden="true" />}</span><span>{item}{details?.[i] && <small className="checklist-detail">{details[i]}</small>}{i >= captured && !pending && <small className="error-text">Not fully captured</small>}<span className="sr-only">{i < captured ? `, ${statusLabel}` : pending ? ", required" : ", incomplete"}</span></span></li>)}</ul>;
+// `done` marks each item on its own. Without it, the first `captured` items are done.
+// `problems` replaces "Not fully captured" with the reason an item failed.
+export function Checklist({ items, details, captured = items.length, done, problems, pending = false, statusLabel = "captured" }: { items: string[]; details?: string[]; captured?: number; done?: boolean[]; problems?: (string | null)[]; pending?: boolean; statusLabel?: string }) {
+  return <ul className="checklist">{items.map((item, i) => { const ok = done ? done[i] : i < captured; return <li key={`${i}-${item}`}><span className={`check-symbol ${!ok ? pending ? "pending" : "failed" : ""}`}>{ok ? <CheckIcon size={13} weight="bold" aria-hidden="true" /> : !pending && <XIcon size={12} weight="bold" aria-hidden="true" />}</span><span>{item}{details?.[i] && <small className="checklist-detail">{details[i]}</small>}{!ok && !pending && <small className="error-text">{problems?.[i] ?? "Not fully captured"}</small>}<span className="sr-only">{ok ? `, ${statusLabel}` : pending ? ", required" : ", incomplete"}</span></span></li>; })}</ul>;
 }
 
 // `file` is the real upload. It is missing when the demo file is chosen.
@@ -55,18 +57,18 @@ export function UploadPanel({ kind, file, onFile }: { kind: "tgs" | "scan"; file
   const isTgs = kind === "tgs";
   function selectFile(selected?: File) {
     if (!selected) return;
-    const extensions = isTgs ? /\.(pdf|png|jpe?g)$/i : /\.(ply|las|e57|zip)$/i;
-    if (!extensions.test(selected.name)) { setError(isTgs ? "Choose a PDF, PNG or JPG file." : "Choose a .ply, .las, .e57 or .zip file."); return; }
+    const extensions = isTgs ? /\.(pdf|png|jpe?g)$/i : /\.(ply|las)$/i;
+    if (!extensions.test(selected.name)) { setError(isTgs ? "Choose a PDF, PNG or JPG file." : "Choose a .ply or .las file. Export the scan in one of these formats."); return; }
     if (isTgs && selected.size > 20 * 1024 * 1024) { setError("This file is larger than 20 MB. Choose a smaller file."); return; }
     setError("");
     onFile({ name: selected.name, size: `${Math.max(0.1, selected.size / 1024 / 1024).toFixed(1)} MB`, file: selected });
   }
   return <div className="upload-group">
-    <input ref={input} id={id} className="sr-only" type="file" tabIndex={-1} accept={isTgs ? ".pdf,.png,.jpg,.jpeg" : ".ply,.las,.e57,.zip"} onChange={e => { selectFile(e.target.files?.[0]); e.target.value = ""; }} aria-label={isTgs ? "Choose TGS file" : "Choose site scan file"} />
+    <input ref={input} id={id} className="sr-only" type="file" tabIndex={-1} accept={isTgs ? ".pdf,.png,.jpg,.jpeg" : ".ply,.las"} onChange={e => { selectFile(e.target.files?.[0]); e.target.value = ""; }} aria-label={isTgs ? "Choose TGS file" : "Choose site scan file"} />
     <button type="button" className={`upload-panel ${!isTgs ? "upload-compact" : ""} ${dragging ? "dragging" : ""}`} onClick={() => input.current?.click()} onDragOver={e => { e.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={e => { e.preventDefault(); setDragging(false); selectFile(e.dataTransfer.files[0]); }} aria-describedby={`${id}-help`}>
       {isTgs ? <FilePlusIcon size={40} weight="light" aria-hidden="true" /> : <CloudArrowUpIcon size={32} weight="light" aria-hidden="true" />}
       <strong>{isTgs ? "Drop your TGS here" : "Upload site scan"}</strong>
-      <span id={`${id}-help`}>{isTgs ? "PDF, PNG or JPG (max 20 MB)" : "Supported formats: .ply, .las, .e57, .zip"}</span>
+      <span id={`${id}-help`}>{isTgs ? "PDF, PNG or JPG (max 20 MB)" : "One scan per area. Supported formats: .ply, .las"}</span>
     </button>
     {file && <div className="file-row"><FilePdfIcon className="file-icon" size={32} aria-hidden="true" /><span><strong>{file.name}</strong><small>{file.size}</small></span><button className="icon-button" aria-label={`Remove ${file.name}`} onClick={() => onFile(null)}><XIcon size={18} aria-hidden="true" /></button></div>}
     {error && <p className="error-text" role="alert">{error}</p>}

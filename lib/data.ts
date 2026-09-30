@@ -7,6 +7,7 @@ import savedDemoAnalysis from "@/data/mock/tgs/swanston-analysis.json";
 import sampleTgs from "@/data/mock/tgs/swanston-st-closure.webp";
 import type { TgsAnalysis } from "@/lib/tgs-analysis";
 import type { ImpactResult, ModeImpact, Range, Severity } from "@/lib/impact/types";
+import type { ScanPointResult, SiteCheck } from "@/lib/site-check";
 
 export const sampleTgsUrl = sampleTgs.src;
 
@@ -37,7 +38,20 @@ export async function estimateImpact(analysis: TgsAnalysis | null, signal?: Abor
   return result.result;
 }
 
-// Projects, the scan check and the safety findings are still fixed demo data.
+// Claude compares the plan with the measured scans (app/api/site-check).
+export async function checkSite(analysis: TgsAnalysis, scans: ScanPointResult[], signal?: AbortSignal): Promise<SiteCheck> {
+  const response = await fetch("/api/site-check", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ analysis, scans }),
+    signal,
+  });
+  const result = await response.json().catch(() => ({ error: "The site check failed. Try again." }));
+  if (!response.ok) throw new Error(result.error);
+  return result.check;
+}
+
+// Projects and the demo scan's findings are fixed demo data.
 export function getAssessmentData() {
   return demo;
 }
@@ -66,9 +80,12 @@ function describe(mode: ModeImpact) {
 const PROVENANCE = { live: "Calculated for this plan", precomputed: "Calculated in advance for this site", fixture: "Fixed demo values" };
 
 // Everything the report shows from the impact model. The report reads only this.
-export function buildReport(impact: ImpactResult) {
+// `check` is Claude's plan vs street check of real scans. Without it the demo findings show.
+export function buildReport(impact: ImpactResult, check: SiteCheck | null = null, scansMeasured = 0) {
   const { cars, trucks, pedestrians, public_transport: transport } = impact.modes;
-  const safety = demo.safety;
+  const safety = check
+    ? { severity: check.safety_severity, description: check.safety_summary, basis: `From ${scansMeasured} measured scan${scansMeasured === 1 ? "" : "s"} compared with the plan.` }
+    : demo.safety;
   const traffic = trucks.status === "modelled" ? [...details(cars), ...details(trucks).map(line => `Trucks. ${line}`)] : details(cars);
   const impactSummary = [
     { id: "traffic", label: "Traffic", severity: cars.severity!, description: describe(cars), reason: cars.severity_reason!, details: traffic },
@@ -84,16 +101,19 @@ export function buildReport(impact: ImpactResult) {
     why: "Fewer drivers meet the closure when traffic is light, so fewer are diverted or delayed.",
     recommendation: `Compare the planned hours with this window (${window.window.toLowerCase()}), and check the work fits.`,
   } : null;
-  const actions = [...demo.explanations.actions, ...(trafficAction ? [trafficAction] : [])].map((action, i) => ({ ...action, id: i + 1 }));
+  const siteActions = check ? check.actions : demo.explanations.actions;
+  const actions = [...siteActions, ...(trafficAction ? [trafficAction] : [])].map((action, i) => ({ ...action, id: i + 1 }));
   return {
     period: impact.period,
     overall: impact.overall!.severity,
     overallReason: impact.overall!.reason,
     impactSummary,
+    decision: check ? check.decision : demo.explanations.decision,
+    conflicts: check?.conflicts ?? [],
     keyFindings: [describe(cars), describe(pedestrians), describe(transport), safety.description],
     actions,
-    sourceNote: `Based on the uploaded TGS and the site scan. Traffic estimate: ${impact.method}${impact.label ? ` (${impact.label.toLowerCase()})` : ""}.`,
-    sources: ["TGS analysis", "Site scan", `${impact.method}${impact.label ? `, ${impact.label.toLowerCase()}` : ""}`],
+    sourceNote: `${check ? `Based on the TGS and ${scansMeasured} measured scan${scansMeasured === 1 ? "" : "s"}.` : "Based on the TGS. Site findings are sample findings for the demo scan."} Traffic estimate: ${impact.method}${impact.label ? ` (${impact.label.toLowerCase()})` : ""}.`,
+    sources: ["TGS analysis", check ? "Measured site scans" : "Demo site scan", `${impact.method}${impact.label ? `, ${impact.label.toLowerCase()}` : ""}`],
     method: {
       name: impact.method,
       label: impact.label,

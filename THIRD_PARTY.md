@@ -31,3 +31,4 @@ The competition requires a list of all third-party material and APIs, including 
 | matplotlib | Library | Slide image of the SUMO result. `model/sumo/` | Matplotlib licence (PSF-based) | No |
 | jiti | Tool | Runs the check that the TypeScript port of the impact model matches the Python. `model/check_ts_port.ts` | MIT | No |
 | Sample TGS (Swanston St closure) | Image | Mock TGS upload and shape of mock data. `data/mock/tgs/` | Invarion sample drawing. Licence not confirmed, check before submission | No |
+| OpenStreetMap | Dataset | Street layout for the test TGS in `data/test/` (Swanston St, Grattan St to Faraday St) | ODbL, attribution on the drawing | No |
