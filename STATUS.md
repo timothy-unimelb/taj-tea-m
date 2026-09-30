@@ -12,8 +12,8 @@ Done:
 
 ## Tim
 Now:
-- [14:10] Cloudflare Python runner drafted in `runner/` (jobs in `runner/jobs.json`, client `lib/runner.ts`): tested in local Docker and with `wrangler deploy --dry-run`, not deployed. build_mvm.py peaks at 9.6 GB of memory (3.7 GB if it read only the columns it uses), so the container is 12 GiB. See `runner/README.md`.
 Done:
+- [16:25] Cloudflare Python runner deployed (`runner/`, jobs in `runner/jobs.json`, client `lib/runner.ts`): mvm-sample and mvm-build both run on Cloudflare, lookup CSVs identical to the repo. Containers stop when done (a PID 1 SIGTERM bug kept them running). App not wired yet: needs RUNNER_URL and RUNNER_TOKEN in Vercel. See `runner/README.md`.
 - [10:30] SUMO clip on the Swanston report under "How this was estimated": five simulated minutes at 5pm, normal street beside the closure, with a legend. Optional `visual` field in the impact result (model/IMPACT_CONTRACT.md). Report numbers unchanged.
 - [10:45] Clip redone so the difference shows: cars that use the block are purple with a trail, the closed block is drawn only on the closure panel, and the clip is from the right-turn-allowed case (the main case moves a car or two a minute and the panels looked identical). Caption says which case it is. Numbers unchanged.
 - [11:35] Checked the La Trobe St westbound right turn on Google Street View (Nov 2025): No Right Turn sign on the approach, so the model's main case is the real street. Turn rule now high confidence; photo in model/sumo/output. The report's high figure (right turn allowed) is now a what-if rather than a possible reading of the street, which the team should decide how to present.
