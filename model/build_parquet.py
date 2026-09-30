@@ -1,6 +1,6 @@
 """Build one flat table from the raw files behind the closure-impact model and save it as compressed parquet.
 
-    python model/build_parquet.py                       # reads <root>/raw, writes <root>/parquet
+    python model/build_parquet.py                       # reads <root>/raw, writes model/data/closure_site_hour.parquet
     python model/build_parquet.py --root "D:/data/FEIT Smart City Hackathon" --workers 8
 
 One row = closure x signal site within 200 m x day x hour, for every day from 6 weeks before the closure
@@ -308,11 +308,12 @@ BAND = {h: "AM peak" if 7 <= h <= 8 else "Inter-peak" if 9 <= h <= 15 else "PM p
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default=r"C:\Users\T\Documents\Subjects\FEIT Smart City Hackathon",
-                    help="folder that holds raw/ (output goes to <root>/parquet)")
+                    help="folder that holds raw/")
+    ap.add_argument("--out", default=str(pathlib.Path(__file__).resolve().parent / "data" / "closure_site_hour.parquet"),
+                    help="parquet to write (default: the copy committed in model/data/)")
     ap.add_argument("--workers", type=int, default=12, help="processes reading SCATS zips (about 1 GB RAM each)")
     a = ap.parse_args()
     root = pathlib.Path(a.root); raw = root / "raw"
-    out_dir = root / "parquet"; out_dir.mkdir(exist_ok=True)
 
     c = load_closures(raw);                 log(f"closures: {len(c):,}")
     s = load_sites(raw);                    log(f"signal sites: {len(s):,}")
@@ -374,7 +375,7 @@ def main():
     for col in ["closure_type", "work_window", "category_clean", "time_band", "region", "site_type", "site_status"]:
         t[col] = t[col].astype("category")
 
-    out = out_dir / "closure_site_hour.parquet"
+    out = pathlib.Path(a.out); out.parent.mkdir(parents=True, exist_ok=True)
     pq.write_table(pa.Table.from_pandas(t, preserve_index=False), out, compression="zstd", compression_level=9,
                    row_group_size=1_000_000)
     log(f"wrote {out} : {len(t):,} rows x {t.shape[1]} columns, {out.stat().st_size / 1e6:.0f} MB")

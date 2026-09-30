@@ -16,7 +16,7 @@ import pandas as pd
 
 HERE = pathlib.Path(__file__).resolve().parent
 OUT = HERE / "output"
-DEFAULT_PARQUET = r"C:\Users\T\Documents\Subjects\FEIT Smart City Hackathon\parquet\closure_site_hour.parquet"
+DEFAULT_PARQUET = HERE.parent / "data" / "closure_site_hour.parquet"                # committed copy
 MIN_N, BIG_DROP, TRAIN_BEFORE = 20, -0.15, pd.Timestamp("2026-01-01")
 KEYS = ["radar_id", "site_no", "date_local", "time_band"]
 

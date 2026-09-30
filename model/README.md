@@ -23,6 +23,7 @@ It has two parts. Neither uses machine learning.
 | `mvm/output/mvm_validation_*.csv` | How well the model predicted 2026 closures when trained on earlier ones. |
 | `headline_stats/output/` | Hourly traffic profile and daily volume per signal site. The prediction, the app and `sumo/` read these. |
 | `build_parquet.py` | Joins the raw files behind the model into one flat parquet table. See below. |
+| `data/closure_site_hour.parquet` | That table (7 MB). `mvm/build_mvm.py` reads it. |
 | `mvm/build_mvm.py` | Rebuilds the four `mvm/output/` CSVs from the flat parquet. |
 | `headline_stats/build_headline_stats.py` | Rebuilds the two `headline_stats/output/` CSVs from the raw SCATS files. |
 
@@ -56,13 +57,13 @@ The raw downloads (about 41 GB) are too big for git. Everything here is built fr
 2. `python model/mvm/build_mvm.py` builds the lookup and validation CSVs from it (about 15 seconds).
 3. `python model/headline_stats/build_headline_stats.py` builds the traffic profile and site tables (about 7 minutes).
 
-The CSVs are committed, so predictions work without any of these steps. Each script takes `--root` for the folder that holds `raw/`.
+The CSVs and the parquet are committed. Predictions need none of these steps, and step 2 runs without the raw files. Steps 1 and 3 take `--root` for the folder that holds `raw/`.
 
 The model was first built from a local DuckDB warehouse. That route was retired on 30 Sep 2026. The scripts above reproduce its outputs. `mvm/REPLICATION_CONTEXT.md` records the original method and its checks, and its paths point to Tamara's local folder.
 
 ## Flat dataset (parquet)
 
-`build_parquet.py` reads the raw downloads directly with pandas. It writes one compressed file, `parquet/closure_site_hour.parquet`, in the local data folder. The file is too big for git.
+`build_parquet.py` reads the raw downloads directly with pandas. It writes one compressed file, `model/data/closure_site_hour.parquet` (about 7 MB). That file is committed, so `build_mvm.py` runs without the raw files. Rerunning `build_parquet.py` overwrites it.
 
 One row is one closure, one signal site within 200 m, one day and one hour. Each closure's rows start 6 weeks before it, so its baseline weeks come with it. Columns cover:
 
