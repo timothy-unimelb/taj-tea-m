@@ -72,6 +72,7 @@ Read this first when picking up the work. All of it is on `main` (merged from `t
 
 ## 4. Scan measurement (in progress, branch `joel`)
 
+- **in progress** (Tamara) The four real Swanston St scans are registered to each other and placed on the map to about 0.5 to 1 m. Heights are still phone GPS, and a final manual alignment is pending. See `scans/swanston_registered_v2/SCAN_REGISTRATION_STATUS.md`; tool in `tools/scan_register/`. The scan files are not in the repo.
 - **done** In TypeScript in the browser instead of Python: ground, kerb, obstacles, clear widths per 0.5 m slice (`lib/scan/measure.ts`). Works on synthetic scans. On three real Scaniverse LAS scans (Swanston St near Grattan St, iPhone 16) it finds the kerb (80 to 190 mm) but not reliable footpath widths: the street direction is found from the sharpest kerb step, and tram rails and separators confuse it. Widths are withheld when implausible. **next** Use the LAS georeference and the street's bearing from OpenStreetMap for the direction.
 
 Plan in BRIEF.md "Scan measurement": Open3D, trimesh, laspy. Find ground, kerb and obstacles, slice every 0.5 m, output clear widths as JSON. Runs as a Vercel Python function or a small separate service.

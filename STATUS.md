@@ -55,8 +55,8 @@ Done:
 
 ## Tamara
 Now:
-- [18:50] Committing the Swanston St scan registration work: status doc, transforms, registration code and the satellite alignment tool (scans/, tools/scan_register/).
 Done:
+- [19:00] Committed the Swanston St scan registration work: scans/swanston_registered_v2/ (status doc, transforms, registration code) and tools/scan_register/ (satellite alignment tool). Scan files (25 MB) stay local. THIRD_PARTY.md and PLAN.md step 4 updated.
 - [11:55] Added model/mvm/SOURCES.md: the 69 URLs for the data the model uses (RADAR pages, SCATS zips, Traffic Lights, AADT files).
 - [11:20] Committed the flat parquet (7.4 MB) at model/data/closure_site_hour.parquet. build_mvm.py reads it by default, so the model builds without the raw files; build_parquet.py writes there.
 - [11:00] Model no longer needs the local warehouse. Added model/headline_stats/build_headline_stats.py (same outputs, rebuilt from raw SCATS). Removed warehouse-only scripts and SQL. model/README.md links the raw files on Google Drive.
