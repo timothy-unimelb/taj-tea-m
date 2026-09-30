@@ -103,10 +103,13 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
     const controller = new AbortController();
     const site = (tgsAnalysis ?? demoAnalysis).site;
     const input = [{ name: "Site scan", location: `${site.street}, ${site.extent}`, capture: points.map(point => point.name).join(", "), measurement: realScan }];
-    // If Claude can't be reached, plain rules on the measurements still give findings.
+    // If Claude can't be reached or takes over 90 s, plain rules on the measurements still give findings.
+    let timedOut = false;
+    const timer = window.setTimeout(() => { timedOut = true; controller.abort(); }, 90_000);
     checkSite(tgsAnalysis ?? demoAnalysis, input, controller.signal)
-      .then(setSiteCheck).catch((error: Error) => { if (error.name !== "AbortError") setSiteCheck(ruleCheck(input)); });
-    return () => controller.abort();
+      .then(setSiteCheck).catch((error: Error) => { if (error.name !== "AbortError" || timedOut) setSiteCheck(ruleCheck(input)); })
+      .finally(() => window.clearTimeout(timer));
+    return () => { window.clearTimeout(timer); controller.abort(); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [needsCheck, impactAttempt]);
   const reportReady = impact !== null && (realScan === null || siteCheck !== null);
