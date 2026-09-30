@@ -55,6 +55,7 @@ ap.add_argument("--fps", type=int, default=10)
 ap.add_argument("--subtitle", default="", help="extra words for the title, e.g. 'right turn from La Trobe St allowed'")
 ap.add_argument("--trail", type=int, default=75, help="seconds of trail behind each highlighted car (0: keep the whole clip)")
 ap.add_argument("--queues", action="store_true", help="colour each block by how many more cars are queued on it than on the normal street")
+ap.add_argument("--aerial", action="store_true", help="draw the Vicmap aerial photo under the streets (downloads it once into the work folder)")
 ap.add_argument("--copy-to", default="" if SITE else os.path.join(REPO, "public", "assets", "sumo-swanston-5pm.gif"), help="also copy the GIF here for the app ('' to skip)")
 args = ap.parse_args()
 
@@ -154,6 +155,27 @@ def levels(queued, normal, t):
     return sum((extra >= MIN_EXTRA) & (extra >= b * normal) for b in BANDS)
 
 
+def aerial(size=800):
+    """The Vicmap Basemap aerial photo for the view, resampled onto the simulation's grid (CC BY 4.0, State of Victoria)."""
+    import io, urllib.request, pyproj
+    from PIL import Image
+    path = os.path.join(WORK, f"aerial_{cx:.0f}_{cy:.0f}_{args.radius:g}.png")
+    if not os.path.exists(path):
+        ox, oy = net.getLocationOffset()
+        to_web = pyproj.Transformer.from_crs(net.getGeoProj().srs, "EPSG:3857", always_xy=True)
+        xs, ys = np.meshgrid(np.linspace(cx - args.radius, cx + args.radius, size), np.linspace(cy + args.radius, cy - args.radius, size))
+        wx, wy = to_web.transform(xs - ox, ys - oy)   # where each pixel of the view sits in the photo's projection
+        x0, x1, y0, y1 = wx.min() - 5, wx.max() + 5, wy.min() - 5, wy.max() + 5
+        n = 1600
+        url = ("https://base.maps.vic.gov.au/service?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=AERIAL_WM_256&STYLES=&SRS=EPSG:3857"
+               f"&BBOX={x0},{y0},{x1},{y1}&WIDTH={n}&HEIGHT={n}&FORMAT=image/jpeg")
+        photo = np.asarray(Image.open(io.BytesIO(urllib.request.urlopen(url, timeout=60).read())).convert("RGB"))
+        col = np.clip(((wx - x0) / (x1 - x0) * (n - 1)).round().astype(int), 0, n - 1)
+        row = np.clip(((y1 - wy) / (y1 - y0) * (n - 1)).round().astype(int), 0, n - 1)
+        Image.fromarray(photo[row, col]).save(path)
+    return plt.imread(path)
+
+
 diverted = diverted_ids()
 (base, base_q), (clos, clos_q) = positions("base"), positions(args.scenario)
 normal = base_q[:, WINDOW:].mean(axis=1)   # cars queued on each block, averaged over the hour in the normal run
@@ -191,9 +213,12 @@ scat, trails, divs, streets = [], [], [], []
 in_block = [(l, i) for l, _, i in lines if i is not None]   # the lines to colour, each with its block
 closed_name = f"{SITE['closure']['street']} {SITE['closure']['direction']} closed" if SITE else "Swanston St block closed"
 for i, (ax, title) in enumerate(zip(axes, ("Normal street", closed_name))):
-    ax.add_collection(LineCollection([l for l, tram, block in lines if not tram and block is None], colors="#e4e4e4", linewidths=2.5, zorder=1))
-    ax.add_collection(LineCollection([l for l, tram, _ in lines if tram], colors="#9fc6e8", linewidths=1.2, zorder=1.5))
-    streets.append(ax.add_collection(LineCollection([l for l, _ in in_block], colors=QUEUE[0][0], linewidths=QUEUE[0][1], capstyle="butt", zorder=1.2)))
+    if args.aerial:   # the photo shows the streets, so the plain street and tram lines are left out
+        ax.imshow(aerial(), extent=(cx - args.radius, cx + args.radius, cy - args.radius, cy + args.radius), zorder=0)
+    else:
+        ax.add_collection(LineCollection([l for l, tram, block in lines if not tram and block is None], colors="#e4e4e4", linewidths=2.5, zorder=1))
+        ax.add_collection(LineCollection([l for l, tram, _ in lines if tram], colors="#9fc6e8", linewidths=1.2, zorder=1.5))
+    streets.append(ax.add_collection(LineCollection([l for l, _ in in_block], colors=QUEUE[0][0], linewidths=QUEUE[0][1], capstyle="butt", zorder=1.2, alpha=0.8 if args.aerial else 1)))
     if i == 1:   # the block is only closed in the right-hand panel
         ax.add_collection(LineCollection([net.getEdge(c).getShape() for c in closed_ids], colors="black", linewidths=6, zorder=2))
     ax.set_xlim(cx - args.radius, cx + args.radius); ax.set_ylim(cy - args.radius, cy + args.radius)
@@ -201,7 +226,7 @@ for i, (ax, title) in enumerate(zip(axes, ("Normal street", closed_name))):
         ax.text(x, y, name, rotation=angle, ha="center", va="center", fontsize=8, color="#555", zorder=5,
                 path_effects=[patheffects.withStroke(linewidth=3, foreground="white")])
     ax.set_aspect("equal"); ax.axis("off"); ax.set_title(title, fontsize=13)
-    scat.append(ax.scatter([], [], s=12, color=GREY, linewidths=0, zorder=3))
+    scat.append(ax.scatter([], [], s=16 if args.aerial else 12, color=GREY, edgecolors="white", linewidths=0.5 if args.aerial else 0, zorder=3))
     trails.append(ax.scatter([], [], s=4, color=COL[i], alpha=0.35, linewidths=0, zorder=3.5))
     divs.append(ax.scatter([], [], s=40, color=COL[i], edgecolors="white", linewidths=0.7, zorder=4))
 label = fig.text(0.5, 0.215 if args.queues else 0.11, "", ha="center", fontsize=11)
@@ -222,7 +247,7 @@ fig.legend(handles=[Line2D([], [], marker="o", color="none", markerfacecolor=PUR
                     Line2D([], [], marker="o", color="none", markerfacecolor=GREY, markersize=7, label="Other traffic"),
                     Line2D([], [], color="black", linewidth=5, label=f"Closed {'lane' if SITE else 'block'}")],
            loc="lower center", ncol=3, frameon=False, fontsize=10, bbox_to_anchor=(0.5, 0.02), handletextpad=0.4, columnspacing=1.8)
-fig.text(0.99, 0.005, "Map data © OpenStreetMap contributors", ha="right", fontsize=7, color="#777")
+fig.text(0.99, 0.005, "Map data © OpenStreetMap contributors" + (". Aerial photo © State of Victoria (Vicmap Basemap)" if args.aerial else ""), ha="right", fontsize=7, color="#777")
 if args.queues:
     fig.legend(handles=[Line2D([], [], color=c, linewidth=w, label=words) for c, w, words in QUEUE], title="Cars queued on each block in the last 2 minutes, against the normal street's average",
                loc="lower center", ncol=4, frameon=False, fontsize=10, title_fontsize=10, bbox_to_anchor=(0.5, 0.075), handletextpad=0.6, columnspacing=1.6)
@@ -252,7 +277,7 @@ def draw(i):
 
 
 os.makedirs(OUT, exist_ok=True)
-out = os.path.join(OUT, (f"clip-{args.hour:g}" if SITE else f"swanston-clip-{args.hour:g}") + (f"-x{args.scale:g}" if args.scale != 1 else "") + ("-queues" if args.queues else "") + ".gif")
+out = os.path.join(OUT, (f"clip-{args.hour:g}" if SITE else f"swanston-clip-{args.hour:g}") + (f"-x{args.scale:g}" if args.scale != 1 else "") + ("-queues" if args.queues else "") + ("-aerial" if args.aerial else "") + ".gif")
 FuncAnimation(fig, draw, frames=len(times), blit=False).save(out, writer=PillowWriter(fps=args.fps), dpi=72)
 print(out, os.path.getsize(out) // 1024, "KB")
 if args.copy_to:

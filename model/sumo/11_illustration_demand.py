@@ -6,7 +6,7 @@
     python3 04_run.py base --hour 11.5 --seed 1 --fcd 10
     python3 04_run.py signed --hour 11.5 --seed 1 --fcd 10
     python3 09_clip.py --scenario signed --hour 11.5 --seed 1 --start 40 --minutes 6 --centre=-37.7994,144.9649 --radius 175 \\
-        --queues --subtitle "illustration with heavier traffic" --copy-to ../../public/assets/sumo-smac-clip.gif
+        --queues --aerial --subtitle "illustration with heavier traffic" --copy-to ../../public/assets/sumo-smac-clip.gif
 
 At the demo site the closed lane carries about 150 cars an hour and the detour streets cope, so the real clip
 shows no queues. This script copies every driver who uses the closed lane --times over, in the normal and the
