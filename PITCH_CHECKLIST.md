@@ -16,7 +16,7 @@ The pre-screening PDF the judges have read is at `artifacts/submission/pre-scree
 
 Lead with time, safety and efficiency: hours of delay across the city, pedestrian safety, which streets take the detour, queue length. One public transport point. It is in the problem statement so it stays, but it matters less than the others.
 
-- [ ] Each mode shows its own detail. It does not yet.
+- [x] Each mode shows its own detail. It does not yet. (Joel: each check leads with a short answer, colour-coded, and one line under it; one-sentence summaries; Plan vs street on the Safety tab only)
 - [x] Site overview image is distorted. Fix. (Joel: artwork shown at its own shape)
 
 Traffic

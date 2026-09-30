@@ -14,7 +14,10 @@ import type { ScanPointResult, SiteCheck } from "@/lib/site-check";
 
 // Report points written in advance for a demo TGS, so its report needs no Claude call.
 // Each point's checks answer the questions the report must cover (PITCH_CHECKLIST.md).
-type Check = { label: string; text: string };
+// `answer` is the short result that stands out, `text` one short line behind it,
+// `status` its colour: ok, watch or fix. Site safety checks are actions, and their
+// `answer` names the report point they come from.
+type Check = { label: string; text: string; answer?: string; status?: "ok" | "watch" | "fix" };
 export type SavedReport = {
   points: Record<"traffic" | "pedestrians" | "transport" | "safety", { summary?: string; reason?: string; checks: Check[] }>;
   site_check: SiteCheck;

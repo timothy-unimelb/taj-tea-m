@@ -15,7 +15,21 @@ const metricIcons = { traffic: CarIcon, pedestrians: PersonSimpleWalkIcon, trans
 export function MetricCard({ metric, detailed = false }: { metric: ImpactMetric; detailed?: boolean }) {
   const Icon = metricIcons[metric.id as keyof typeof metricIcons];
   const SeverityIcon = metric.severity === "Low" ? CheckCircleIcon : metric.severity === "Not modelled" ? QuestionIcon : WarningCircleIcon;
-  return <article className="metric-card"><Icon size={21} aria-hidden="true" /><div><div className="metric-heading"><h3>{metric.label}</h3><span className={`severity severity-${metric.severity.toLowerCase().replaceAll(" ", "-")}`}><SeverityIcon size={13} weight="fill" aria-hidden="true" />{metric.severity}</span></div><p>{metric.description}</p>{detailed && <ul className="key-findings">{metric.checks.map(c => <li key={c.label}><strong>{c.label}.</strong> {c.text}</li>)}{metric.details.map(line => <li key={line}>{line}</li>)}<li>Rating: {metric.reason}</li></ul>}</div></article>;
+  return <article className="metric-card"><Icon size={21} aria-hidden="true" /><div><div className="metric-heading"><h3>{metric.label}</h3><span className={`severity severity-${metric.severity.toLowerCase().replaceAll(" ", "-")}`}><SeverityIcon size={13} weight="fill" aria-hidden="true" />{metric.severity}</span></div><p>{metric.description}</p>{detailed && <CheckRows metric={metric} />}</div></article>;
+}
+
+// Each check leads with its answer; the line under it says why. Site safety checks are
+// numbered actions, tagged with the report point they come from.
+function CheckRows({ metric }: { metric: ImpactMetric }) {
+  const actions = metric.id === "safety";
+  return <>
+    {metric.checks.length > 0 && <ol className={`check-rows ${actions ? "check-actions" : ""}`}>{metric.checks.map((c, i) => <li key={c.label} className={`check-row check-${c.status ?? "watch"}`}>
+      {actions ? <><span className="check-answer"><span className="check-number">{i + 1}</span>{c.label}</span>{c.answer && <span className="check-tag">{c.answer}</span>}</> : <><span className="check-label">{c.label}</span>{c.answer && <span className="check-answer">{c.answer}</span>}</>}
+      <span className="check-note">{c.text}</span>
+    </li>)}</ol>}
+    {metric.details.length > 0 && <ul className="key-findings">{metric.details.map(line => <li key={line}>{line}</li>)}</ul>}
+    <p className="check-reason">Why {metric.severity.toLowerCase()}: {metric.reason}</p>
+  </>;
 }
 
 export type OverviewImage = { src: string; alt: string; caption: string };
@@ -57,9 +71,9 @@ export function SiteReport({ report, project, document = false, overview = [] }:
     <div id={document ? undefined : "report-panel"} role={document ? undefined : "tabpanel"} aria-labelledby={document ? undefined : `tab-${active}`}>
       {document ? <ReportSection title="Key findings"><ul className="key-findings">{report.keyFindings.map(item => <li key={item}>{item}</li>)}</ul></ReportSection> : <><div className="decision-card"><WarningIcon size={26} weight="fill" aria-hidden="true" /><div><h2>Review required before deployment</h2><p>{report.decision}</p></div></div><p className="source-note"><FileTextIcon size={15} aria-hidden="true" />{report.sourceNote}</p></>}
       <ReportSection title="Impact summary"><div className="metrics">{visibleMetrics.map(metric => <MetricCard metric={metric} detailed={document ? metric.checks.length > 0 : active !== "overview"} key={metric.id} />)}</div></ReportSection>
-      {report.conflicts.length > 0 && (document || active === "overview" || active === "safety") && <ReportSection title="Plan vs street"><ul className="key-findings">{report.conflicts.map(c => <li key={`${c.scan_point}-${c.measured}`}><strong>{c.scan_point}.</strong> Measured {c.measured}. Needed {c.needed}. {c.finding}</li>)}</ul></ReportSection>}
+      {report.conflicts.length > 0 && (document || active === "safety") && <ReportSection title="Plan vs street"><ol className="check-rows plan-vs-street">{report.conflicts.map(c => <li key={`${c.scan_point}-${c.measured}`} className="check-row check-watch"><span className="check-label">{c.scan_point}</span><span className="check-answer">Needs {c.needed}</span><span className="check-note">{c.measured}. {c.finding}</span></li>)}</ol></ReportSection>}
       <ReportSection title="Site overview">{overview.length ? <SiteImages images={overview} /> : <SiteOverview />}</ReportSection>
-      {actions.length > 0 && <ReportSection title={document ? "Recommended actions" : "Recommended before deployment"}><div className="recommendations">{actions.map(action => document ? <div className="document-action" key={action.id}><span className="action-number">{action.id}</span><div><h3>{action.title}</h3><p>{action.point}. {action.summary}</p></div></div> : <details className="recommendation" key={action.id}><summary><span className="action-number">{action.id}</span><span><strong>{action.title}</strong><small>{action.point}. {action.summary}</small></span><CaretDownIcon size={18} aria-hidden="true" /></summary><dl className="action-detail"><dt>Report point</dt><dd>{action.point}</dd><dt>Impact</dt><dd>{action.impact}</dd><dt>Why it matters</dt><dd>{action.why}</dd><dt>Evidence used</dt><dd><ul>{report.sources.map(source => <li key={source}>{source}</li>)}</ul></dd><dt>Recommended action</dt><dd>{action.recommendation}</dd></dl></details>)}</div></ReportSection>}
+      {actions.length > 0 && <ReportSection title={document ? "Recommended actions" : "Recommended before deployment"}><div className="recommendations">{actions.map(action => document ? <div className="document-action" key={action.id}><span className="action-number">{action.id}</span><div><h3>{action.title}</h3><p>{action.point}. {action.summary}</p></div></div> : <details className="recommendation" key={action.id}><summary><span className="action-number">{action.id}</span><span><strong>{action.title}</strong><small>{action.point}</small></span><CaretDownIcon size={18} aria-hidden="true" /></summary><dl className="action-detail"><dt>What</dt><dd>{action.summary}</dd><dt>Impact</dt><dd>{action.impact}</dd><dt>Why it matters</dt><dd>{action.why}</dd><dt>Evidence used</dt><dd><ul>{report.sources.map(source => <li key={source}>{source}</li>)}</ul></dd><dt>Recommended action</dt><dd>{action.recommendation}</dd></dl></details>)}</div></ReportSection>}
       {(document || active === "overview") && <MethodNote report={report} document={document} />}
     </div>
   </article>;

@@ -14,52 +14,135 @@
   ],
   "points": {
     "traffic": {
+      "summary": "About 890 drivers take a short detour. The detour streets cope, but the detour signs need moving.",
+      "reason": "892 drivers diverted over the works hours. The Moderate limit is 100.",
       "checks": [
-        { "label": "Hours of delay", "text": "About 16 vehicle-hours of extra driving each works day, for all traffic within about 600 m of the site. Each of the 891 diverted drivers loses about 22 seconds." },
-        { "label": "Detour streets", "text": "Faraday St, Cardigan St and Grattan St. All three can carry the extra cars. In the busiest hour Grattan St westbound reaches 65% of one lane's capacity, Cardigan St 47% and Faraday St 27%." },
-        { "label": "Queue length", "text": "About 38 m on Cardigan St before Grattan St, up to 71 m. That is about 6 cars, up to 11. It does not reach back to Faraday St." },
-        { "label": "Detour safety", "text": "Not as drawn. VMS 1 and VMS 2 stand south of Faraday St, so drivers read \"Detour via Faraday St\" after the turn. Faraday St westbound also becomes a dead end. Fix both before deployment." }
+        {
+          "label": "Hours of delay",
+          "answer": "16 vehicle-hours a day",
+          "status": "watch",
+          "text": "All traffic within 600 m. About 22 s per diverted trip."
+        },
+        {
+          "label": "Detour streets",
+          "answer": "Faraday, Cardigan, Grattan St",
+          "status": "ok",
+          "text": "The signed route around the closure."
+        },
+        {
+          "label": "Can they carry it?",
+          "answer": "Yes, 65% at most",
+          "status": "ok",
+          "text": "Busiest is Grattan St westbound at lunchtime."
+        },
+        {
+          "label": "Queue length",
+          "answer": "38 m, up to 71 m",
+          "status": "ok",
+          "text": "About 6 cars on Cardigan St. It stays clear of Faraday St."
+        },
+        {
+          "label": "Is the detour safe?",
+          "answer": "Not as drawn",
+          "status": "fix",
+          "text": "The VMS boards stand past the turn, and Faraday St westbound becomes a dead end."
+        }
       ]
     },
     "pedestrians": {
-      "summary": "The footpath stays open past the works with 1.5 m clear, so nobody walks further. The risk moves to the detour's crossings and the lunchtime crowd.",
-      "reason": "The footpath stays open, but its 1.5 m has no spare at lunchtime and the scan could not measure it.",
+      "summary": "The footpath stays open, so nobody walks further. Watch the detour crossings and the lunchtime crowd.",
+      "reason": "The footpath keeps exactly the width the lunchtime crowd needs, and the scan could not confirm it.",
       "checks": [
-        { "label": "Risk from the detour", "text": "Some, at Faraday St and Cardigan St. Detour traffic turns right there across zebra crossings with no traffic lights, and Faraday St eastbound goes from 41 to 160 cars an hour. The other detour turns are at traffic lights." },
-        { "label": "Extra walking", "text": "None. The east footpath stays open past the works. The signalised crossing to the tram stop, about 30 m north of the work area, stays open too." },
-        { "label": "Lunchtime crowding", "text": "From 1pm to 2pm about 708 people an hour walk past (council sensor at Grattan St, 38 m away). That is 11.8 a minute, so the council's comfort rule needs 1.5 m clear. The plan keeps exactly 1.5 m, with no spare." }
+        {
+          "label": "At risk from the detour?",
+          "answer": "Some",
+          "status": "watch",
+          "text": "Detour cars turn across zebra crossings with no lights at Faraday St and Cardigan St."
+        },
+        {
+          "label": "Extra walking",
+          "answer": "None",
+          "status": "ok",
+          "text": "The east footpath and the tram stop crossing stay open."
+        },
+        {
+          "label": "Lunchtime crowding",
+          "answer": "708 people an hour",
+          "status": "watch",
+          "text": "The council's rule needs 1.5 m clear. The plan keeps exactly 1.5 m."
+        }
       ]
     },
     "transport": {
-      "summary": "Trams keep running. Bus 546 uses the closed lane and needs its own detour. Parts of the setup sit within 20 m of the Melbourne University tram stop.",
-      "reason": "Trams run on Swanston St and bus 546 uses the closed lane, so Yarra Trams and the bus operator must review the plan.",
+      "summary": "Trams keep running. Bus 546 needs a detour, and a PTV permit is needed.",
+      "reason": "Bus 546 uses the closed lane and the works sit near a tram stop.",
       "checks": [
-        { "label": "Trams and buses", "text": "Trams yes: the northbound lane and the tracks stay open, and barriers keep 0.8 m from the tram envelope. Bus 546 no: it drives the closed lane to its Melbourne University terminus. Buses 241 and 402 share Grattan St with the detour, where drive times do not change." },
-        { "label": "Stop access", "text": "Yes. The Melbourne University tram stop stays open, and so does the signalised crossing at its south end, just past the end of the lane closure. The bus stops on Grattan St are outside the works." },
-        { "label": "PTV permit", "text": "Needed. The lane closure ends about 14 m from the tram stop platform, and VMS 2 stands about 13 m from it. Both are inside 20 m. The plan already notes Yarra Trams approval for working near the tracks." }
+        {
+          "label": "Trams and buses run?",
+          "answer": "Trams yes, bus 546 no",
+          "status": "fix",
+          "text": "Bus 546 drives the closed lane to its terminus. It needs its own detour."
+        },
+        {
+          "label": "Stops accessible?",
+          "answer": "Yes",
+          "status": "ok",
+          "text": "The tram stop, its crossing and the Grattan St bus stops stay open."
+        },
+        {
+          "label": "PTV permit",
+          "answer": "Needed",
+          "status": "fix",
+          "text": "The closure ends 14 m from the tram stop, inside 20 m."
+        }
       ]
     },
     "safety": {
       "checks": [
-        { "label": "Move VMS 1 and 2 north of Faraday St", "text": "On the plan both boards stand past the only turn onto the detour. About 150 drivers an hour would reach the closure and turn around beside the tram stop." },
-        { "label": "Hold people while plant crosses", "text": "Plant crosses the footpath and bike lane to reach the work area. About 700 people an hour walk past from noon to 2pm. Have TC 1 and TC 2 hold walkers and riders, and move plant outside those hours." },
-        { "label": "Check the tram clearance at set-out", "text": "The scan did not reach the tram tracks, so the 0.8 m from barriers to the tram envelope is not confirmed. Measure it as the barriers go in, before the first tram passes." }
+        {
+          "label": "Move VMS 1 and 2 before Faraday St",
+          "answer": "Traffic",
+          "status": "fix",
+          "text": "They stand past the only detour turn. About 150 drivers an hour would turn around by the tram stop."
+        },
+        {
+          "label": "Guard the plant crossing",
+          "answer": "Pedestrians",
+          "status": "fix",
+          "text": "It is the one open gap in the barriers, onto a footpath with 700 people an hour. Traffic controllers hold people. Move plant outside noon to 2pm."
+        },
+        {
+          "label": "Check tram clearance at set-out",
+          "answer": "Public transport",
+          "status": "watch",
+          "text": "The scan missed the tracks, so the 0.8 m clearance is unconfirmed. Measure it before the first tram passes."
+        }
       ]
     }
   },
   "site_check": {
-    "decision": "Move VMS 1 and 2 north of Faraday St, and sign Faraday St westbound closed at Cardigan St. Then confirm the 1.5 m footpath and the tram clearance on site.",
+    "decision": "Move the detour signs before Faraday St and close Faraday St westbound. Then check the footpath width and tram clearance on site.",
     "safety_severity": "Moderate",
-    "safety_summary": "The detour signs stand past the detour turn, plant crosses a busy footpath and bike lane, and the tram clearance is not confirmed.",
+    "safety_summary": "Three fixes: the detour signs, the open plant crossing and the tram clearance.",
     "conflicts": [
-      { "scan_point": "Work zone footpath", "measured": "kerb 170 mm high over 34.9 m of street; footpath width could not be measured", "needed": "1.5 m clear (plan note, and the council's rule at 708 people an hour)", "finding": "The plan's width is exactly what the lunchtime crowd needs. Measure the narrowest point before setup." },
-      { "scan_point": "Barrier line and bike lane", "measured": "the scan stops short of the tram tracks", "needed": "0.8 m from barriers to the tram envelope (plan note)", "finding": "Not confirmed. Measure it at set-out." }
+      {
+        "scan_point": "Footpath past the works",
+        "measured": "The scan could not measure it",
+        "needed": "1.5 m clear",
+        "finding": "Measure the narrowest point before setup."
+      },
+      {
+        "scan_point": "Barriers to tram tracks",
+        "measured": "The scan stops short of the tracks",
+        "needed": "0.8 m",
+        "finding": "Measure it at set-out."
+      }
     ],
     "actions": [
       {
         "category": "safety",
-        "title": "Move VMS 1 and 2 north of Faraday St",
-        "summary": "On the plan both VMS boards stand south of Faraday St, past the only turn onto the detour.",
+        "title": "Move VMS 1 and 2 before Faraday St",
+        "summary": "Both boards stand past the only turn onto the detour.",
         "impact": "About 150 drivers an hour read \"Detour via Faraday St\" too late, reach the closure and turn around beside the tram stop.",
         "why": "Drivers turning around in a closed lane next to tram tracks and a busy crossing put walkers, riders and the traffic controllers at risk.",
         "recommendation": "Place VMS 1 on Swanston St north of Faraday St, before the turn, and VMS 2 further north, so drivers see both before they must turn."
@@ -67,15 +150,15 @@
       {
         "category": "pedestrians",
         "title": "Measure the footpath before setup",
-        "summary": "The scan could not measure the footpath, and 1.5 m is exactly what the lunchtime crowd needs.",
+        "summary": "The scan could not measure it, and 1.5 m is exactly what the lunchtime crowd needs.",
         "impact": "A bin, sign or barrier foot that narrows the path below 1.5 m would push people onto the bike lane at lunchtime.",
         "why": "About 708 people an hour walk past from 1pm to 2pm. Below 1.5 m clear the footpath gets crowded by the council's rule.",
         "recommendation": "Tape-measure the narrowest point past the works before setup. Move bins or signs, or the barrier line, to keep at least 1.5 m clear."
       },
       {
         "category": "safety",
-        "title": "Hold people while plant crosses",
-        "summary": "Plant crosses the footpath and bike lane to reach the work area, at a spot about 700 people an hour walk past at lunchtime.",
+        "title": "Guard the plant crossing",
+        "summary": "The only gap in the barriers opens onto a busy footpath and bike lane.",
         "impact": "A reversing or turning machine meets walkers and riders who don't expect it.",
         "why": "The plan relies on TC 1 and TC 2 to hold people, and the crowd is largest from noon to 2pm.",
         "recommendation": "Have TC 1 and TC 2 stop walkers and riders for every plant crossing, and schedule deliveries and plant moves outside noon to 2pm."
@@ -83,7 +166,7 @@
       {
         "category": "transport",
         "title": "Apply for the PTV permit",
-        "summary": "The lane closure and VMS 2 sit within 20 m of the Melbourne University tram stop.",
+        "summary": "The closure and VMS 2 are within 20 m of the tram stop.",
         "impact": "Without the permit the works can be stopped on the day.",
         "why": "Works within 20 m of a tram stop need a PTV permit, and works near the tracks need Yarra Trams approval.",
         "recommendation": "Send the plan to PTV and Yarra Trams together, with the barrier clearance to the tram envelope marked."

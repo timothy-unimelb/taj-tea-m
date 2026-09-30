@@ -282,3 +282,20 @@ small.error-text { display: block; font-size: 12px; margin-top: 1px; }
 .site-images figure { margin: 0; }
 .site-images img { display: block; width: 100%; height: auto; max-height: 320px; object-fit: contain; border-radius: 10px; border: 1px solid #cbd9cd; background: #1d2521; }
 .site-images figcaption { margin-top: 6px; font-size: 13px; color: #5b665f; }
+
+/* Report checks: the answer stands out, one short line under it, a coloured edge for ok, watch or fix. */
+.check-rows { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 10px; }
+.check-row { display: grid; gap: 1px; padding: 1px 0 1px 10px; border-left: 3px solid var(--amber); }
+.check-row.check-ok { border-left-color: #2f7a55; }
+.check-row.check-fix { border-left-color: var(--red); }
+.check-label { font-size: 11px; font-weight: 600; color: var(--muted); }
+.metric-card .check-answer, .plan-vs-street .check-answer { font-size: 14px; font-weight: 700; line-height: 1.3; color: #1d2a24; }
+.check-ok .check-answer { color: #206044; }
+.check-fix .check-answer { color: #ad3025; }
+.check-actions .check-answer { display: flex; align-items: baseline; gap: 7px; color: #1d2a24; }
+.check-number { flex-shrink: 0; font-size: 12px; color: var(--muted); }
+.check-tag { justify-self: start; font-size: 10px; font-weight: 700; color: var(--muted); background: #eef2ef; border-radius: 4px; padding: 1px 6px; margin: 2px 0 1px 19px; }
+.check-actions .check-note { padding-left: 19px; }
+.check-note { font-size: 12px; line-height: 1.45; color: var(--muted); }
+.check-reason { font-size: 11px !important; color: var(--muted); margin-top: 10px !important; max-width: none !important; }
+
