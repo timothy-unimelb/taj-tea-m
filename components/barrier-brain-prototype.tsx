@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowLeftIcon, CaretRightIcon, CheckIcon, FilePdfIcon, MagnifyingGlassIcon, MapPinIcon, PlusIcon, ShareNetworkIcon, WarningCircleIcon, XIcon } from "@phosphor-icons/react";
 import { analyseTgs, buildReport, checkSite, demoAnalysis, demoTgsFile, demoTgsUrl, estimateImpact, savedReportFor, type AssessmentData } from "@/lib/data";
-import { describeMeasurement, measureScan, scanPreview, scanProblem, type ScanMeasurement } from "@/lib/scan/measure";
+import { describeMeasurement, measureScan, scanProblem, type ScanMeasurement } from "@/lib/scan/measure";
 import { stitchScans } from "@/lib/scan/stitch";
 import { ruleCheck, type SiteCheck } from "@/lib/site-check";
 import type { ImpactResult } from "@/lib/impact/types";
@@ -38,7 +38,6 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   const [stitchProgress, setStitchProgress] = useState("");
   const [stitchNote, setStitchNote] = useState<string | null>(null);
   const [siteCheck, setSiteCheck] = useState<SiteCheck | null>(null);
-  const [scanImage, setScanImage] = useState<string | null>(null);
   const [tgsAnalysis, setTgsAnalysis] = useState<TgsAnalysis | null>(null);
   const [tgsError, setTgsError] = useState("");
   const [tgsAttempt, setTgsAttempt] = useState(0);
@@ -97,14 +96,11 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
   useEffect(() => {
     if (screen !== "scan-checking" || !realFiles.length || measured !== null) return;
     let cancelled = false;
-    stitchScans(realFiles, message => { if (!cancelled) setStitchProgress(message); }).then(({ file, note }) => { if (!cancelled) { setStitchNote(note); setStitchProgress(""); } return Promise.all([
-      measureScan(file),
-      scanPreview(file).catch(() => null).then(image => { if (!cancelled) setScanImage(image); }),
-    ]); }).then(([result]) => { if (!cancelled) setMeasured(result); }).catch((error: Error) => { if (!cancelled) { setStitchProgress(""); setMeasured(error.message); } });
+    stitchScans(realFiles, message => { if (!cancelled) setStitchProgress(message); }).then(({ file, note }) => { if (!cancelled) { setStitchNote(note); setStitchProgress(""); } return measureScan(file); }).then(result => { if (!cancelled) setMeasured(result); }).catch((error: Error) => { if (!cancelled) { setStitchProgress(""); setMeasured(error.message); } });
     return () => { cancelled = true; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen, scanFiles, measured]);
-  function resetScanResults() { setMeasured(null); setSiteCheck(null); setScanImage(null); setStitchNote(null); setStitchProgress(""); }
+  function resetScanResults() { setMeasured(null); setSiteCheck(null); setStitchNote(null); setStitchProgress(""); }
   function addScans(files: UploadFile[]) { setScanFiles(current => [...current.filter(f => f.file), ...files]); resetScanResults(); setDemoScanComplete(false); }
   function removeScan(i: number) { setScanFiles(current => current.filter((_, j) => j !== i)); resetScanResults(); }
   // The demo scan is the team's real scan of Swanston St near Grattan St. It loads as a file, so it is measured
@@ -210,7 +206,7 @@ export function BarrierBrainPrototype({ data }: { data: AssessmentData }) {
       </> : isReport || isPdf ? <>
         {report && reportReady ? <SiteReport report={report} project={reportProject} document={isPdf} overview={[
           ...(reportTgsUrl ? [{ src: reportTgsUrl, alt: "The traffic guidance scheme for this work zone", caption: "Traffic guidance scheme" }] : []),
-          ...(realScan && scanImage ? [{ src: scanImage, alt: "Top-down view of the site scan. Ground shaded by height, objects standing on it in red.", caption: `Site scan from above, north up: ground by height, objects in red (${realScan.length_m} m of street)` }] : []),
+          ...(realScan && demoScanFile ? [{ src: "/assets/demo-scan-plan.webp", alt: "Two top-down plots of the site scan with a metre grid. Left: objects picked out of the scan as coloured points. Right: the scan in its photo colours, showing the footpath, bike lane and road.", caption: `Site scan from above, in metres: objects picked out of the scan (left) and the scan in colour (right)` }] : []),
         ]} /> : impactError ? <><div className="scan-warning" role="alert"><WarningCircleIcon size={25} weight="fill" aria-hidden="true" /><p>{impactError}</p></div><div className="bottom-actions"><PrimaryButton onClick={retryImpact} arrow={false}>Try again</PrimaryButton></div></> : <p className="source-note" role="status">Loading the impact estimate.</p>}
         {isPdf && report && <div className="document-print"><PrimaryButton onClick={() => window.print()} arrow={false}><FilePdfIcon size={20} aria-hidden="true" />Print / Save PDF</PrimaryButton><p>Use your browser’s print options to save this report as a PDF.</p></div>}
       </> : <>

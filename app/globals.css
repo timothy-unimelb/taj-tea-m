@@ -285,7 +285,7 @@ small.error-text { display: block; font-size: 12px; margin-top: 1px; }
 }
 .site-images { display: grid; gap: 12px; }
 .site-images figure { margin: 0; }
-.site-images img { display: block; width: 100%; height: auto; max-height: 320px; object-fit: contain; border-radius: 10px; border: 1px solid #cbd9cd; background: #1d2521; }
+.site-images img { display: block; width: 100%; height: auto; max-height: 520px; object-fit: contain; border-radius: 10px; border: 1px solid #cbd9cd; background: #fff; }
 .site-images figcaption { margin-top: 6px; font-size: 13px; color: #5b665f; }
 
 /* Report checks: the answer stands out, one short line under it, a coloured edge for ok, watch or fix. */
