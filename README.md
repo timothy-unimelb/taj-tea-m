@@ -20,7 +20,7 @@ Optional settings in `.env.local`:
 
 | Variable | What it does |
 |---|---|
-| `IMPACT_MODEL` | `sumo` (default: SUMO for the Swanston sample, the lookup model elsewhere), `mvm` (lookup model everywhere) or `http` |
+| `IMPACT_MODEL` | `mvm` (default: lookup model everywhere), `sumo` (SUMO for the Swanston sample, the lookup model elsewhere) or `http` |
 | `IMPACT_MODEL_URL` | With `IMPACT_MODEL=http`, a service that takes an ImpactRequest and returns an ImpactResult |
 
 `npm run lint` and `npm run build` must pass before pushing.

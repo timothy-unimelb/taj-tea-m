@@ -13,6 +13,7 @@ Done:
 
 ## Tim
 Now:
+- [16:28] Default impact model back to `mvm` (the live lookup) on main, then testing it on Vercel with the test TGS (data/test).
 Done:
 - [10:30] SUMO clip on the Swanston report under "How this was estimated": five simulated minutes at 5pm, normal street beside the closure, with a legend. Optional `visual` field in the impact result (model/IMPACT_CONTRACT.md). Report numbers unchanged.
 - [10:45] Clip redone so the difference shows: cars that use the block are purple with a trail, the closed block is drawn only on the closure panel, and the clip is from the right-turn-allowed case (the main case moves a car or two a minute and the panels looked identical). Caption says which case it is. Numbers unchanged.

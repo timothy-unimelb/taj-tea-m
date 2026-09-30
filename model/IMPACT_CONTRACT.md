@@ -10,11 +10,11 @@ One setting, the `IMPACT_MODEL` environment variable (in `.env.local` or Vercel)
 
 | Value | Model | Runs |
 |---|---|---|
-| `sumo` (default) | SUMO traffic simulation (`model/sumo/`) | Precomputed, Swanston St sample only |
-| `mvm` | Tamara's past-closures lookup plus hourly queue, ported to TypeScript (`lib/impact/models/mvm.ts`) | Live, any site |
+| `sumo` | SUMO traffic simulation (`model/sumo/`) | Precomputed, Swanston St sample only |
+| `mvm` (default) | Tamara's past-closures lookup plus hourly queue, ported to TypeScript (`lib/impact/models/mvm.ts`) | Live, any site |
 | `http` | Any service at `IMPACT_MODEL_URL` | Live, whatever the service covers |
 
-If the chosen model can't cover the site, or fails, the app uses `mvm` instead and says so in the report's assumptions. So by default the Swanston sample shows SUMO and every other site shows `mvm`. SUMO is the default because the lookup assumes half of the signal site's traffic uses the closed street, which overstates streets with little car access such as the Swanston block.
+If the chosen model can't cover the site, or fails, the app uses `mvm` instead and says so in the report's assumptions. So with `sumo` the Swanston sample shows SUMO and every other site shows `mvm`. `mvm` is the default. Note that it assumes half of the signal site's traffic uses the closed street, which overstates streets with little car access such as the Swanston block.
 
 ## Three ways to plug in a new model
 

@@ -1,12 +1,11 @@
 // The model switch. IMPACT_MODEL picks which model the report uses:
-//   sumo     SUMO simulation, precomputed for the Swanston St sample only (default)
-//   mvm      Tamara's past-closures lookup and queue, live, any site
+//   mvm      Tamara's past-closures lookup and queue, live, any site (default)
+//   sumo     SUMO simulation, precomputed for the Swanston St sample only
 //   http     any service at IMPACT_MODEL_URL that returns an ImpactResult
 // If the chosen model can't cover the site, or fails, the live lookup model is
-// used instead and the report says so in its assumptions. So by default the
-// Swanston sample gets SUMO and every other site gets the lookup model.
-// SUMO is the default because the lookup overstates diversions on streets with
-// little car access, like the Swanston block (Tim, 30 Sep).
+// used instead and the report says so in its assumptions. With IMPACT_MODEL=sumo
+// the Swanston sample gets SUMO and every other site gets the lookup model.
+// The lookup is the default again so every TGS runs the live model (Tim, 30 Sep).
 
 import type { ImpactRequest, ImpactResult, ImpactModel } from "./types";
 import { mvmModel } from "./models/mvm";
@@ -14,7 +13,7 @@ import { httpModel } from "./models/http";
 import { NotCoveredError, precomputedModel } from "./models/precomputed";
 import { rateSeverity } from "./severity";
 
-export const DEFAULT_MODEL = "sumo";
+export const DEFAULT_MODEL = "mvm";
 
 function chooseModel(id: string): ImpactModel {
   if (id === "mvm") return mvmModel;
