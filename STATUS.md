@@ -75,6 +75,11 @@ Done:
 - [09:30] Added model/build_parquet.py. Joins the raw closure, SCATS, site, AADT and holiday files into one parquet (closure x site x day x hour, 4.8M rows, 7 MB). Output is local only, in parquet/ of the data folder. Counts match the warehouse exactly.
 - [23:15] Added the closure-impact model in model/: code, notes and output CSVs (not the 5 GB warehouse). `python model/mvm/mvm_predict.py` runs it. Not connected to the app yet. THIRD_PARTY.md and BRIEF.md updated.
 
+## Tom
+Now:
+- [30 Sep] On branch `both-models` (not merged, not pushed): the report shows both traffic estimates side by side where two models cover the site. New "Two traffic estimates" table on the Overview, the Traffic tab and the PDF: drivers diverted, longest queue, delay and traffic rating from the SUMO simulation and the past closures lookup. Ratings still come from the same model as before. lib/impact/index.ts, app/api/impact/route.ts, lib/data.ts, components/site-report.tsx, app/globals.css. Lint and build pass; checked in the browser at phone width.
+Done:
+
 ## Others
 Now:
 Done:
