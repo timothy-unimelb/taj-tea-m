@@ -11,6 +11,7 @@ Done:
 ## Tim
 Now:
 Done:
+- [10:30] SUMO clip on the Swanston report under "How this was estimated": five simulated minutes at 5pm, normal street beside the closure, with a legend. Optional `visual` field in the impact result (model/IMPACT_CONTRACT.md). Report numbers unchanged.
 - [10:00] `tim` merged into `main` (fast-forward, lint and build pass). The review list below is now a list of things the team can still revisit.
 - [09:05] SUMO less janky, PLAN.md 6b items 3 and 4, merged into `tim` at 09:55 (app numbers unchanged). Left-hand traffic (was right-hand), every turn at the closed block sourced (OpenStreetMap plus sheets, `model/sumo/turn_rules.json`), delay-based signals, and `08_check_counts.py` checking simulated traffic against the counts: 71% of counted street-hours within GEH 5, afternoon peak still drops 5% to 7% of cars. Diversions about 123 (110 to 162) over the works hours with the La Trobe St right turn banned, about 1,080 if allowed. Details in model/sumo/README.md "Turn rules" and "Calibration check".
 - [07:45] SUMO: every hour of the works (7am to 10pm), and the La Trobe St right turn banned as a second case. Report now says about 755 to 871 shortcut drivers over the works hours, about 77 if the turn is banned. Delay left out as noise. model/sumo/, data/impact/sumo-swanston.json. SUMO roadmap in PLAN.md step 6.
