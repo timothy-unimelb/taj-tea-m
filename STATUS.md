@@ -7,6 +7,7 @@
 ## Joel
 Now:
 Done:
+- [12:10] Test TGS redrawn in the sample's layout (Vicmap aerial) and moved to where the site scan was taken: southbound kerbside lane, east side, 22 to 60 m north of Grattan St. Site overview now shows the real TGS and a top-down render of the scan. Scan measurement finds the real kerb more reliably; the merged site scan's kerb reads 50 mm, so widths are still withheld. Full pipeline rerun against Vercel: works.
 - [11:55] End-to-end test on Vercel with the test TGS (data/test) and the 4 real Scaniverse scans merged into one site scan: TGS read by Claude (17 s), site check by Claude (14 s), report generated. Kerb found (150 mm); footpath widths withheld as unreliable. Found: the lookup model keeps a lane open for a lane closure even when the direction has only one lane, so Traffic shows Low for this TGS.
 - [11:48] Merged `joel` into main. One site scan covers every scan point. Scan screens use the TGS scan points. Real PLY/LAS scans are measured in the browser; kerb found on the real scans, footpath widths withheld as unreliable. Claude plan vs street check (/api/site-check) with a rule fallback.
 
