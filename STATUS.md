@@ -48,8 +48,8 @@ Done:
 
 ## Tamara
 Now:
-- [11:45] Adding model/mvm/SOURCES.md: the model's data source URLs, compacted from the local analysis/mvm/SOURCES.md.
 Done:
+- [11:55] Added model/mvm/SOURCES.md: the 69 URLs for the data the model uses (RADAR pages, SCATS zips, Traffic Lights, AADT files).
 - [11:20] Committed the flat parquet (7.4 MB) at model/data/closure_site_hour.parquet. build_mvm.py reads it by default, so the model builds without the raw files; build_parquet.py writes there.
 - [11:00] Model no longer needs the local warehouse. Added model/headline_stats/build_headline_stats.py (same outputs, rebuilt from raw SCATS). Removed warehouse-only scripts and SQL. model/README.md links the raw files on Google Drive.
 - [10:20] Model now builds from the parquet: model/mvm/build_mvm.py (15 s). Same outputs as the warehouse build (differences 1e-16). CSVs regenerated; app tables not re-exported since values are unchanged.
