@@ -9,7 +9,7 @@ Locked frontend flow, 29 Sep. Mobile browser at 393 x 852, responsive from 375 t
 
 1. **Projects.** New assessment, search and the three recent projects from the board.
 2. **Upload TGS.** PDF, PNG or JPG up to 20 MB. Demo file selected. Analyse TGS.
-3. **TGS analysis.** Brief progress state, then plan elements and areas requiring site verification.
+3. **TGS analysis.** Brief progress state, then plan elements, anything not clear on the plan, and areas requiring site verification.
 4. **Upload site scans.** External photogrammetry scanning app only. One or more PLY or LAS scans, stitched into one site scan. The external scan evidence images show only after a scan is uploaded. Check scan completeness.
 5. **Incomplete scan.** Some required areas not captured. View missing area, or upload an additional scan: the file picker opens on this screen and the check runs again, with no trip back to the upload screen. No Continue action.
 6. **Complete scan.** Five of five areas captured. Generate impact report.

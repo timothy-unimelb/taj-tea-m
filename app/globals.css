@@ -120,6 +120,7 @@ svg { flex-shrink: 0; }
 .checklist li + li { border-top: 1px solid #edf0ec; }
 .check-symbol { display: inline-grid; place-items: center; flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; color: #155839; background: #c6e5d1; }
 .check-symbol.failed { background: #b53025; color: #fff; }
+.check-symbol.marker { color: #3d5361; background: #e3e9ed; }
 .check-symbol.pending { border: 1.5px solid #657783; background: white; border-radius: 4px; }
 .error-text { color: var(--red); }
 small.error-text { display: block; font-size: 12px; margin-top: 1px; }
@@ -146,6 +147,10 @@ small.error-text { display: block; font-size: 12px; margin-top: 1px; }
 .screen-scan .flow-section { margin-top: 20px; }
 .scan-warning { display: flex; align-items: center; gap: 12px; color: #63400e; background: var(--amber-bg); border: 1px solid #ebd9b4; border-radius: 12px; padding: 16px; margin-top: 22px; font-size: 13px; }
 .scan-warning > svg { color: #945b06; }
+.plan-notes { list-style: none; margin: 0; padding: 4px 14px; color: #63400e; background: var(--amber-bg); border: 1px solid #ebd9b4; border-radius: 12px; font-size: 13px; line-height: 20px; }
+.plan-notes li { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; }
+.plan-notes li + li { border-top: 1px solid #ebd9b4; }
+.plan-notes svg { flex-shrink: 0; margin-top: 1px; color: #945b06; }
 .completion-card { display: flex; align-items: center; gap: 18px; padding: 22px 18px; border: 1px solid var(--border); border-radius: 14px; background: #fff; margin-bottom: 18px; }
 .large-check { width: 56px; height: 56px; color: #fff; background: var(--green); border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; }
 .completion-card strong { font-size: 29px; font-weight: 750; letter-spacing: -.8px; }
