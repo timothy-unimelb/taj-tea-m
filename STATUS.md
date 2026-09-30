@@ -55,6 +55,7 @@ Done:
 
 ## Tamara
 Now:
+- [18:50] Committing the Swanston St scan registration work: status doc, transforms, registration code and the satellite alignment tool (scans/, tools/scan_register/).
 Done:
 - [11:55] Added model/mvm/SOURCES.md: the 69 URLs for the data the model uses (RADAR pages, SCATS zips, Traffic Lights, AADT files).
 - [11:20] Committed the flat parquet (7.4 MB) at model/data/closure_site_hour.parquet. build_mvm.py reads it by default, so the model builds without the raw files; build_parquet.py writes there.
