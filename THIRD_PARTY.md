@@ -32,3 +32,5 @@ The competition requires a list of all third-party material and APIs, including 
 | Sample TGS (Swanston St closure) | Image | Mock TGS upload and shape of mock data. `data/mock/tgs/` | Invarion sample drawing. Licence not confirmed, check before submission | No |
 | OpenStreetMap | Dataset | Street layout for the test TGS in `data/test/` (Swanston St, Grattan St to Faraday St) | ODbL, attribution on the drawing | No |
 | Vicmap Basemap aerial (base.maps.vic.gov.au) | Imagery | Aerial background of the test TGS in `data/test/` | CC BY 4.0, State of Victoria, attribution on the drawing | No |
+| City of Melbourne Pedestrian Counting System (data.melbourne.vic.gov.au API) | Dataset / API | Hourly pedestrian counts near the site for the footpath crowding check (`lib/pedestrians.ts`) | CC BY 4.0, City of Melbourne | No |
+| City of Melbourne, Pedestrian Level of Service and Trip Generation (2012); TfL Pedestrian Comfort Guidance for London (2010) | Method | Footpath crowding rule in `prompts/site-check.md` | Cited guidance | No |

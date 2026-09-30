@@ -3,6 +3,7 @@ import { join } from "node:path";
 import Anthropic from "@anthropic-ai/sdk";
 import { getVercelOidcToken } from "@vercel/oidc";
 import { siteCheckSchema, type ScanPointResult, type SiteCheck } from "@/lib/site-check";
+import { pedestrianCountsNear } from "@/lib/pedestrians";
 import type { TgsAnalysis } from "@/lib/tgs-analysis";
 
 // Claude compares the TGS analysis with the scan measurements. The browser
@@ -31,7 +32,10 @@ function fail(message: string, status: number) {
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null) as { analysis?: TgsAnalysis; scans?: ScanPointResult[] } | null;
   if (!body?.analysis || !Array.isArray(body.scans)) return fail("The plan or the scans are missing.", 400);
-  const input = JSON.stringify({ tgs_analysis: body.analysis, scan_points: body.scans });
+  // Pedestrian counts near the scan, for the council's crowding rule. The check still runs without them.
+  const where = body.scans.find(s => s.measurement?.location)?.measurement?.location;
+  const pedestrians = where ? await pedestrianCountsNear(where, body.analysis.work_start, body.analysis.work_end).catch(() => null) : null;
+  const input = JSON.stringify({ tgs_analysis: body.analysis, scan_points: body.scans, pedestrian_counts: pedestrians ?? "No counts: the scan has no map location or no council sensor is within 400 m." });
   if (input.length > 200_000) return fail("Too much scan data to check at once.", 413);
 
   try {

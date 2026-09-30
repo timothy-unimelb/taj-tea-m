@@ -104,7 +104,7 @@ For the Thursday pitch (decided 30 Sep) the report leads with time, safety and e
 - The PDF export is for a project planner. It carries charts and the full recommendations.
 - The last screen has a Close button back to the start, not Back.
 
-Pedestrian safety follows council rules on footpath crowding: how full a footpath gets before people walk on the road. That rule goes to the agent with the scan measurements. The full change list is in PITCH_CHECKLIST.md.
+Pedestrian safety follows council rules on footpath crowding: how full a footpath gets before people walk on the road. The City of Melbourne's Walking Plan technical report recommends London's Pedestrian Comfort Level: people per minute per metre of clear width at the busiest hour, B+ (11 or fewer) as the minimum, 13 as the crowding capacity where people start stepping onto the road. That rule goes to the agent with the scan measurements and the nearest council pedestrian sensor counts. The full change list is in PITCH_CHECKLIST.md.
 
 The earlier before/after modelling definition remains background for future model integration. The locked frontend uses the supplied impact summary and recommendations, without adding before/after tables.
 
@@ -154,7 +154,6 @@ Mocked for Wednesday: scan measurement, and the safety findings that depend on i
 When one is answered, delete it here, add a line to Decisions, and update the section it affects.
 
 - Is the impact based on the plan as drawn, or the plan fitted to the scanned street?
-- Which council rule sets when a footpath is too crowded and people step onto the road? The pedestrian safety point in the report should use it. City of Melbourne's minimum clear widths are one input; find the crowding threshold.
 - What radius do the traffic delay hours cover ("x km")?
 
 ## Decisions
@@ -186,6 +185,7 @@ Newest at the bottom. Format: `[date] Who: what was decided. Why, if not obvious
 - [30 Sep] Advait: the photogrammetry scan gets its true scale from the GPS positions in the LAS file.
 - [30 Sep] Advait: pre-screening PDF submitted and kept in the repo. The team is now preparing the Thursday 1 Oct pitch. The product changes to make are the three "what's left" items in the PDF (see Demo plan).
 - [30 Sep] Advait: the Thursday demo is live on stage. Change list agreed and written in PITCH_CHECKLIST.md: several scans stitched into one, faster scan flow, report detail per mode led by time, safety and efficiency, pedestrian safety from council crowding rules, three site safety points, at most 5 recommendations, a fuller PDF with charts, Close button at the end. Tim and Joel are building it.
+- [30 Sep] Joel: the pedestrian crowding rule is London's Pedestrian Comfort Level, as recommended in the City of Melbourne's Walking Plan technical report (2012): clear width minus 0.2 m buffers at kerb and building, people per minute per metre at the busiest works hour, B+ (11 or fewer) the minimum, 13 the crowding capacity. Counts come from the nearest City of Melbourne pedestrian sensors to the scan's location.
 
 ## Terms
 

@@ -49,32 +49,34 @@ export function Checklist({ items, details, captured = items.length, done, probl
 
 // `file` is the real upload. It is missing when the demo file is chosen.
 export type UploadFile = { name: string; size: string; file?: File };
-export function UploadPanel({ kind, file, onFile }: { kind: "tgs" | "scan"; file: UploadFile | null; onFile: (file: UploadFile | null) => void }) {
+// A TGS upload takes one file (`file`). A scan upload takes several (`files`, removed one at a time with `onRemove`).
+export function UploadPanel({ kind, file = null, files, onFile, onRemove }: { kind: "tgs" | "scan"; file?: UploadFile | null; files?: UploadFile[]; onFile: (file: UploadFile | null) => void; onRemove?: (index: number) => void }) {
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
   const [dragging, setDragging] = useState(false);
   const isTgs = kind === "tgs";
-  function selectFile(selected?: File) {
-    if (!selected) return;
+  function selectFiles(list?: FileList | null) {
+    const selected = Array.from(list ?? []).slice(0, isTgs ? 1 : undefined);
+    if (!selected.length) return;
     const extensions = isTgs ? /\.(pdf|png|jpe?g)$/i : /\.(ply|las)$/i;
-    if (!extensions.test(selected.name)) { setError(isTgs ? "Choose a PDF, PNG or JPG file." : "Choose a .ply or .las file. Export the scan in one of these formats."); return; }
-    if (isTgs && selected.size > 20 * 1024 * 1024) { setError("This file is larger than 20 MB. Choose a smaller file."); return; }
+    if (selected.some(f => !extensions.test(f.name))) { setError(isTgs ? "Choose a PDF, PNG or JPG file." : "Choose .ply or .las files. Export the scans in one of these formats."); return; }
+    if (isTgs && selected[0].size > 20 * 1024 * 1024) { setError("This file is larger than 20 MB. Choose a smaller file."); return; }
     setError("");
-    onFile({ name: selected.name, size: `${Math.max(0.1, selected.size / 1024 / 1024).toFixed(1)} MB`, file: selected });
+    for (const f of selected) onFile({ name: f.name, size: `${Math.max(0.1, f.size / 1024 / 1024).toFixed(1)} MB`, file: f });
   }
+  const rows = isTgs ? (file ? [file] : []) : files ?? [];
   return <div className="upload-group">
-    <input ref={input} id={id} className="sr-only" type="file" tabIndex={-1} accept={isTgs ? ".pdf,.png,.jpg,.jpeg" : ".ply,.las"} onChange={e => { selectFile(e.target.files?.[0]); e.target.value = ""; }} aria-label={isTgs ? "Choose TGS file" : "Choose site scan file"} />
-    <button type="button" className={`upload-panel ${!isTgs ? "upload-compact" : ""} ${dragging ? "dragging" : ""}`} onClick={() => input.current?.click()} onDragOver={e => { e.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={e => { e.preventDefault(); setDragging(false); selectFile(e.dataTransfer.files[0]); }} aria-describedby={`${id}-help`}>
+    <input ref={input} id={id} className="sr-only" type="file" tabIndex={-1} multiple={!isTgs} accept={isTgs ? ".pdf,.png,.jpg,.jpeg" : ".ply,.las"} onChange={e => { selectFiles(e.target.files); e.target.value = ""; }} aria-label={isTgs ? "Choose TGS file" : "Choose site scan files"} />
+    <button type="button" className={`upload-panel ${!isTgs ? "upload-compact" : ""} ${dragging ? "dragging" : ""}`} onClick={() => input.current?.click()} onDragOver={e => { e.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={e => { e.preventDefault(); setDragging(false); selectFiles(e.dataTransfer.files); }} aria-describedby={`${id}-help`}>
       {isTgs ? <FilePlusIcon size={40} weight="light" aria-hidden="true" /> : <CloudArrowUpIcon size={32} weight="light" aria-hidden="true" />}
-      <strong>{isTgs ? "Drop your TGS here" : "Upload site scan"}</strong>
-      <span id={`${id}-help`}>{isTgs ? "PDF, PNG or JPG (max 20 MB)" : "Supported formats: .ply, .las"}</span>
+      <strong>{isTgs ? "Drop your TGS here" : rows.length ? "Upload more scans" : "Upload scans"}</strong>
+      <span id={`${id}-help`}>{isTgs ? "PDF, PNG or JPG (max 20 MB)" : "One or more scans. Supported formats: .ply, .las"}</span>
     </button>
-    {file && <div className="file-row"><FilePdfIcon className="file-icon" size={32} aria-hidden="true" /><span><strong>{file.name}</strong><small>{file.size}</small></span><button className="icon-button" aria-label={`Remove ${file.name}`} onClick={() => onFile(null)}><XIcon size={18} aria-hidden="true" /></button></div>}
+    {rows.map((row, i) => <div className="file-row" key={`${row.name}-${i}`}><FilePdfIcon className="file-icon" size={32} aria-hidden="true" /><span><strong>{row.name}</strong><small>{row.size}</small></span><button className="icon-button" aria-label={`Remove ${row.name}`} onClick={() => isTgs ? onFile(null) : onRemove?.(i)}><XIcon size={18} aria-hidden="true" /></button></div>)}
     {error && <p className="error-text" role="alert">{error}</p>}
   </div>;
 }
-
 export function ExternalScanEvidence() {
   return <section className="scan-evidence" aria-labelledby="scan-evidence-title">
     <div className="scan-evidence-heading">

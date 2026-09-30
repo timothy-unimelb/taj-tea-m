@@ -6,18 +6,18 @@ The pre-screening PDF the judges have read is at `artifacts/submission/pre-scree
 
 ## Upload site scan screen
 
-- [ ] Allow more than one scan. Button and heading say "Upload scans".
-- [ ] Code that stitches several scans into one site scan, as part of the flow.
-- [ ] The site scan button says .zip but that is not what it takes. Fix the copy.
-- [ ] External scan evidence (mobile scan capture, point cloud export, map export): show only after a scan is uploaded.
-- [ ] "Upload additional scan" goes back to the upload screen. For the demo, move through the flow faster. No trip back.
+- [x] Allow more than one scan. Button and heading say "Upload scans". (Joel, branch `joel`)
+- [ ] Code that stitches several scans into one site scan, as part of the flow. (Tamara. Hook in `lib/scan/stitch.ts`; a GPS join with height levelling stands in until then.)
+- [x] The site scan button says .zip but that is not what it takes. Fix the copy. (Joel: PLY and LAS only, demo scan is .las)
+- [x] External scan evidence (mobile scan capture, point cloud export, map export): show only after a scan is uploaded. (Joel)
+- [x] "Upload additional scan" goes back to the upload screen. For the demo, move through the flow faster. No trip back. (Joel: opens the file picker on the incomplete screen, then checks again)
 
 ## Impact report
 
 Lead with time, safety and efficiency: hours of delay across the city, pedestrian safety, which streets take the detour, queue length. One public transport point. It is in the problem statement so it stays, but it matters less than the others.
 
 - [ ] Each mode shows its own detail. It does not yet.
-- [ ] Site overview image is distorted. Fix.
+- [x] Site overview image is distorted. Fix. (Joel: artwork shown at its own shape)
 
 Traffic
 - [ ] Hours of delay within an x km radius.
@@ -29,7 +29,7 @@ Pedestrians
 - [ ] Are they at risk, given the detour.
 - [ ] How much further they walk.
 - [ ] A third point Claude picks from the data set or nearby information.
-- [ ] Pedestrian safety follows the council's rules. Councils have logic for how crowded a footpath gets before people step onto the road. Pass that rule to the agent when it analyses the scan for the report. (Find the rule: open question in BRIEF.md.)
+- [x] Pedestrian safety follows the council's rules. Councils have logic for how crowded a footpath gets before people step onto the road. Pass that rule to the agent when it analyses the scan for the report. (Joel: rule in `prompts/site-check.md`, counts from the nearest council sensors via `lib/pedestrians.ts`. See BRIEF.md decisions.)
 
 Public transport
 - [ ] Can buses and trams still run as planned.
