@@ -6,8 +6,8 @@
 
 ## Joel
 Now:
-- [10:45] On branch `joel`: fix the scan screens so they use the TGS scan points (8 became 5), read a real uploaded scan in the browser, feed the real TGS and scan into the report, and a test TGS for Swanston St at the Sidney Myer Asia Centre (Grattan St to Faraday St). Not merged into main until the team checks it.
 Done:
+- [11:35] Branch `joel`, not merged. Scan screens now use the TGS scan points (8 points became 5 fixed areas). Real PLY/LAS scans are measured in the browser (lib/scan/measure.ts); Claude compares plan and measurements (/api/site-check) with a rule fallback. Test TGS for Swanston St at the Sidney Myer Asia Centre and synthetic scans in data/test/. Lint and build pass. Claude site check not yet run on Vercel. Needs a team look before merging into main.
 
 ## Tim
 Now:
