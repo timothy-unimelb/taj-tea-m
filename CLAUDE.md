@@ -31,7 +31,7 @@ It is an app for one workflow, not a marketing site. No landing page, hero secti
 
 STATUS.md tracks what each Claude session is working on. Anyone can ask "what's happening?" and get a straight answer.
 
-1. Read it, BRIEF.md and PLAN.md at the start of every session. PLAN.md holds the build steps and their state, and starts with "Where things stand": what is real, what is demo data, and what is next. Update it when a step changes.
+1. Read it and BRIEF.md at the start of every session.
 2. Before starting a task, add it under "Now" in the section of the person running this session.
 3. Update that line when something changes: a decision, a blocker, a partial result.
 4. When the task is done, move it to "Done" with one line on what changed and where.

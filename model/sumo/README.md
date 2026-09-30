@@ -122,7 +122,7 @@ Site 2921 detector 3, on the closed block's southbound side, is not a car count.
 
 Weekday works hours, 5 seeds, delay-based signals, the turn rules above (30 Sep, 9am):
 
-| Measure | Result | PLAN.md 6b target |
+| Measure | Result | Target |
 |---|---|---|
 | Counted street-hours within GEH 5 | 71% (91% within GEH 10, mean GEH 3.8) | most |
 | Worst hour (5pm to 6pm) within GEH 5 | 54% | |
@@ -173,7 +173,7 @@ What this says: the closed block matters little for cars, and whether it matters
 
 ## Not yet credible
 
-The plan to fix these, in order, is PLAN.md step 6b (less janky) and then 6c (any site).
+Fix these in order: first make SUMO trustworthy for this site, then make it work for any site.
 
 - **No count constrains the closed lane.** The range is how many simulated drivers enter it, which depends on simulated queues.
 - **The right-turn-allowed case is a what-if, not a possible reading of the street.** Site 2921's signal sheet shows no car right-turn signal from westbound La Trobe St, and Street View (Nov 2025) shows a No Right Turn sign on the approach. So the main case is the street as it is. The allowed case shows how much the block would matter if that ban were lifted, about ten times more, and is the only reason to keep the sensitivity figure in the report's range.
