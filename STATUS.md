@@ -6,8 +6,9 @@
 
 ## Joel
 Now:
+- [11:50] Testing the full flow on Vercel with the test TGS (data/test) and a real Scaniverse LAS scan.
 Done:
-- [11:35] Branch `joel`, not merged. Scan screens now use the TGS scan points (8 points became 5 fixed areas). Real PLY/LAS scans are measured in the browser (lib/scan/measure.ts); Claude compares plan and measurements (/api/site-check) with a rule fallback. Test TGS for Swanston St at the Sidney Myer Asia Centre and synthetic scans in data/test/. Lint and build pass. Claude site check not yet run on Vercel. Needs a team look before merging into main.
+- [11:48] Merged `joel` into main. One site scan covers every scan point. Scan screens use the TGS scan points. Real PLY/LAS scans are measured in the browser; kerb found on the real scans, footpath widths withheld as unreliable. Claude plan vs street check (/api/site-check) with a rule fallback.
 
 ## Tim
 Now:
