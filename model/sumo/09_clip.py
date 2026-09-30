@@ -208,6 +208,22 @@ if SITE:
             angle = math.degrees(math.atan2(y1 - y0, x1 - x0))
             angle = angle - 180 if angle > 90 else angle + 180 if angle < -90 else angle
             best[e.getName()] = (e.getLength(), ((x0 + x1) / 2, (y0 + y1) / 2, angle))
+    if args.aerial:
+        # Names sit beside the road, clear of its colours, all by one rule: a north-south street's name is east of it,
+        # level with the middle of the view; an east-west street's name is north of it, above the middle of the view.
+        for name, (length, (x, y, angle)) in list(best.items()):
+            upright = abs(angle) > 45
+            cross = []   # where the street's lines pass the middle of the view
+            for e in net.getEdges():
+                if e.getName() == name and e.allows("passenger"):
+                    for (x0, y0), (x1, y1) in zip(e.getShape(), e.getShape()[1:]):
+                        a0, a1, mid = (y0, y1, cy) if upright else (x0, x1, cx)
+                        if a0 != a1 and min(a0, a1) <= mid <= max(a0, a1):
+                            f = (mid - a0) / (a1 - a0)
+                            cross.append((x0 + f * (x1 - x0), y0 + f * (y1 - y0)))
+            if cross:
+                x, y = max(cross, key=lambda p: p[0 if upright else 1])
+                best[name] = (length, (x + 20, y, angle) if upright else (x, y + 20, angle))
     street_labels = {n.replace("Street", "St"): v for n, (_, v) in best.items()}
 scat, trails, divs, streets = [], [], [], []
 in_block = [(l, i) for l, _, i in lines if i is not None]   # the lines to colour, each with its block
@@ -220,7 +236,16 @@ for i, (ax, title) in enumerate(zip(axes, ("Normal street", closed_name))):
         ax.add_collection(LineCollection([l for l, tram, _ in lines if tram], colors="#9fc6e8", linewidths=1.2, zorder=1.5))
     streets.append(ax.add_collection(LineCollection([l for l, _ in in_block], colors=QUEUE[0][0], linewidths=QUEUE[0][1], capstyle="butt", zorder=1.2, alpha=0.8 if args.aerial else 1)))
     if i == 1:   # the block is only closed in the right-hand panel
-        ax.add_collection(LineCollection([net.getEdge(c).getShape() for c in closed_ids], colors="black", linewidths=6, zorder=2))
+        shapes = [net.getEdge(c).getShape() for c in closed_ids]
+        if args.aerial:   # a white edge, so the lane stands out from the dark photo
+            ax.add_collection(LineCollection(shapes, colors="white", linewidths=11, zorder=1.9))
+        ax.add_collection(LineCollection(shapes, colors="black", linewidths=7 if args.aerial else 6, capstyle="butt", zorder=2))
+        if args.aerial:   # and the words LANE CLOSED along it
+            line = np.array(sorted((p for pts in shapes for p in pts), key=lambda p: -p[1]))   # north to south
+            (xa, ya), (xb, yb) = line[0], line[-1]
+            angle = math.degrees(math.atan2(yb - ya, xb - xa))
+            ax.text((xa + xb) / 2, (ya + yb) / 2, f"{'LANE' if SITE else 'BLOCK'} CLOSED", rotation=angle + 180 if angle < -90 or angle > 90 else angle, ha="center", va="center",
+                    fontsize=8.5, fontweight="bold", color="white", zorder=6, path_effects=[patheffects.withStroke(linewidth=3, foreground="black")])
     ax.set_xlim(cx - args.radius, cx + args.radius); ax.set_ylim(cy - args.radius, cy + args.radius)
     for name, (x, y, angle) in street_labels.items():
         ax.text(x, y, name, rotation=angle, ha="center", va="center", fontsize=8, color="#555", zorder=5,
@@ -245,7 +270,8 @@ fig.text(0.5, 0.965, title, ha="center", fontsize=11 if len(title) < 85 else 9.5
 from matplotlib.lines import Line2D
 fig.legend(handles=[Line2D([], [], marker="o", color="none", markerfacecolor=PURPLE, markersize=9, label="Drivers who normally use this lane"),
                     Line2D([], [], marker="o", color="none", markerfacecolor=GREY, markersize=7, label="Other traffic"),
-                    Line2D([], [], color="black", linewidth=5, label=f"Closed {'lane' if SITE else 'block'}")],
+                    Line2D([], [], color="black", linewidth=5, label=f"Closed {'lane' if SITE else 'block'}",
+                            path_effects=[patheffects.withStroke(linewidth=9, foreground="white")] if args.aerial else [])],
            loc="lower center", ncol=3, frameon=False, fontsize=10, bbox_to_anchor=(0.5, 0.02), handletextpad=0.4, columnspacing=1.8)
 fig.text(0.99, 0.005, "Map data © OpenStreetMap contributors" + (". Aerial photo © State of Victoria (Vicmap Basemap)" if args.aerial else ""), ha="right", fontsize=7, color="#777")
 if args.queues:

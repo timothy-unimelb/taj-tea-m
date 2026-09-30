@@ -19,6 +19,7 @@ Done:
 ## Tim
 Now:
 Done:
+- [01:30] Illustration SUMO clip in the demo report: over the aerial photo the closed lane now has a white edge and the words LANE CLOSED, and the street names sit beside their roads by one rule. public/assets/sumo-smac-clip.gif, model/sumo/09_clip.py.
 - [00:35] The illustration SUMO clip in the demo report now has the Vicmap aerial photo under the streets (`09_clip.py --aerial`). The GIF is 19 MB, up from 2.3 MB, so it loads slowly on a phone; drop `--aerial` and re-render to go back. public/assets/sumo-smac-clip.gif.
 - [23:20] The SUMO clip in the demo report is now an illustration: made-up traffic (five times the drivers in the closed lane, the rest as measured) so the detour streets visibly queue with the closure, blocks coloured by extra queued cars against the normal street. Its title and its caption in the report say it is an illustration, not the result for this plan. The report's numbers are unchanged. public/assets/sumo-smac-clip.gif, data/impact/sumo-smac.json (caption only). How to remake it: model/sumo/11_illustration_demand.py and README "The illustration clip".
 - [21:55] Direct link to the demo report: https://taj-tea-m.vercel.app/#report/swanston-grattan (no Claude call, one saved SUMO lookup). Opened cold it now shows the test TGS under Site overview instead of the placeholder artwork. The top-down scan picture only appears after walking the flow with the demo scan. components/barrier-brain-prototype.tsx.
