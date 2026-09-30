@@ -6,6 +6,7 @@
 
 ## Joel
 Now:
+- [10:45] On branch `joel`: fix the scan screens so they use the TGS scan points (8 became 5), read a real uploaded scan in the browser, feed the real TGS and scan into the report, and a test TGS for Swanston St at the Sidney Myer Asia Centre (Grattan St to Faraday St). Not merged into main until the team checks it.
 Done:
 
 ## Tim
