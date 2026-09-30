@@ -7,7 +7,7 @@ The pre-screening PDF the judges have read is at `artifacts/submission/pre-scree
 ## Upload site scan screen
 
 - [x] Allow more than one scan. Button and heading say "Upload scans". (Joel, branch `joel`)
-- [ ] Code that stitches several scans into one site scan, as part of the flow. (Tamara. Hook in `lib/scan/stitch.ts`; a GPS join with height levelling stands in until then.)
+- [x] Code that stitches several scans into one site scan, as part of the flow. (Registers them to each other by code, lib/scan/stitch.ts.) (Tamara. Hook in `lib/scan/stitch.ts`; a GPS join with height levelling stands in until then.)
 - [x] The site scan button says .zip but that is not what it takes. Fix the copy. (Joel: PLY and LAS only, demo scan is .las)
 - [x] External scan evidence (mobile scan capture, point cloud export, map export): show only after a scan is uploaded. (Joel)
 - [x] "Upload additional scan" goes back to the upload screen. For the demo, move through the flow faster. No trip back. (Joel: opens the file picker on the incomplete screen, then checks again)
@@ -55,4 +55,4 @@ Recommended before deployment
 
 - [ ] Stitch the working pieces into one end-to-end flow on Vercel.
 - [ ] Run the model's inference in the cloud from the app, not on our laptops.
-- [ ] Turn the point cloud registration process into a script.
+- [x] Turn the point cloud registration process into a script. (tools/scan_register/register.ts, and it runs in the app.)
