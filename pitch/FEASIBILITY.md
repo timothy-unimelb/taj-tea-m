@@ -24,16 +24,27 @@ Over ten years that is about 180 deaths and 2,450 serious injury crashes. That i
 
 For scale overseas: 850 to 960 people died in US work zones each year from 2021 to 2024 (FHWA Work Zone Safety Clearinghouse, from NHTSA FARS. https://workzonesafety.org/work-zone-data/work-zone-fatal-crashes-and-fatalities/).
 
-How to say "hundreds of lives" without lying: the lives at stake are in the hundreds. In Australia, about 200 deaths a decade at roadworks on the police count, and likely far more. In the US, 900 a year. Say "hundreds of lives are lost at roadworks" rather than "we will save hundreds of lives".
+The claim "save hundreds of lives", and how we get there. Lives means people killed or seriously injured. Serious injury means hospitalised, often for weeks. The chain:
 
-What a share of that is worth. Austroads found that cutting worksite crashes by 5% would pay for the whole national harmonisation program. Using their own figures:
+| Step | Figure | Basis |
+|---|---|---|
+| People killed or seriously injured at Australian roadworks a year | at least 263 | 18 fatal + 245 serious injury crashes, Austroads |
+| Share of work zone crashes in the placement-defined areas (warning signs, taper, buffer) | 25 to 30% | Garber and Zhao, Virginia, 2002, 1,484 crashes: advance warning 8.7 to 11.3%, transition 11.0 to 16.2%, buffer 4.5 to 6.5% |
+| Reduction we assume at sites that use Barrier Brain | 15% | Our assumption: we check placement on every site and catch about half of those crashes. Austroads justified its whole national program on 5%, and that was a paperwork change |
+| People a year not killed or seriously injured | 39 | 263 x 15% |
+| Over a decade, Australia | about 400 | 39 x 10 |
+| Correction for police undercount | x 6.4 | Queensland: 820 work zone crashes in safety records vs 128 in police data (Blackman, Debnath and Haworth, 2020) |
 
-| Crash reduction | Deaths avoided a year | Serious injury crashes avoided a year | Cost avoided a year |
-|---|---|---|---|
-| 5% | 0.9 | 12 | about $16 million |
-| 10% | 1.8 | 25 | about $32 million |
+So: hundreds of lives a decade in Australia on the police count, thousands on the real count. Overseas, the US loses 850 to 960 people a year in work zones; 15% of that is about 135 lives a year.
 
-Working: $3.2 billion over 10 years is about $320 million a year. 5% of that is $16 million. BITRE's 2020 per-crash costs give a lower figure (fatal $3.2m, hospitalised $261k, minor $30.4k: 18 x 3.2m + 245 x 261k + 530 x 30.4k = about $138 million a year, so 5% is about $7 million). Quote Austroads on stage since it is the roadworks-specific study.
+Garber source: https://rosap.ntl.bts.gov/view/dot/20448/dot_20448_DS1.pdf
+
+Three groups of people, so the claim covers drivers, pedestrians and workers:
+- Drivers: the Austroads figures above. 71% of fatal US work zone crashes involve speeding, against 30% of fatal crashes overall (FHWA). In Australia 52 to 98% of vehicles speed on the approach to worksites (CARRS-Q, 2020). Drivers do not slow down for what they cannot see coming. Sight distance to the first barrier is one of the things the scan checks.
+- Pedestrians: 56 pedestrian deaths and about 2,200 hospital-treated pedestrian injuries a year in Victoria. The densest cluster of pedestrian crashes in the state is the Melbourne CBD, Southbank to Carlton, where roadworks are also densest (Victoria Walks and MUARC, Understanding Pedestrian Crashes in Victoria, 2008 to 2018 data. https://www.victoriawalks.org.au/Assets/Files/Understanding-Pedestrian-Crashes.pdf). Our demo site is in Carlton.
+- Workers: about 100 traffic controllers injured a year needing treatment or time off, and at least one killed (NRSPP fact sheet, 2020. https://www.nrspp.org.au/resources/nrspp-fact-sheet-driver-safety-at-roadworks/). 49% of controllers say they were nearly struck by a distracted driver in the past year (TMAA survey, 2024, 1,500 respondents. https://roadsonline.com.au/tmaa-survey-shines-light-on-safety/).
+
+Cost of the crashes avoided. $3.2 billion over 10 years is about $320 million a year (Austroads). 15% is $48 million a year. BITRE's 2020 per-crash costs give a lower base (fatal $3.2m, hospitalised $261k, minor $30.4k: about $138 million a year, so 15% is about $21 million). Quote Austroads on stage since it is the roadworks-specific study.
 
 Why a plan check should move this number. Crashes at roadworks come from what drivers meet on the day: a barrier round a bend, a sign that has fallen, a detour across an unsignalled crossing. Two evidence points:
 - WorkSafe Victoria, 300 inspections of roadside sites, found "inadequate signage for road users" and crews near each other "causing multiple traffic diversions". https://www.worksafe.vic.gov.au/news/2017-12/put-safety-first-roadside-construction-sites
@@ -109,18 +120,29 @@ Sources: VicRoads MoA FAQ, Mar 2022 (now offline, quoted by MK Traffic Jun 2026)
 
 Each revision restarts the clock. Main Roads WA says it plainly: "Producing a traffic model as part of a technical report can reduce multiple TMP revisions and the lengthy approval periods associated with those revisions." Guidelines for Traffic Modelling, Temporary Traffic Management, Mar 2025. https://www.mainroads.wa.gov.au/499785/globalassets/technical-commercial/working-on-roads/traffic-management/guidelines-for-traffic-modelling.pdf
 
-How many plans. Our RADAR dataset holds about 2,700 Melbourne closures from 2024 to 2026 that sit within 200 m of a traffic signal, so roughly 1,350 a year on signalled streets alone. The full count is higher. No authority publishes a total.
+How many plans, and how short the jobs are. Our RADAR dataset (model/data/closure_site_hour.parquet) holds 3,075 Melbourne closures on 801 streets from 27 Feb 2024 to 27 Sep 2026, matched to traffic signals within 200 m. That is about 1,190 a year on signalled streets alone. The full count is higher. No authority publishes a total.
+
+Their length, measured from the feed's start and end times:
+
+| Closures lasting | Share |
+|---|---|
+| 1 day or less | 42% |
+| 3 days or less | 82% |
+| 7 days or less | 99.6% |
+| Median | 1.5 days |
+
+So the permit takes three weeks and 99.6% of the jobs take less than one. That is why nobody models them: a $30,000 study cannot be justified for a two-day closure. It also means the whole market is unmodelled, and a 50-cent report is the only thing that fits.
 
 Our estimate of the time lost to revisions in Melbourne, stated as an estimate:
 
 | Assumption | Value |
 |---|---|
-| Closures a year near signals | 1,350 (our data) |
+| Closures a year near signals | 1,190 (our data) |
 | Share that need a revision | 20% (our assumption) |
-| Delay per revision | 2 weeks (from the approval times above) |
-| Weeks of waiting a year | 540 |
+| Delay per revision | 15 business days, 3 weeks (DTP's stated average) |
+| Weeks of waiting a year | about 720 |
 
-540 weeks is over ten years of calendar time lost every year, in one city, on signalled streets alone. That is "months of effort" with room to spare.
+720 weeks is fourteen years of calendar time lost every year, in one city, on signalled streets alone. That is "months of effort" with room to spare.
 
 What Barrier Brain takes, measured on our build:
 
@@ -189,7 +211,7 @@ Optimised total: about US$0.07 a report with the hosted open model and US SUMO, 
 | Cost to model one closure | $30,000 to $200,000 (micro-sim), so short jobs get $0 of modelling | A$0.50 | A$0.10 |
 | Time to a result | weeks | under 1 hour | under 1 hour, decisions in 0.3 s |
 | Site check | none before setup, first-week observation after | phone scan, code plus AI | same, fine-tuned model |
-| Every closure in Melbourne near a signal, a year (1,350) | not done | A$675 | A$135 |
+| Every closure in Melbourne near a signal, a year (1,190) | not done | A$595 | A$119 |
 
 The point for the judges: today the choice is $30,000 or nothing, so it is nothing. We make it 50 cents, so it can be every site.
 
@@ -213,6 +235,7 @@ No new hardware, no new data collection, no new regulation. Every input already 
 - No Australian audit publishes how often a site set-up differs from its approved TGS. Use the tradie's quote and WorkSafe's inspection findings, not a percentage.
 - No Australian figure for roadworks' share of congestion. The 10% is US FHWA. Say so.
 - No published count of roadworks or permits a year in Victoria, NSW or nationally. Use our RADAR count for Melbourne and label the national figure an estimate.
-- The 5% and 10% improvement figures are our assumptions. Austroads' own program was justified on 5%, which is the best anchor.
+- The 15% crash reduction, 5% delay reduction and 20% revision rate are our assumptions. Austroads' own program was justified on a 5% crash cut, which is the best anchor. Garber's 25 to 30% of crashes in the placement areas is the grounds for 15%.
+- The Victorian road occupation charge of $1,200 to $1,865 per lane per week is the 2018 trial rate (The Urban Developer, 29 May 2018). A search snippet gives today's rate as $173 to $252 per lane per day, but the Transport Victoria page could not be fetched to confirm it.
 - Jev's headline claims (200x faster, 400x cheaper) are TypeSafe's own. Use the independent 5x and 25x from Entagl.
 - The app calls Sonnet 5.5 in test and Opus 5.5 live. Costs above use Opus.
