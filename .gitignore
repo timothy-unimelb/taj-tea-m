@@ -45,3 +45,7 @@ next-env.d.ts
 __pycache__/
 *.duckdb
 *.duckdb.wal
+
+# raw site scans (large, local only)
+/scans/raw/
+/public/scans/test/

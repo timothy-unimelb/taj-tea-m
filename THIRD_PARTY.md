@@ -31,7 +31,8 @@ The competition requires a list of all third-party material and APIs, including 
 | jiti | Tool | Runs the check that the TypeScript port of the impact model matches the Python. `model/check_ts_port.ts` | MIT | No |
 | Esri World Imagery | Map tiles | Satellite backdrop for lining up site scans. `tools/scan_register/` | Esri terms of use. Check before submission | No |
 | OpenStreetMap tiles | Map tiles | Street map backdrop option in the scan alignment tool. `tools/scan_register/` | ODbL, OSM tile usage policy | No |
-| City of Melbourne open data (2023 building footprints, street trees, footpaths, kerbs and bike lanes) | Dataset | Reference features for placing the Swanston St scans on the map. `scans/` | CC BY 4.0 | No |
+| City of Melbourne open data (2023 building footprints, street trees, footpaths, kerbs and bike lanes) | Dataset | Reference features for placing site scans on the map: Tamara's offline work in `scans/`, and live in the app via `app/api/reference-features` (building footprints, footpaths, street trees) | CC BY 4.0 | No |
+| OpenStreetMap data via the Overpass API | Dataset and API | Building outlines and trees for placing a site scan on the map where council data has none. `lib/scan/reference.ts` | ODbL, © OpenStreetMap contributors; Overpass API usage policy | No |
 | NumPy | Library | Scan registration and the alignment tool. `scans/`, `tools/scan_register/` | BSD 3-Clause | No |
 | SciPy | Library | Scan registration (nearest-neighbour search, image filters). `scans/` | BSD 3-Clause | No |
 | OpenCV | Library | Scan registration (image matching). `scans/` | Apache 2.0 | No |

@@ -1,22 +1,31 @@
 // Turns the scans a planner uploads into one site scan, in the browser.
 //
-// This is the hook for the team's point cloud registration (Tamara). Replace
-// the body of `stitchScans` with the real registration; the rest of the app
-// only needs one File back.
-//
-// Until then: one scan passes straight through. Several georeferenced LAS
-// scans are joined by their map coordinates, with each scan's height levelled
-// to the scans before it where they overlap (phone altitude drifts). Rotation
-// and position errors between scans are NOT corrected. Several PLY scans have
-// no shared coordinates, so they are joined as they are.
+// One scan passes straight through. Several georeferenced LAS scans are
+// registered to each other and placed on the map by lib/scan/site-scan.ts
+// (heading and position errors from the phone corrected; see
+// scans/swanston_registered_v2/SCAN_REGISTRATION_STATUS.md). If that fails,
+// they are joined by their phone coordinates as before, with heights
+// levelled. Several PLY scans have no shared coordinates, so they are joined
+// as they are.
 
 import { readPlyPoints } from "./measure";
+import { registerScanFiles, summariseSiteScan } from "./site-scan";
 
-export async function stitchScans(files: File[]): Promise<File> {
-  if (files.length === 1) return files[0];
+export type Stitched = { file: File; note: string | null };
+
+export async function stitchScans(files: File[], onProgress?: (message: string) => void): Promise<Stitched> {
+  if (files.length === 1) return { file: files[0], note: null };
   const names = files.map(f => f.name.toLowerCase());
-  if (names.every(n => n.endsWith(".las"))) return joinLas(files);
-  if (names.every(n => n.endsWith(".ply"))) return joinPly(files);
+  if (names.every(n => n.endsWith(".las"))) {
+    try {
+      const { file, report } = await registerScanFiles(files, onProgress);
+      return { file, note: summariseSiteScan(report) };
+    } catch (error) {
+      onProgress?.("Joining the scans by their phone positions");
+      return { file: await joinLas(files), note: `The scans could not be fitted together: ${error instanceof Error ? error.message : String(error)} They were joined by their phone positions instead, which can be 10 to 20 m out.` };
+    }
+  }
+  if (names.every(n => n.endsWith(".ply"))) return { file: await joinPly(files), note: "PLY scans carry no map position, so they were joined as they are." };
   throw new Error("Upload all scans in one format: all LAS or all PLY.");
 }
 
