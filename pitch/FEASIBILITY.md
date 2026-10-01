@@ -239,3 +239,47 @@ No new hardware, no new data collection, no new regulation. Every input already 
 - The Victorian road occupation charge of $1,200 to $1,865 per lane per week is the 2018 trial rate (The Urban Developer, 29 May 2018). A search snippet gives today's rate as $173 to $252 per lane per day, but the Transport Victoria page could not be fetched to confirm it.
 - Jev's headline claims (200x faster, 400x cheaper) are TypeSafe's own. Use the independent 5x and 25x from Entagl.
 - The app calls Sonnet 5.5 in test and Opus 5.5 live. Costs above use Opus.
+
+## 6. Two multiples for the economics slide, with sources
+
+### Open-weight model vs Claude: about 50x per report
+
+Per report: about 9,500 tokens in, 7,500 out. Prices per million tokens, 30 Sep 2026.
+
+| Model | Input | Output | Per report | vs Opus |
+|---|---|---|---|---|
+| Claude Opus 5.5 (live) | $4 | $20 | $0.19 | 1x |
+| Claude Sonnet 5.5 | $2 | $10 | $0.094 | 2x |
+| Claude Haiku 4.5 | $1 | $5 | $0.047 | 4x |
+| Llama 4 Scout (vision) on DeepInfra | $0.10 | $0.30 | $0.0032 | 59x |
+| Llama 3.3 70B on DeepInfra | $0.10 | $0.32 | $0.0034 | 55x |
+| Qwen3.5 9B on DeepInfra | $0.10 | $0.15 | $0.0021 | 90x |
+
+Working for Scout: 9,500 x 0.10 + 7,500 x 0.30, over a million = $0.00095 + $0.00225 = $0.0032. Say "about 50 times cheaper". Scout reads images, so it can take the TGS. Sources: https://platform.claude.com/docs/en/about-claude/pricing and https://deepinfra.com/pricing
+
+Published anchors that a fine-tuned small model holds its accuracy: TensorZero, Jul 2025, fine-tuned small models "reducing inference costs by up to 30x" and 31x on a data extraction task (https://www.tensorzero.com/blog/distillation-programmatic-data-curation-smarter-llms-5-30x-cheaper-inference/); Patel et al., arXiv 2609.15706, Sep 2026, fine-tuned Qwen2.5-VL-7B F1 0.985 against Claude Sonnet 4.5 at 0.857 on document extraction (https://arxiv.org/abs/2609.15706).
+
+If asked "does a cheap model read a TGS as well": "Not out of the box. Fine-tuned on a few thousand real TGS drawings it does, and that paper shows it beating Claude on exactly that kind of task."
+
+### AWS vs Vercel: 3 to 4x on demand, over 10x with a commitment
+
+Compute, per vCPU-hour with 2 GB of memory, Sydney:
+
+| | Price | vs Vercel |
+|---|---|---|
+| Vercel Pro fluid compute: Active CPU $0.180/hr + 2 GB x $0.0149/GB-hr | $0.21 | 1x |
+| AWS EC2 c7i.2xlarge on demand, $0.466/hr for 8 vCPU and 16 GB | $0.058 | 3.6x |
+| Same with an EC2 Instance Savings Plan, 3 years, up to 72% off | $0.016 | 13x |
+
+Sources: https://vercel.com/docs/functions/usage-and-pricing (updated 16 Jun 2026), https://www.devzero.io/instances/aws/c7i.2xlarge, https://aws.amazon.com/savingsplans/compute-pricing/
+
+Bandwidth, per GB after the first terabyte: Vercel $0.15 (https://vercel.com/pricing), CloudFront $0.085 in the US and $0.114 in Australia (https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/). 1.3 to 1.8x.
+
+Fixed: Vercel Pro $20 a month per seat. AWS Lightsail from $5 a month (1 vCPU, 0.5 GB, 1 TB transfer). 4x.
+
+Caveats to know, not to put on the slide:
+- The EC2 multiple holds only if the box is kept busy. EC2 bills 24 hours a day; Vercel bills only while a request runs. At today's volume the web app costs about $23 a month on Vercel and about $12 on AWS. Both are nothing.
+- AWS Lambda is not the cheap option for us. Our functions spend most of their time waiting on Claude. Vercel pauses CPU billing during that wait; Lambda does not. For a 30 s wait at 1 GB, Vercel is about $0.00009 and Lambda $0.0005.
+- SUMO cannot run on Vercel at all. Functions cap at 800 s and SUMO takes 10 to 30 minutes. So the SUMO box is on AWS in every version of the product, and the "optimised" version simply moves the web app onto the same reserved box.
+
+The line for the slide: "Hosting: up to 10x cheaper on reserved AWS capacity." The line for the question: "Vercel charges 18 cents a CPU-hour in Sydney. A reserved EC2 core is under 2 cents. Three to four times cheaper on demand, over ten with a three-year commitment."
